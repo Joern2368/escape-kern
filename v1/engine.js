@@ -390,7 +390,7 @@ m.querySelector('.ok').onclick=schliesse;
 }
 function infoFenster(k){
 const o=objI(k),inf=(C.raeume[st.raum].infos||[])[k]||{},kk=st.raum+'-'+k,neuKarte=!st.kartenSet.has(kk);
-if(neuKarte){st.kartenSet.add(kk);st.karten.push({raum:st.raum,titel:inf.titel||o.name,text:inf.text||''});}
+if(neuKarte){st.kartenSet.add(kk);st.karten.push({raum:st.raum,titel:inf.titel||o.name,text:inf.text||''});speichere();}
 const bild=inf.bild?`<figure class="lernbild"><img src="${esc(ohnePunkte(inf.bild))}" alt="${esc(ohnePunkte(inf.titel||o.name))}" referrerpolicy="no-referrer" onerror="this.parentNode.remove()">${inf.quelle?`<figcaption>${inf.quelle}</figcaption>`:''}</figure>`:'';
 const m=modal(`<div class="mkopf"><h2>${o.name}</h2>${vorKnopf()}<button class="x" aria-label="Schließen">×</button></div>
     <div class="keinraetsel">💡 ${W.keinRaetsel}</div>${neuKarte?`<div class="neukarte">🃏 ${du?'Neue Wissenskarte! Sie liegt jetzt in deiner Mappe.':'Neue Wissenskarte! Sie liegt jetzt in eurer Mappe.'}</div>`:''}${inf.titel?`<h3>${inf.titel}</h3>`:''}${bild}<p>${inf.text||''}</p>
@@ -429,14 +429,27 @@ app.innerHTML=`<div class="start">${SZ.emblem}
     <div class="story">${vorKnopf()}${story}</div>
     <div class="namelabel">${W.figurFrage}</div>
     <div class="figwahl">${FIGUREN.map((f,k)=>`<button class="fig${k===st.figur?' an':''}" data-k="${k}" aria-label="${f.name}" title="${f.name}"><svg viewBox="-45 -152 90 160" aria-hidden="true">${figurSvg(k)}</svg></button>`).join('')}</div>
+    ${staendeHtml()}
     <label class="namelabel" for="name">${W.nameFrage}</label>
     <input class="namefeld" id="name" type="text" maxlength="40" autocomplete="off" placeholder="${W.namePlatz}"><br>
     <button class="btn gross" id="los">${T.startKnopf}</button></div>`;
 const v=app.querySelector('.story .vor');if(v)v.onclick=()=>sprich(nurText(story));
 app.querySelectorAll('.fig').forEach(b=>b.onclick=()=>{st.figur=+b.dataset.k;app.querySelectorAll('.fig').forEach(x=>x.classList.toggle('an',x===b));});
+const beginne=()=>{st.start=Date.now();if(mitTimer)st.tid=setInterval(tick,1000);zeigeRaum(true);};
+const weiter=name=>{
+const s=SPEICHER.lies().staende[name];
+try{if(!s)throw 0;ladeStand(s);}catch(e){loescheStand(name);st.name=name;return beginne();}
+TON.init();TON.spiele('klick');if(mitTimer)st.tid=setInterval(tick,1000);zeigeRaum(false);
+};
+app.querySelectorAll('.stand .weiter').forEach(b=>b.onclick=()=>weiter(b.dataset.n));
+app.querySelectorAll('.stand .loesch').forEach(b=>b.onclick=()=>{loescheStand(b.dataset.n);start();});
 document.getElementById('los').onclick=()=>{
 TON.init();TON.spiele('klick');st.name=document.getElementById('name').value.trim();
-st.start=Date.now();if(mitTimer)st.tid=setInterval(tick,1000);zeigeRaum(true);
+const alt=SPEICHER.lies().staende[st.name];
+if(!alt)return beginne();
+const m=modal(`<div class="mkopf"><h2>${'Spielstand gefunden'}</h2></div><p>${st.name?esc(st.name)+': ':''}Es gibt schon einen gespeicherten Spielstand (Raum ${(alt.raum|0)+1} von ${C.raeume.length}).</p><div class="aktionen mitte"><button class="btn weiterspielen">Weiterspielen</button><button class="btn zweit neuanfang">Neu anfangen</button></div>`,{schliessbar:false});
+m.querySelector('.weiterspielen').onclick=()=>{const n=st.name;schliesse();weiter(n);};
+m.querySelector('.neuanfang').onclick=()=>{schliesse();loescheStand(st.name);beginne();};
 };
 }
 function zeigeRaum(neu){
@@ -484,6 +497,7 @@ const ch=app.querySelector(`.fund .f[data-i="${frischI}"]`),sz=app.querySelector
 if(ch){ch.style.visibility='hidden';TON.spiele('flug');fliege(`<div>${rl[frischI].ziffer}</div>`,'zflug',{x:sz.left+sz.width/2,y:sz.top+sz.height/2},ch,()=>{ch.style.visibility='';ch.classList.add('pulst');});}
 }
 if(neu)meldung(raumName,fuell(R.text||(du&&def.introDu)||def.intro),'Los geht&rsquo;s');
+speichere();
 }
 function lichtHtml(def){
 const L=def.licht;if(!L)return'';
@@ -537,6 +551,7 @@ if(th&&m._falsch&&m._falsch.length){const t=m._falsch.filter(k=>th[k]).map(k=>`<
 else if(th&&th.some(Boolean)&&!m._geprueft)h=(r.hinweis?r.hinweis+'<br>':'')+W.erstPruefen;
 ht.innerHTML=`<b>${T.hinweisGeber}</b> ${h}${extra}`;ht.hidden=false;
 if(C.vorlesen)sprich(nurText(h));
+speichere();
 };
 }
 function zeigeFund(r,o,frisch){
@@ -588,11 +603,12 @@ const reise=von!==undefined&&von+1<C.raeume.length&&!ruhig;
 b.innerHTML=reise?reiseHtml(von,von+1):'';
 b.classList.add('an');setTimeout(()=>{mitte();window.scrollTo(0,0);b.classList.remove('an');setTimeout(()=>{b.innerHTML='';},800);},reise?2300:750);
 }
-function tick(){st.rest--;zeichneTimer();if(st.rest<=0&&!st.zeitUm){st.zeitUm=true;meldung(T.zeitUmTitel,T.zeitUm,'Weiterspielen');}}
+function tick(){st.rest--;zeichneTimer();if(st.rest%5===0)speichere();if(st.rest<=0&&!st.zeitUm){st.zeitUm=true;meldung(T.zeitUmTitel,T.zeitUm,'Weiterspielen');}}
 function zeichneTimer(){const el=app.querySelector('.timer');if(!el)return;
 if(st.rest>0){el.textContent='⏳ '+fmt(st.rest);el.className='timer'+(st.rest<=300?' knapp':'');}
 else{el.textContent='+'+fmt(-st.rest);el.className='timer um';}}
 function ende(){
+st.fertig=true;loescheStand(st.name);
 clearInterval(st.tid);const dauer=(Date.now()-st.start)/1000;
 const text=fuell(C.abschluss||T.abschluss);
 app.innerHTML=`<div class="szene"><svg viewBox="0 0 1000 600" role="img" aria-label="Ausgang">${SZ.ausgang()}<g transform="translate(500 575) scale(1.5)"><g class="jubel">${figurSvg(st.figur)}</g></g></svg></div>
@@ -601,5 +617,38 @@ app.innerHTML=`<div class="szene"><svg viewBox="0 0 1000 600" role="img" aria-la
    <button class="btn" onclick="location.reload()">Noch einmal spielen</button></div>`;
 const v=app.querySelector('.story .vor');if(v)v.onclick=()=>sprich(nurText(text));
 }
+const SPEICHER=(()=>{
+const hash=s=>{let h=5381;for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36);};
+const key='escape-'+hash(JSON.stringify(C)+'|'+(SZ.name||''));
+const leer=()=>({staende:{}});
+const lies=()=>{try{const t=localStorage.getItem(key),o=t?JSON.parse(t):null;return(o&&typeof o==='object'&&o.staende&&typeof o.staende==='object')?o:leer();}catch(e){return leer();}};
+const schreibe=o=>{try{localStorage.setItem(key,JSON.stringify(o));}catch(e){}};
+return{lies,schreibe};
+})();
+function speichere(){
+if(!st.start||st.fertig)return;
+const o=SPEICHER.lies();
+o.staende[st.name||'']={name:st.name,figur:st.figur,raum:st.raum,pos:{x:st.pos.x,y:st.pos.y,r:st.pos.r},geloest:[...st.geloest],hinweise:st.hinweise,hinweisSet:[...st.hinweisSet],
+fehler:st.fehler,rest:st.rest,zeitUm:!!st.zeitUm,gespielt:Math.round((Date.now()-st.start)/1000),karten:st.karten,kartenSet:[...st.kartenSet],los:LOS,zeit:Date.now()};
+SPEICHER.schreibe(o);
+}
+function loescheStand(name){const o=SPEICHER.lies();delete o.staende[name||''];SPEICHER.schreibe(o);}
+function ladeStand(s){
+const raum=s.raum|0,n=C.raeume.length;
+if(raum<0||raum>=n||!s.los||!Array.isArray(s.geloest)||!s.pos)throw 0;
+st.name=s.name||'';st.figur=Math.max(0,Math.min(FIGUREN.length-1,s.figur|0));st.raum=raum;st.pos={x:+s.pos.x,y:+s.pos.y,r:s.pos.r||1};
+st.geloest=new Set(s.geloest);st.hinweise=s.hinweise|0;st.hinweisSet=new Set(s.hinweisSet||[]);st.fehler=s.fehler||{};
+st.rest=typeof s.rest==='number'?s.rest:st.rest;st.zeitUm=!!s.zeitUm;st.karten=s.karten||[];st.kartenSet=new Set(s.kartenSet||[]);
+for(const k in LOS)delete LOS[k];
+for(const k in s.los)LOS[k]=s.los[k];
+st.start=Date.now()-(s.gespielt||0)*1000;st.neu=-1;
+}
+function staendeHtml(){
+const o=SPEICHER.lies(),namen=Object.keys(o.staende).filter(k=>o.staende[k]&&typeof o.staende[k].raum==='number').sort((a,b)=>(o.staende[b].zeit||0)-(o.staende[a].zeit||0)).slice(0,6);
+if(!namen.length)return'';
+return`<div class="namelabel">Gespeicherte Spiele:</div><div class="staende">${namen.map(k=>`<div class="stand"><button class="btn weiter" data-n="${esc(k)}">&#9654; Weiterspielen${k?': '+esc(k):''} (Raum ${o.staende[k].raum+1} von ${C.raeume.length})</button><button class="btn zweit loesch" data-n="${esc(k)}" aria-label="Spielstand löschen" title="Spielstand löschen">&times;</button></div>`).join('')}</div>`;
+}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)speichere();});
+window.addEventListener('pagehide',speichere);
 start();
 })();

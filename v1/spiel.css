@@ -200,3 +200,6 @@ input.ein,select{font:inherit;font-size:1.05em;padding:7px 10px;border:2px solid
 .lin i{position:absolute;left:0;top:0;bottom:0;width:0;background:#d8a73a;animation:fuell 1s .4s forwards}
 @keyframes fuell{to{width:100%}}
 @media (max-width:600px){.rad{width:58px}.rad .zahl{width:44px;font-size:28px}.modal{padding:12px 14px 16px}}
+.staende{margin:6px auto 16px;max-width:560px;display:flex;flex-direction:column;gap:8px;align-items:stretch}
+.stand{display:flex;gap:8px;justify-content:center}
+.stand .weiter{flex:1;text-align:center}
