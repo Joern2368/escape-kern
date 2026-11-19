@@ -7,7 +7,7 @@ const E=einfach?(SZ.einfach||{}):{};
 const T=Object.assign({},SZ.texte,du?(SZ.texteDu||{}):{},E.texte||{},du?(E.texteDu||{}):{});
 const SZNAME=E.name||SZ.name,SYMNAMEN=E.symbolNamen||SZ.symbolNamen;
 const wortspeicher=(typeof C.wortspeicher==='boolean')?C.wortspeicher:parseInt(C.klasse,10)<=6;
-const symbolModus=(typeof C.symbolModus==='boolean')?C.symbolModus:parseInt(C.klasse,10)>=5;
+const symbolModus=(typeof C.symbolModus==='boolean')?C.symbolModus:true;
 const mitTimer=C.timerMinuten>0;
 const W=du?{
 auftrag:'Untersuche die Gegenstände im Raum – tippe sie an!',
