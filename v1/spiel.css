@@ -203,3 +203,4 @@ input.ein,select{font:inherit;font-size:1.05em;padding:7px 10px;border:2px solid
 .staende{margin:6px auto 16px;max-width:560px;display:flex;flex-direction:column;gap:8px;align-items:stretch}
 .stand{display:flex;gap:8px;justify-content:center}
 .stand .weiter{flex:1;text-align:center}
+.hinweistext .vor{float:right;margin:0 0 4px 10px}

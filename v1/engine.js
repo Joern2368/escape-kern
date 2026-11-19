@@ -367,7 +367,6 @@ function meldeKurz(text){
 const sz=app.querySelector('.szene');if(!sz)return;
 let t=sz.querySelector('.toast');if(!t){t=document.createElement('div');t.className='toast';sz.appendChild(t);}
 t.textContent=text;t.classList.add('an');clearTimeout(t._z);t._z=setTimeout(()=>t.classList.remove('an'),2200);
-if(C.vorlesen)sprich(text);
 }
 function zurTuer(){
 const offen=noetig()-st.geloest.size;
@@ -549,8 +548,8 @@ let h=r.hinweis||W.lesen;
 const th=typ.teil?typ.teil(r):null;
 if(th&&m._falsch&&m._falsch.length){const t=m._falsch.filter(k=>th[k]).map(k=>`<br><b>${typ.teilTitel?typ.teilTitel(r,k):typ.teilName+' '+(k+1)}:</b> ${th[k]}`);if(t.length)h=t.join('');}
 else if(th&&th.some(Boolean)&&!m._geprueft)h=(r.hinweis?r.hinweis+'<br>':'')+W.erstPruefen;
-ht.innerHTML=`<b>${T.hinweisGeber}</b> ${h}${extra}`;ht.hidden=false;
-if(C.vorlesen)sprich(nurText(h));
+ht.innerHTML=`${vorKnopf()}<b>${T.hinweisGeber}</b> ${h}${extra}`;ht.hidden=false;
+const vk=ht.querySelector('.vor');if(vk)vk.onclick=()=>sprich(nurText(h));
 speichere();
 };
 }
