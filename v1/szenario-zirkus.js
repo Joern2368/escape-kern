@@ -29,14 +29,8 @@ const schuhe=()=>`${schatten(60,4)}${[-30,26].map(x=>`<path d="M${x-30} -4Q${x-3
 const kostuem=()=>`${C(0,-70,4,'#888')}<path d="M0 -70V-60M-30 -46L0 -60L30 -46" stroke="#888" stroke-width="3" fill="none"/><path d="M-30 -46L-46 -20L-34 -12L-24 -30L-20 40H20L24 -30L34 -12L46 -20L30 -46Q0 -30 -30 -46Z" fill="#7a3ac8" stroke="#3a1a6a" stroke-width="3"/>${[[-10,-20],[10,0],[-6,20],[12,-28],[0,-4]].map(([x,y])=>`<use href="#sym-stern" x="${x-6}" y="${y-6}" width="12" height="12" color="#f4c430"/>`).join('')}<path d="M-20 40L-28 60H28L20 40Z" fill="#e86ab8" stroke="#3a1a6a" stroke-width="2"/>`;
 const holzkiste=()=>`${schatten(70,4)}${R(-64,-124,128,120,'#b8865a','#6b4a24',4)}<path d="M-64 -124L64 -4M-64 -4L64 -124" stroke="#8a5a2a" stroke-width="8"/>${R(-64,-124,128,14,'#8a5a2a')}${R(-64,-18,128,14,'#8a5a2a')}<use href="#sym-stern" x="-16" y="-80" width="32" height="32" color="#c8302a"/>`;
 const stelzen=()=>`${schatten(40,4)}${[-18,18].map(x=>`<path d="M${x-8} 0L${x+8} -220" stroke="#c8302a" stroke-width="8" stroke-linecap="round"/><path d="M${x-6} -60H${x+12}" stroke="#222" stroke-width="6"/><path d="M${x-5} -120L${x+3} -150" stroke="#fff" stroke-width="8"/>`).join('')}`;
-const zauberkasten=()=>`${schatten(50,4)}${R(-44,-130,88,126,'#1b2a48','#f4c430',4)}<path d="M0 -130V-4" stroke="#f4c430" stroke-width="3"/>${[[-22,-100],[22,-70],[-20,-40],[20,-110]].map(([x,y])=>`<use href="#sym-stern" x="${x-9}" y="${y-9}" width="18" height="18" color="#f4c430"/>`).join('')}<use href="#sym-zylinder" x="-22" y="-166" width="44" height="44" color="#222"/>`;
 const seilrolle=()=>`${schatten(56,4)}${C(0,-50,48,'#8a5a2a','#4a2a14',4)}${C(0,-50,34,'#d8c08a')}${[0,1,2,3].map(k=>`<path d="M-32 ${-72+k*14}Q0 ${-66+k*14} 32 ${-72+k*14}" stroke="#a88a5a" stroke-width="2" fill="none"/>`).join('')}${C(0,-50,8,'#4a2a14')}<path d="M34 -40Q60 -10 50 0" stroke="#d8c08a" stroke-width="5" fill="none"/>`;
 const scheinwerfer=()=>`<path d="M-60 -40H-20V0" stroke="#555" stroke-width="6" fill="none"/><path d="M38 0L130 70L150 10Z" fill="#fff3b0" opacity=".3"/><g transform="rotate(20)"><path d="M-30 -20H24L40 -34V34L24 20H-30Z" fill="#444" stroke="#222" stroke-width="3"/><ellipse cx="40" rx="8" ry="34" fill="#fff3b0"/></g>`;
-const bett=()=>`${schatten(70,4)}<path d="M-64 0V-200M64 0V-200" stroke="#8a5a2a" stroke-width="8"/>${[-30,-120].map((y,k)=>`${R(-60,y-16,120,16,'#8a5a2a')}${R(-58,y-34,116,18,k?'#5ac85a':'#3aa0e8')}<ellipse cx="-36" cy="${y-38}" rx="16" ry="8" fill="#f4ecd8"/>`).join('')}<path d="M40 -120V-30M54 -120V-30M40 -96H54M40 -66H54" stroke="#6b4a24" stroke-width="4"/>`;
-const herd=()=>`${schatten(50,4)}${R(-44,-90,88,88,'#e8e2d2','#555',3)}${R(-32,-64,64,40,'#333','#555',2)}<path d="M-20 -44H20" stroke="#ff9a2a" stroke-width="4"/>${C(-24,-80,4,'#222')}${C(24,-80,4,'#222')}<path d="M-26 -90Q-26 -126 0 -126Q26 -126 26 -90Z" fill="#c8302a" stroke="#6a1010" stroke-width="2"/><path d="M26 -104L44 -116" stroke="#c8302a" stroke-width="6" stroke-linecap="round"/><path d="M-12 -132Q0 -146 12 -132" stroke="#6a1010" stroke-width="4" fill="none"/><path d="M48 -126Q42 -140 50 -150" stroke="#fff" stroke-width="3" opacity=".6" fill="none"/>`;
-const klapptisch=()=>`${schatten(56,4)}<path d="M-40 0L30 -60M40 0L-30 -60" stroke="#8a5a2a" stroke-width="6"/>${R(-56,-68,112,10,'#b8865a','#6b4a24',2)}${R(-34,-90,18,22,'#e8413a')}<path d="M-16 -84Q-8 -80 -16 -74" stroke="#e8413a" stroke-width="3" fill="none"/>${R(12,-88,18,20,'#3aa0e8')}${R(-6,-74,18,6,'#f4ecd8')}`;
-const koffer=()=>`${schatten(56,4)}<rect x="-50" y="-96" width="100" height="90" rx="10" fill="#a0522d" stroke="#5a2a14" stroke-width="3"/><path d="M-16 -96V-110H16V-96" stroke="#5a2a14" stroke-width="5" fill="none"/>${C(-24,-60,14,'#f4c430')}${R(4,-76,30,20,'#3aa0e8')}<use href="#sym-stern" x="10" y="-44" width="22" height="22" color="#fff3b0"/>${C(-36,-4,5,'#222')}${C(36,-4,5,'#222')}`;
-const pokale=()=>`${R(-90,20,180,10,'#8a5a2a')}<path d="M-80 30L-70 44M80 30L70 44" stroke="#6b4a24" stroke-width="4"/>${[[-56,1],[0,1.3],[56,.9]].map(([x,s])=>`<g transform="translate(${x} 20) scale(${s})"><path d="M-14 -50H14Q14 -24 0 -20Q-14 -24 -14 -50ZM-4 -20H4V-8H-4ZM-12 -8H12V0H-12Z" fill="#f4c430" stroke="#8a6420" stroke-width="2"/><path d="M-14 -46Q-24 -42 -14 -32M14 -46Q24 -42 14 -32" stroke="#f4c430" stroke-width="3" fill="none"/></g>`).join('')}`;
 const kasse=()=>`${schatten(80,4)}${R(-70,-180,140,176,'#c8302a','#6a1010',3)}${R(-50,-150,100,60,'#fff3b0','#6a1010',3)}${R(-60,-84,120,10,'#f4ecd8')}<path d="M-84 -180L0 -236L84 -180Z" fill="#f4ecd8" stroke="#6a1010" stroke-width="3"/><path d="M-56 -180L0 -236L-28 -180ZM28 -180L0 -236L56 -180Z" fill="#c8302a"/>${R(-40,-74,80,60,'#a82020')}<text y="-160" text-anchor="middle" font-family="sans-serif" font-weight="bold" font-size="18" fill="#fff">KASSE</text>`;
 const popcornwagen=()=>`${schatten(66,4)}${C(-40,-14,14,'#222')}${C(40,-14,14,'#222')}${R(-58,-70,116,50,'#c8302a','#6a1010',3)}${R(-50,-150,100,80,'#cfe8ef','#888',4)}${[...Array(14)].map((_,k)=>C(-40+(k%7)*13,-82-Math.floor(k/7)*12-(k%2)*3,7,'#fff3b0','#e8c45a',1)).join('')}<path d="M-64 -150L-50 -176H50L64 -150Z" fill="#f4ecd8" stroke="#6a1010" stroke-width="3"/><path d="M-30 -176L-36 -150M0 -176V-150M30 -176L36 -150" stroke="#c8302a" stroke-width="10"/><use href="#sym-popcorn" x="-16" y="-62" width="32" height="32" color="#fff3b0"/>`;
 const ballons=()=>`${schatten(26,4)}${R(-14,-20,28,20,'#888','#444',2)}${[[-34,-230,'#e8413a'],[0,-250,'#3aa0e8'],[32,-226,'#f4c430'],[-14,-196,'#5ac85a'],[18,-192,'#e86ab8']].map(([x,y,c])=>`<path d="M0 -20Q${x/2} ${(y-20)/2} ${x} ${y+26}" stroke="#666" stroke-width="1.5" fill="none"/><ellipse cx="${x}" cy="${y}" rx="22" ry="27" fill="${c}"/><ellipse cx="${x-8}" cy="${y-10}" rx="5" ry="8" fill="#fff" opacity=".5"/>`).join('')}`;
@@ -51,24 +45,59 @@ const paravent=()=>`${schatten(70,4)}${[[-66,'#e86ab8'],[-22,'#7a3ac8'],[22,'#e8
 const lagerplan=()=>`${R(-50,-66,100,132,'#8a5a2a','#4a2a14',3)}${R(-40,-52,80,110,'#f4ecd8')}${R(-16,-72,32,14,'#888')}${[0,1,2,3,4].map(k=>`<path d="M-26 ${-35+k*18}H${k%2?14:28}" stroke="#666" stroke-width="3"/>${R(-36,-38+k*18,6,6,'none','#3a6ad8',2)}`).join('')}`;
 const keulenfass=()=>`${schatten(44,4)}${[[-16,-8,'#e8413a'],[0,4,'#f4ecd8'],[16,-4,'#3aa0e8']].map(([x,r,c])=>`<path d="M${x-3} -60V-100Q${x-12} -120 ${x} -134Q${x+12} -120 ${x+3} -100V-60Z" fill="${c}" stroke="#222" stroke-width="2" transform="rotate(${r} ${x} -60)"/>`).join('')}<path d="M-38 -70Q-44 -35 -38 0H38Q44 -35 38 -70Z" fill="#a0683a" stroke="#4a2a14" stroke-width="3"/><path d="M-42 -50H42M-42 -20H42" stroke="#555" stroke-width="5"/>`;
 const farbeimer=()=>`${schatten(56,4)}${[[-28,'#e8413a',50],[24,'#3aa0e8',40]].map(([x,c,h])=>`<path d="M${x-22} ${-h}L${x-18} 0H${x+18}L${x+22} ${-h}Z" fill="#c9ccce" stroke="#555" stroke-width="2"/><ellipse cx="${x}" cy="${-h}" rx="22" ry="6" fill="${c}"/><path d="M${x-10} ${-h}V${-h+16}M${x+6} ${-h}V${-h+10}" stroke="${c}" stroke-width="5" stroke-linecap="round"/>`).join('')}<path d="M-20 -50L-8 -100" stroke="#8a5a2a" stroke-width="5"/>${R(-16,-118,16,20,'#f4c430')}`;
-const tourkarte=()=>`${R(-90,-60,180,120,'#e8f0d8','#6b4a24',5)}<path d="M-70 -20Q-40 -50 -10 -30Q20 -50 60 -30Q76 0 50 30Q10 46 -20 30Q-70 20 -70 -20Z" fill="#a8d08a" stroke="#5a8a4a" stroke-width="2"/><path d="M-50 -10L-14 -24L20 10L50 -10" stroke="#c8302a" stroke-width="3" stroke-dasharray="6 4" fill="none"/>${[[-50,-10],[-14,-24],[20,10],[50,-10]].map(([x,y])=>C(x,y,6,'#c8302a','#fff',2)).join('')}`;
-const gitarre=()=>`${schatten(40,4)}<g transform="rotate(-8)"><ellipse cy="-36" rx="30" ry="32" fill="#d8873a" stroke="#6b3a14" stroke-width="3"/><ellipse cy="-84" rx="22" ry="22" fill="#d8873a" stroke="#6b3a14" stroke-width="3"/>${C(0,-66,8,'#3a2010')}${R(-5,-180,10,80,'#6b3a14')}${R(-8,-200,16,22,'#3a2010')}<path d="M-2 -196V-40M2 -196V-40" stroke="#eee" stroke-width="1"/>${R(-12,-36,24,6,'#3a2010')}</g>`;
-const kaktus=()=>`${schatten(32,4)}<path d="M10 -80H22V-96M-10 -66H-22V-86" stroke="#5aa04a" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M-10 -40V-110Q-10 -122 0 -122Q10 -122 10 -110V-40Z" fill="#5aa04a" stroke="#2f6a2a" stroke-width="3"/><path d="M-22 0L-26 -40H26L22 0Z" fill="#e86ab8" stroke="#8a2a5a" stroke-width="3"/>${C(0,-124,6,'#f4c430')}`;
 const programm=()=>`${R(-70,-80,140,160,'#2a3a2a','#8a5a2a',6)}${[0,1,2,3].map(k=>`${C(-46,-52+k*36,8,BC[k])}<path d="M-28 ${-52+k*36}H${46-k%2*18}" stroke="#f4ecd8" stroke-width="3"/>`).join('')}`;
 const zuckerwatte=()=>`${schatten(50,4)}${R(-46,-80,92,76,'#e86ab8','#8a2a5a',3)}<path d="M-46 -60H46" stroke="#fff" stroke-width="4"/><ellipse cy="-84" rx="40" ry="10" fill="#c9ccce" stroke="#888" stroke-width="2"/><path d="M-6 -84L-10 -140M16 -84L24 -134" stroke="#f4ecd8" stroke-width="3"/>${C(-10,-152,18,'#ffb8d8')}${C(24,-146,16,'#b8e0ff')}`;
 const litfass=()=>`${schatten(44,4)}${R(-36,-190,72,180,'#3f6a3a')}${R(-40,-16,80,16,'#2a4a2a')}<path d="M-46 -190Q0 -214 46 -190Z" fill="#2a4a2a"/>${R(-30,-170,60,70,'#f4c430')}${R(-30,-94,60,70,'#f4ecd8')}<path d="M-14 -110L0 -150L14 -110Z" fill="#c8302a"/>${C(0,-60,14,'#e8413a')}`;
+const heuballen=()=>`${schatten(60,4)}${R(-54,-52,108,50,'#e8c45a','#a07818',3)}${R(-44,-98,88,46,'#f0d070','#a07818',3)}<path d="M-54 -34H54M-44 -78H44M-20 -52V-2M20 -52V-2" stroke="#a07818" stroke-width="3"/><path d="M-50 -52L-60 -66M30 -98L40 -112M-10 -98L-16 -112" stroke="#e8c45a" stroke-width="4" stroke-linecap="round"/>`;
+const futtereimer=()=>`${schatten(40,4)}<path d="M-34 -50L-26 -2H26L34 -50Z" fill="#3aa0e8" stroke="#1a4a8a" stroke-width="3"/><path d="M-34 -50Q0 -66 34 -50" stroke="#1a4a8a" stroke-width="3" fill="none"/><ellipse cx="0" cy="-50" rx="34" ry="8" fill="#e8a838"/>${[[-14,-54],[4,-56],[16,-52]].map(([x,y])=>C(x,y,6,'#f4c430')).join('')}<path d="M-34 -48Q0 -96 34 -48" stroke="#555" stroke-width="3" fill="none"/>`;
+const pony=()=>`${schatten(70,4)}<path d="M-46 -6V-60M-24 -6V-56M30 -6V-60M52 -6V-56" stroke="#8a5a2a" stroke-width="10" stroke-linecap="round"/><path d="M-54 -64Q-60 -108 -10 -112Q40 -114 58 -96Q66 -88 62 -64Q40 -50 0 -52Q-36 -50 -54 -64Z" fill="#c8864a" stroke="#6b3a14" stroke-width="3"/><path d="M50 -96L58 -134Q86 -130 84 -106Q84 -96 66 -88Z" fill="#c8864a" stroke="#6b3a14" stroke-width="3"/>${C(74,-116,3,'#222')}<path d="M54 -130L48 -150L66 -136Z" fill="#8a5a2a"/><path d="M-54 -80Q-76 -70 -70 -44" stroke="#3a2210" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M36 -112Q20 -124 6 -110" stroke="#3a2210" stroke-width="7" fill="none" stroke-linecap="round"/>`;
+const ziege=()=>`${schatten(56,4)}<path d="M-30 -6V-44M-10 -6V-42M20 -6V-44M38 -6V-42" stroke="#9a9a9a" stroke-width="8" stroke-linecap="round"/><path d="M-40 -48Q-44 -84 0 -86Q40 -86 48 -62Q44 -46 0 -44Q-26 -44 -40 -48Z" fill="#f4f0e8" stroke="#8a8a8a" stroke-width="3"/><path d="M40 -76L50 -104Q72 -102 70 -80Q66 -66 48 -66Z" fill="#f4f0e8" stroke="#8a8a8a" stroke-width="3"/><path d="M48 -104L44 -124M58 -104L66 -122" stroke="#8a8a8a" stroke-width="4" stroke-linecap="round"/>${C(62,-90,3,'#222')}<path d="M62 -68L60 -54" stroke="#8a8a8a" stroke-width="4"/>`;
+const tiertafel=()=>`${R(-70,-50,140,100,'#f4ecd8','#6b4a24',5)}<path d="M-70 -50L-84 -66M70 -50L84 -66" stroke="#6b4a24" stroke-width="4"/><path d="M-44 -20Q-44 -34 -30 -34Q-16 -34 -16 -20Q-16 -8 -30 -8Q-44 -8 -44 -20Z" fill="#c8864a"/><path d="M0 -26H50M0 -10H40M0 6H50" stroke="#6b4a24" stroke-width="4" stroke-linecap="round"/><path d="M-40 30H40" stroke="#c8302a" stroke-width="5" stroke-linecap="round"/>`;
+const traenke=()=>`${schatten(66,4)}<path d="M-56 -4L-48 -46H48L56 -4Z" fill="#8a5a2a" stroke="#4a2a14" stroke-width="3"/><ellipse cx="0" cy="-46" rx="48" ry="9" fill="#4a90c8"/><path d="M-30 -46q10 -5 20 0t20 0" stroke="#bfe8ff" stroke-width="2" fill="none"/><path d="M-48 -30H48" stroke="#4a2a14" stroke-width="3"/>`;
+const balancierstange=()=>`${schatten(70,4)}<path d="M-70 -86H70" stroke="#c8302a" stroke-width="7" stroke-linecap="round"/>${C(-70,-86,12,'#3a3a44')}${C(70,-86,12,'#3a3a44')}<path d="M0 -86V-4M-24 -4H24" stroke="#8a5a2a" stroke-width="8" stroke-linecap="round"/>${C(0,-86,6,'#f4c430')}`;
+const kreidekasten=()=>`${schatten(46,4)}<path d="M-34 -4V-70M34 -4V-70" stroke="#6b4a24" stroke-width="7"/>${R(-44,-90,88,24,'#f4ecd8','#6b4a24',3)}<path d="M-34 -90L-24 -102H24L34 -90Z" fill="#e8e0c8" stroke="#6b4a24" stroke-width="3"/><path d="M-20 -80H20" stroke="#aaa" stroke-width="3"/>`;
+const uebungstrapez=()=>`${schatten(60,4)}<path d="M-54 -4L-40 -190M54 -4L40 -190M-40 -190H40" stroke="#6b4a24" stroke-width="8" stroke-linecap="round"/><path d="M-30 -190V-104M30 -190V-104" stroke="#e8d9b8" stroke-width="4"/>${R(-38,-110,76,10,'#c8302a','#6a1010',2)}`;
+const regeltafel=()=>`${R(-70,-60,140,120,'#2a3a6a','#f4c430',5)}${[[-36,-30],[0,-30],[36,-30]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="14" fill="none" stroke="#fff" stroke-width="4"/>`).join('')}<path d="M-50 12H50M-50 32H30" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M-26 -42L-46 -18M10 -42L-10 -18" stroke="#f4c430" stroke-width="3"/>`;
+const schlossPl=(n,y)=>{let d='';const x0=500-(n-1)*11;for(let k=0;k<n;k++)d+=C(x0+k*22,y,8,'#1a1030','#f4c430',2);return`<rect x="${500-n*11-12}" y="${y-18}" width="${n*22+24}" height="36" rx="6" fill="#1a1030" stroke="#f4c430" stroke-width="2"/>`+d;};
+const sternOben=y=>`<use href="#sym-stern" x="472" y="${y}" width="56" height="56" color="#f4c430"/>`;
+const TDEF=`<defs><clipPath id="vhclip"><rect x="396" y="190" width="208" height="280"/></clipPath><clipPath id="spclip"><ellipse cx="500" cy="320" rx="98" ry="138"/></clipPath><linearGradient id="spG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eaf6ff"/><stop offset=".5" stop-color="#a8c4e0"/><stop offset="1" stop-color="#d8e8f8"/></linearGradient><radialGradient id="spH"><stop offset="0" stop-color="#8a4ad8"/><stop offset="1" stop-color="#1a0a3a"/></radialGradient><pattern id="rw" width="40" height="40" patternUnits="userSpaceOnUse" patternTransform="rotate(30)"><rect width="40" height="40" fill="#f4ecd8"/><rect width="20" height="40" fill="#c8302a"/></pattern><radialGradient id="tubG"><stop offset="0" stop-color="#cfe8ff"/><stop offset=".3" stop-color="#3a1a3a"/><stop offset="1" stop-color="#7a1a2a"/></radialGradient><linearGradient id="torG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b1f4a"/><stop offset="1" stop-color="#ffb870"/></linearGradient><linearGradient id="platteG" x1="0" x2="1"><stop offset="0" stop-color="#1f3a8a"/><stop offset=".5" stop-color="#3a6ad8"/><stop offset="1" stop-color="#1a2a6a"/></linearGradient></defs>`;
+const TSTIL=`<style>.tuer .tb{transition:transform 1.8s ease-in-out}.tuer.offen #vho{transform:translateY(-300px)}.tuer.offen #spi{transform:scaleX(.1)}.tuer.offen #gl{transform:scaleX(.12)}.tuer.offen #gr{transform:scaleX(.12)}.tuer.offen #kla{transform:scaleY(.1)}.tuer.offen #tl{transform:scaleX(.12)}.tuer.offen #tr{transform:scaleX(.12)}</style>`;
+function tuerVorhang(n){
+let f='';for(let x=410;x<604;x+=26)f+=`M${x} 190V470`;let sc='M378 194';for(let k=0;k<8;k++)sc+='q15.25 24 30.5 0';
+return`${R(396,190,208,280,'#1a0e1e')}<circle cx="500" cy="360" r="110" fill="url(#licht)"/>
+   <g clip-path="url(#vhclip)"><g id="vho" class="tb">${R(396,190,208,290,'#c8302a')}<path d="${f}" stroke="#8a1a1a" stroke-width="5"/><path d="M423 190V470M475 190V470M527 190V470M579 190V470" stroke="#e8605a" stroke-width="3" opacity=".6"/>${R(396,452,208,10,'#f4c430')}${[410,440,470,500,530,560,590].map(x=>C(x,468,4,'#f4c430')).join('')}</g></g>
+   ${R(378,158,244,36,'#8a1a1a','#f4c430',3)}<path d="${sc}" fill="#8a1a1a" stroke="#f4c430" stroke-width="3"/>${sternOben(96)}${schlossPl(n,176)}`;
+}
+function tuerSpiegel(n){
+let bl='';for(let k=0;k<16;k++){const a=k*Math.PI/8;bl+=C((500+Math.cos(a)*114).toFixed(0),(320+Math.sin(a)*150).toFixed(0),6,BC[k%5],'#6b4a1c',1);}
+const sp=[[450,230],[540,260],[480,330],[560,380],[440,400],[520,200]].map(([x,y])=>`<use href="#sym-stern" x="${x}" y="${y}" width="12" height="12" color="#fff3b0"/>`).join('');
+return`<ellipse cx="500" cy="320" rx="116" ry="152" fill="#c9962e" stroke="#6b4a1c" stroke-width="6"/>${bl}<ellipse cx="500" cy="320" rx="98" ry="138" fill="url(#spH)"/>${sp}
+   <g clip-path="url(#spclip)"><g id="spi" class="tb" style="transform-origin:402px 320px"><ellipse cx="500" cy="320" rx="98" ry="138" fill="url(#spG)"/><path d="M430 200L470 160M420 260L520 170M420 330L560 190" stroke="#fff" stroke-width="12" opacity=".5"/>${sternOben(204)}${schlossPl(n,336)}</g></g>`;
+}
+function tuerGatter(n){
+const cols=['#e8413a','#f4c430','#3aa0e8','#5ac85a'];let l='',r='';
+for(let k=0;k<4;k++){l+=`<rect x="410" y="${236+k*58}" width="90" height="40" fill="${cols[k]}" stroke="#4a2a14" stroke-width="3"/>`;r+=`<rect x="500" y="${236+k*58}" width="90" height="40" fill="${cols[(k+2)%4]}" stroke="#4a2a14" stroke-width="3"/>`;}
+return`${R(410,220,180,250,'#2a1a0a')}${R(410,440,180,30,'#e8c45a')}<circle cx="500" cy="380" r="90" fill="url(#licht)"/>
+   <g id="gl" class="tb" style="transform-origin:410px 340px">${l}<path d="M410 436L500 240" stroke="#4a2a14" stroke-width="6"/></g><g id="gr" class="tb" style="transform-origin:590px 340px">${r}<path d="M590 436L500 240" stroke="#4a2a14" stroke-width="6"/></g>
+   ${R(392,120,18,350,'#8a5a2a','#4a2a14',3)}${R(590,120,18,350,'#8a5a2a','#4a2a14',3)}${R(410,120,180,58,'#f4ecd8','#4a2a14',4)}${sternOben(60)}${schlossPl(n,150)}`;
+}
+function tuerRutsche(n){
+let ri='';for(let k=1;k<4;k++)ri+=`<ellipse cx="500" cy="350" rx="${96-k*22}" ry="${104-k*24}" fill="none" stroke="#3a0a1a" stroke-width="3" opacity=".6"/>`;
+return`<ellipse cx="500" cy="350" rx="114" ry="122" fill="#8a1a1a" stroke="#f4c430" stroke-width="6"/><ellipse cx="500" cy="350" rx="96" ry="104" fill="url(#tubG)"/>${ri}
+   <g id="kla" class="tb" style="transform-origin:500px 246px"><ellipse cx="500" cy="350" rx="96" ry="104" fill="url(#rw)" stroke="#f4c430" stroke-width="4"/><ellipse cx="500" cy="350" rx="80" ry="88" fill="none" stroke="#fff" stroke-width="2" opacity=".5"/>${sternOben(268)}${schlossPl(n,392)}</g>`;
+}
+function tuerTor(n){
+let b='';for(let k=0;k<9;k++){const a=Math.PI*k/8;b+=C((500-110*Math.cos(a)).toFixed(0),(200-96*Math.sin(a)).toFixed(0),5,BC[k%5]).replace('<circle','<circle class="blink" style="animation-delay:-'+(k*.21).toFixed(2)+'s"');}
+return`<path d="M386 200Q500 90 614 200" stroke="#f4c430" stroke-width="10" fill="none"/>${b}${R(408,190,184,280,'url(#torG)')}${[[440,230],[540,250],[480,300]].map(([x,y])=>`<use href="#sym-stern" x="${x}" y="${y}" width="12" height="12" color="#fff3b0"/>`).join('')}
+   <g id="tl" class="tb" style="transform-origin:408px 340px">${R(408,200,92,270,'url(#platteG)','#f4c430',3)}<path d="M454 200V470M408 400H500" stroke="#f4c430" stroke-width="4"/><use href="#sym-stern" x="436" y="250" width="40" height="40" color="#f4c430"/></g>
+   <g id="tr" class="tb" style="transform-origin:592px 340px">${R(500,200,92,270,'url(#platteG)','#f4c430',3)}<path d="M546 200V470M500 400H592" stroke="#f4c430" stroke-width="4"/><use href="#sym-stern" x="524" y="250" width="40" height="40" color="#f4c430"/></g>
+   ${R(386,170,22,300,'#c8302a','#6a1010',3)}${R(592,170,22,300,'#c8302a','#6a1010',3)}${schlossPl(n,150)}`;
+}
 function tuer(n,bereit,def){
-const dx=((def&&def.tuerX)||500)-500;
-let d='';const x0=500-(n-1)*11;for(let k=0;k<n;k++)d+=`<circle cx="${x0+k*22}" cy="330" r="8" fill="#1a1030" stroke="#f4c430" stroke-width="2"/>`;
-const bogen='M410 470V250Q410 172 500 172Q590 172 590 250V470Z';
-const birnen=[...Array(9)].map((_,k)=>{const a=Math.PI*k/8;return C(500-106*Math.cos(a),246-90*Math.sin(a),5,BC[k%5]).replace('<circle','<circle class="blink" style="animation-delay:-'+(k*.21).toFixed(2)+'s"');}).join('');
-return`<defs><clipPath id="tuerclip"><path d="${bogen}"/></clipPath><linearGradient id="platteG" x1="0" x2="1"><stop offset="0" stop-color="#1f3a8a"/><stop offset=".5" stop-color="#3a6ad8"/><stop offset="1" stop-color="#1a2a6a"/></linearGradient></defs>
-  <g transform="translate(${dx} 0)"><g class="tuer${bereit?' bereit':''}" role="button" tabindex="0" aria-label="Tür mit Zahlenschloss">
-   <path d="M380 470V244Q380 140 500 140Q620 140 620 244V470Z" fill="#c8302a" stroke="#6a1010" stroke-width="5"/>${birnen}
-   <path d="${bogen}" fill="#120a04"/>
-   <g clip-path="url(#tuerclip)"><g id="platte"><path d="${bogen}" fill="url(#platteG)"/><path d="M455 172V470M545 172V470" stroke="#f4c430" stroke-width="4"/><path d="M410 400H590" stroke="#f4c430" stroke-width="6"/><use href="#sym-stern" x="468" y="236" width="64" height="64" color="#f4c430"/><rect x="${500-n*11-12}" y="312" width="${n*22+24}" height="36" rx="6" fill="#1a1030" stroke="#f4c430" stroke-width="2"/>${d}</g></g>
-   <path d="M486 140L500 118L514 140" fill="#f4c430" stroke="#8a6420" stroke-width="2"/>
-  </g></g>`;
+const dx=((def&&def.tuerX)||500)-500,art=(def&&def.tuerArt)||'vorhang';
+const arten={vorhang:[tuerVorhang,'Manegenvorhang mit Zahlenschloss'],spiegel:[tuerSpiegel,'Zauberspiegel mit Zahlenschloss'],gatter:[tuerGatter,'Holzgatter mit Zahlenschloss'],rutsche:[tuerRutsche,'Rutsche mit Zahlenschloss'],tor:[tuerTor,'Zirkustor mit Zahlenschloss']};
+const a=arten[art]||arten.vorhang;
+return`${TDEF}${TSTIL}<g transform="translate(${dx} 0)"><g class="tuer${bereit?' bereit':''}" role="button" tabindex="0" aria-label="${a[1]}">${a[0](n)}</g></g>`;
 }
 const staub=(x0,x1,y0,y1,n)=>[...Array(n)].map((_,k)=>`<circle class="treibt" cx="${x0+k*137%(x1-x0)}" cy="${y0+k*71%(y1-y0)}" r="${2+k%3}" fill="#fff6c8" style="animation-duration:${7+k%5*2}s;animation-delay:-${k*1.1}s"/>`).join('');
 const schwenkLicht=(x,f)=>`<g class="schwenk" style="animation-delay:-${x%5}s"><path d="M${x-14} 30H${x+14}L${x+140} 560H${x-140}Z" fill="${f}" opacity=".13"/></g>`;
@@ -81,15 +110,15 @@ SZENARIEN.zirkus={
 ambiente:n=>[
 schwenkLicht(520,'#7ad0ff')+schwenkLicht(1080,'#ff9ac8')+staub(300,1300,120,420,10),
 funkeln([[300,210],[720,150],[1120,250],[1420,170],[880,330]])+staub(100,1500,150,450,8),
-schwenkLicht(800,'#fff3b0')+staub(200,1400,100,440,14),
-pendelLampe(560)+staub(300,1300,150,420,8),
+schwenkLicht(500,'#fff3b0')+staub(200,1400,100,440,14),
+funkeln([[300,160],[700,120],[1200,180],[1450,140]])+schwenkLicht(450,'#fff3b0')+schwenkLicht(1150,'#b8e0ff')+staub(200,1400,100,420,10),
 gluehwuermchen(14)
 ][n],
 vordergrund:n=>[
 kette(0,1800,-6,14,22,1)+kette(60,1860,14,14,22,1),
 kette(0,1800,0,14,26,0),
+kette(0,1800,-6,14,22,1),
 seile([[380,230],[1500,190],[1000,120]]),
-kette(0,1800,-6,14,22,1)+kette(0,1800,20,12,26,0),
 haengeBallons([[200,120,'#e8413a'],[250,150,'#f4c430'],[900,110,'#3aa0e8'],[1500,130,'#e86ab8'],[1560,100,'#5ac85a']])
 ][n],
 name:"Zirkus",
@@ -97,7 +126,7 @@ symbole:["nase","ball","stern","zylinder","popcorn"],
 symbolNamen:["Clownsnase","Jonglierball","Stern","Zylinderhut","Popcorn"],
 emblem:`<svg viewBox="0 0 120 90" width="120" height="90" aria-hidden="true"><path d="M10 80L60 14L110 80Z" fill="#f4ecd8" stroke="#6a1010" stroke-width="3"/><path d="M30 80L60 14L45 80ZM75 80L60 14L90 80Z" fill="#c8302a"/><path d="M60 14V4" stroke="#333" stroke-width="2"/><path d="M60 4L74 8L60 12Z" fill="#3aa0e8"/><path d="M50 80V60Q60 50 70 60V80Z" fill="#1a1030"/><use href="#sym-stern" x="4" y="4" width="24" height="24" color="#f4c430"/><use href="#sym-stern" x="92" y="8" width="20" height="20" color="#f4c430"/></svg>`,
 texte:{
-einleitung:"Ihr seid zu Gast im Zirkus Sternschnuppe. Nach der Probe wollt ihr euch die Manege ansehen – da fällt die Tür hinter euch ins Schloss! Die Zirkusdirektorin hat ein Rätselspiel für euch vorbereitet: Jede Tür hat ein Zahlenschloss. Untersucht die Gegenstände in den Räumen. Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Schafft ihr es bis zum Ausgang, bevor die Vorstellung beginnt?",
+einleitung:"Ihr seid zu Gast im Zirkus Sternschnuppe. Nach der Probe wollt ihr euch die Manege ansehen – da fällt die Tür hinter euch ins Schloss! Die Zirkusdirektorin hat ein Rätselspiel für euch vorbereitet: Jeder Durchgang hat ein Zahlenschloss. Untersucht die Gegenstände in den Räumen. Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Schafft ihr es bis zum Ausgang, bevor die Vorstellung beginnt?",
 startKnopf:"Die Manege betreten",
 hinweisGeber:"Clownin Lulu flüstert:",
 richtig:"Bravo! Richtig gelöst!",
@@ -105,18 +134,18 @@ falsch:["Das stimmt leider noch nicht. Versucht es noch einmal!","Clownin Lulu s
 schlossTitel:"Das Zahlenschloss des Zirkus",
 schlossSymbol:"Über jedem Rad ist ein Zirkus-Zeichen. Stellt unter jedem Zeichen die Ziffer ein, die ihr dafür gefunden habt.",
 schlossStelle:"Stellt jede gefundene Ziffer an der richtigen Stelle ein.",
-schlossFalsch:"Das Schloss klickt – aber die Tür bleibt zu. Überprüft eure Ziffern!",
+schlossFalsch:"Das Schloss klickt – aber der Weg bleibt versperrt. Überprüft eure Ziffern!",
 zeitUmTitel:"Die Vorstellung beginnt!",
 zeitUm:"Eure Zeit ist abgelaufen. Aber gebt nicht auf – ihr dürft weiterspielen und den Ausgang trotzdem noch finden!",
 geschafft:"Ihr seid frei!",
 abschluss:"Manege frei für euch! Ihr habt alle Rätsel zum Thema <b>{titel}</b> gelöst und den Weg aus dem Zirkus gefunden. Das ganze Zirkusteam klatscht Beifall!"
 },
 texteDu:{
-einleitung:"Du bist zu Gast im Zirkus Sternschnuppe. Nach der Probe willst du dir die Manege ansehen – da fällt die Tür hinter dir ins Schloss! Die Zirkusdirektorin hat ein Rätselspiel für dich vorbereitet: Jede Tür hat ein Zahlenschloss. Untersuche die Gegenstände in den Räumen. Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Schaffst du es bis zum Ausgang, bevor die Vorstellung beginnt?",
+einleitung:"Du bist zu Gast im Zirkus Sternschnuppe. Nach der Probe willst du dir die Manege ansehen – da fällt die Tür hinter dir ins Schloss! Die Zirkusdirektorin hat ein Rätselspiel für dich vorbereitet: Jeder Durchgang hat ein Zahlenschloss. Untersuche die Gegenstände in den Räumen. Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Schaffst du es bis zum Ausgang, bevor die Vorstellung beginnt?",
 falsch:["Das stimmt leider noch nicht. Versuche es noch einmal!","Clownin Lulu schüttelt den Kopf … Prüfe deine Antwort!","Fast! Lies die Aufgabe noch einmal ganz genau."],
 schlossSymbol:"Über jedem Rad ist ein Zirkus-Zeichen. Stelle unter jedem Zeichen die Ziffer ein, die du dafür gefunden hast.",
 schlossStelle:"Stelle jede gefundene Ziffer an der richtigen Stelle ein.",
-schlossFalsch:"Das Schloss klickt – aber die Tür bleibt zu. Überprüfe deine Ziffern!",
+schlossFalsch:"Das Schloss klickt – aber der Weg bleibt versperrt. Überprüfe deine Ziffern!",
 zeitUm:"Deine Zeit ist abgelaufen. Aber gib nicht auf – du darfst weiterspielen und den Ausgang trotzdem noch finden!",
 geschafft:"Du bist frei!",
 abschluss:"Manege frei für dich! Du hast alle Rätsel zum Thema <b>{titel}</b> gelöst und den Weg aus dem Zirkus gefunden. Das ganze Zirkusteam klatscht Beifall!"
@@ -125,39 +154,39 @@ einfach:{
 name:"Der Zirkus",
 symbolNamen:["Clownsnase","Ball","Stern","Hut","Popcorn"],
 texte:{
-einleitung:"Ihr seid in einem Zirkus. Ihr wollt euch das große Zelt ansehen. Plötzlich geht die Tür hinter euch zu! An jeder Tür hängt ein Zahlenschloss. Löst die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommt ihr eine Zahl. Findet ihr den Weg nach draußen?",
+einleitung:"Ihr seid in einem Zirkus. Ihr wollt euch das große Zelt ansehen. Plötzlich geht die Tür hinter euch zu! An jedem Weg hängt ein Zahlenschloss. Löst die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommt ihr eine Zahl. Findet ihr den Weg nach draußen?",
 falsch:["Das stimmt noch nicht. Versucht es noch einmal!","Leider falsch. Schaut noch einmal genau hin!","Fast! Lest die Aufgabe noch einmal."],
 schlossTitel:"Das Zahlenschloss",
 schlossSymbol:"Über jedem Rad ist ein Zeichen. Stellt unter jedem Zeichen die passende Zahl ein.",
 schlossStelle:"Stellt jede Zahl an die richtige Stelle.",
-schlossFalsch:"Die Tür bleibt zu. Prüft eure Zahlen noch einmal!",
+schlossFalsch:"Der Weg bleibt zu. Prüft eure Zahlen noch einmal!",
 zeitUmTitel:"Die Zeit ist um!",
 zeitUm:"Die Zeit ist vorbei. Aber ihr dürft weiterspielen!",
 abschluss:"Super! Ihr habt alle Aufgaben zum Thema <b>{titel}</b> gelöst und den Weg nach draußen gefunden!"
 },
 texteDu:{
-einleitung:"Du bist in einem Zirkus. Du willst dir das große Zelt ansehen. Plötzlich geht die Tür hinter dir zu! An jeder Tür hängt ein Zahlenschloss. Löse die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommst du eine Zahl. Findest du den Weg nach draußen?",
+einleitung:"Du bist in einem Zirkus. Du willst dir das große Zelt ansehen. Plötzlich geht die Tür hinter dir zu! An jedem Weg hängt ein Zahlenschloss. Löse die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommst du eine Zahl. Findest du den Weg nach draußen?",
 falsch:["Das stimmt noch nicht. Versuche es noch einmal!","Leider falsch. Schau noch einmal genau hin!","Fast! Lies die Aufgabe noch einmal."],
 schlossSymbol:"Über jedem Rad ist ein Zeichen. Stelle unter jedem Zeichen die passende Zahl ein.",
 schlossStelle:"Stelle jede Zahl an die richtige Stelle.",
-schlossFalsch:"Die Tür bleibt zu. Prüfe deine Zahlen noch einmal!",
+schlossFalsch:"Der Weg bleibt zu. Prüfe deine Zahlen noch einmal!",
 zeitUm:"Die Zeit ist vorbei. Aber du darfst weiterspielen!",
 geschafft:"Du bist frei!",
 abschluss:"Super! Du hast alle Aufgaben zum Thema <b>{titel}</b> gelöst und den Weg nach draußen gefunden!"
 },
 raeume:[
-{titel:"Die Manege",intro:"Ihr steht in der Mitte vom großen Zelt. Hier ist die Show. Bunte Lampen leuchten. Hier sind die Zahlen für das erste Schloss versteckt.",introDu:"Du stehst in der Mitte vom großen Zelt. Hier ist die Show. Bunte Lampen leuchten. Hier sind die Zahlen für das erste Schloss versteckt.",
+{titel:"Die Manege",intro:"Ihr steht in der Mitte vom großen Zelt. Hier ist die Show. Bunte Lampen leuchten. Der rote Vorhang hat ein Schloss. Hier sind die Zahlen dafür versteckt.",introDu:"Du stehst in der Mitte vom großen Zelt. Hier ist die Show. Bunte Lampen leuchten. Der rote Vorhang hat ein Schloss. Hier sind die Zahlen dafür versteckt.",
 objekte:[{name:"Rotes Podest",fund:"Unter dem Podest liegt:"},{name:"Rad mit Sattel",fund:"Am Sattel klebt:"},{name:"Trommel",fund:"In der Trommel liegt:"},{name:"Kleines Auto",fund:"Im Auto liegt:"},{name:"Schaukel oben",fund:"An der Schaukel hängt:"}],
 infoObjekte:[{name:"Bild vom Zirkus",fund:"Hinter dem Bild klebt:"},{name:"Ständer mit Ringen",fund:"An einem Ring hängt:"},{name:"Kiste mit Bällen",fund:"Zwischen den Bällen liegt:"}]},
-{titel:"Die Garderobe",intro:"Hier ziehen sich die Leute vom Zirkus um. Hier hängen bunte Kleider. Findet die Zahlen für das nächste Schloss!",introDu:"Hier ziehen sich die Leute vom Zirkus um. Hier hängen bunte Kleider. Finde die Zahlen für das nächste Schloss!",
+{titel:"Die Garderobe",intro:"Hier ziehen sich die Leute vom Zirkus um. Hier hängen bunte Kleider. Der große Spiegel hat ein Schloss. Findet die Zahlen!",introDu:"Hier ziehen sich die Leute vom Zirkus um. Hier hängen bunte Kleider. Der große Spiegel hat ein Schloss. Finde die Zahlen!",
 objekte:[{name:"Tisch mit Spiegel",fund:"Am Spiegel klebt:"},{name:"Stange mit Kleidern",fund:"In einer Tasche steckt:"},{name:"Schachteln für Hüte",fund:"In einer Schachtel liegt:"},{name:"Große Schuhe",fund:"In einem Schuh steckt:"},{name:"Kleid mit Sternen",fund:"Am Kleid hängt:"}],
 infoObjekte:[{name:"Foto von der Clownin",fund:"Hinter dem Foto klebt:"},{name:"Maschine zum Nähen",fund:"Unter der Maschine liegt:"},{name:"Wand zum Umziehen",fund:"Hinter der Wand liegt:"}]},
-{titel:"Das Lager",intro:"Hier stehen viele Sachen für die Show. Es ist ein bisschen dunkel. Sucht die Zahlen!",introDu:"Hier stehen viele Sachen für die Show. Es ist ein bisschen dunkel. Suche die Zahlen!",
-objekte:[{name:"Große Kiste",fund:"In der Kiste liegt:"},{name:"Lange Stelzen",fund:"An den Stelzen klebt:"},{name:"Kasten zum Zaubern",fund:"Im Kasten liegt:"},{name:"Rolle mit Seil",fund:"Im Seil steckt:"},{name:"Lampe an der Wand",fund:"An der Lampe klebt:"}],
-infoObjekte:[{name:"Liste an der Wand",fund:"Unter der Liste steckt:"},{name:"Fass mit Keulen",fund:"Im Fass liegt:"},{name:"Eimer mit Farbe",fund:"Unter dem Eimer liegt:"}]},
-{titel:"Der Wohnwagen",intro:"In diesem Wagen wohnen Leute vom Zirkus. Es ist klein und gemütlich. Löst die Aufgaben!",introDu:"In diesem Wagen wohnen Leute vom Zirkus. Es ist klein und gemütlich. Löse die Aufgaben!",
-objekte:[{name:"Bett",fund:"Unter dem Kissen liegt:"},{name:"Herd mit Kanne",fund:"Unter der Kanne liegt:"},{name:"Kleiner Tisch",fund:"Unter einer Tasse liegt:"},{name:"Koffer",fund:"Im Koffer liegt:"},{name:"Brett mit Pokalen",fund:"In einem Pokal liegt:"}],
-infoObjekte:[{name:"Karte an der Wand",fund:"Hinter der Karte klebt:"},{name:"Gitarre",fund:"In der Gitarre liegt:"},{name:"Kaktus",fund:"Im Topf steckt:"}]},
+{titel:"Das Tierzelt",intro:"Hier wohnen die Tiere vom Zirkus. Es gibt Ponys und Ziegen. Es riecht nach Heu. Das bunte Gatter hat ein Schloss. Findet die Zahlen!",introDu:"Hier wohnen die Tiere vom Zirkus. Es gibt Ponys und Ziegen. Es riecht nach Heu. Das bunte Gatter hat ein Schloss. Finde die Zahlen!",
+objekte:[{name:"Heu-Ballen",fund:"Im Heu steckt:"},{name:"Eimer mit Futter",fund:"Unter dem Futter liegt:"},{name:"Pony Pünktchen",fund:"Am Halsband steckt:"},{name:"Ziege Gerda",fund:"Die Ziege hat im Maul:"},{name:"Tafel mit Tieren",fund:"Hinter der Tafel klebt:"}],
+infoObjekte:[{name:"Plan fürs Futter",fund:"Auf dem Plan steht:"},{name:"Kiste mit Zaumzeug",fund:"In der Kiste liegt:"},{name:"Wasser für die Tiere",fund:"Am Rand klebt:"}]},
+{titel:"Oben im Zelt",intro:"Ihr seid ganz oben im Zelt. Hier hängen Seile und Schaukeln. Unten ist die Manege ganz klein. Die Rutsche hat ein Schloss. Findet die Zahlen!",introDu:"Du bist ganz oben im Zelt. Hier hängen Seile und Schaukeln. Unten ist die Manege ganz klein. Die Rutsche hat ein Schloss. Finde die Zahlen!",
+objekte:[{name:"Rolle mit Seil",fund:"Im Seil steckt:"},{name:"Stange zum Balancieren",fund:"An der Stange klebt:"},{name:"Lange Stelzen",fund:"An den Stelzen klebt:"},{name:"Kasten mit Kreide",fund:"Unter der Kreide liegt:"},{name:"Lampe an der Wand",fund:"An der Lampe klebt:"}],
+infoObjekte:[{name:"Tafel mit Regeln",fund:"Auf der Tafel steht:"},{name:"Fass mit Keulen",fund:"Im Fass liegt:"},{name:"Schaukel zum Üben",fund:"An der Schaukel klebt:"}]},
 {titel:"Der Platz vor dem Zelt",intro:"Ihr seid draußen. Es ist schon Abend. Viele kleine Lampen leuchten. Öffnet das letzte Tor!",introDu:"Du bist draußen. Es ist schon Abend. Viele kleine Lampen leuchten. Öffne das letzte Tor!",
 objekte:[{name:"Kasse",fund:"In der Kasse liegt:"},{name:"Wagen mit Popcorn",fund:"Im Popcorn liegt:"},{name:"Luftballons",fund:"An einem Ballon hängt:"},{name:"Bank",fund:"Unter der Bank liegt:"},{name:"Schild vom Zirkus",fund:"Am Schild hängt:"}],
 infoObjekte:[{name:"Tafel mit dem Programm",fund:"Unter der Tafel klebt:"},{name:"Stand mit Zuckerwatte",fund:"Am Stand liegt:"},{name:"Runde Säule mit Plakaten",fund:"An der Säule klebt:"}]}
@@ -166,9 +195,9 @@ infoObjekte:[{name:"Tafel mit dem Programm",fund:"Unter der Tafel klebt:"},{name
 welt:{w:1600,h:780},
 raeume:[
 {titel:"Die Manege",
-intro:"Ihr steht mitten in der Manege des großen Zirkuszelts. Scheinwerfer leuchten auf den runden Platz. Irgendwo hier sind die Ziffern für das erste Schloss versteckt …",
-introDu:"Du stehst mitten in der Manege des großen Zirkuszelts. Scheinwerfer leuchten auf den runden Platz. Irgendwo hier sind die Ziffern für das erste Schloss versteckt …",
-tuerX:800,
+intro:"Ihr steht mitten in der Manege des großen Zirkuszelts. Scheinwerfer leuchten auf den runden Platz. Der rotgoldene Vorhang am Ende der Manege bleibt zu. Irgendwo hier sind die Ziffern für sein Schloss versteckt …",
+introDu:"Du stehst mitten in der Manege des großen Zirkuszelts. Scheinwerfer leuchten auf den runden Platz. Der rotgoldene Vorhang am Ende der Manege bleibt zu. Irgendwo hier sind die Ziffern für sein Schloss versteckt …",
+tuerX:800,tuerArt:"vorhang",
 hintergrund:()=>`${defs('#d89a5a','#7a4a22')}<rect width="1600" height="470" fill="#f4e4c8"/>${streifen('#c8302a',50,0,470)}<rect width="1600" height="470" fill="url(#oben)"/>${R(0,400,1600,70,'#6a1010')}${R(0,400,1600,8,'#f4c430')}<path d="M330 0V470M1270 0V470" stroke="#8a6420" stroke-width="16"/><path d="M640 400V110Q700 300 680 400ZM960 400V110Q900 300 920 400Z" fill="#8a1a1a"/>${kette(0,800,40,40,8,1)}${kette(800,1600,40,40,8,1)}${boden(0)}<ellipse cx="800" cy="650" rx="700" ry="130" fill="#e8b878" opacity=".5"/><ellipse cx="800" cy="650" rx="700" ry="130" fill="none" stroke="#c8302a" stroke-width="22"/><ellipse cx="800" cy="650" rx="700" ry="130" fill="none" stroke="#fff" stroke-width="22" stroke-dasharray="44 44"/>${spot(450,'#fff3b0')}${spot(1150,'#b8e0ff')}`,
 objekte:[
 {name:"Manegen-Podest",x:480,boden:600,fuss:4,by:-110,zeichne:podest,fund:"Unter dem Podest liegt:"},
@@ -179,9 +208,9 @@ objekte:[
 ],
 infoObjekte:[{name:"Zirkusplakat",x:450,y:240,wand:true,by:-100,zeichne:plakat,fund:"Hinter dem Plakat klebt:"},{name:"Reifenständer",x:1530,boden:560,fuss:4,by:-175,zeichne:reifen,fund:"An einem Reifen hängt:"},{name:"Kiste mit Jonglierbällen",x:700,boden:740,fuss:4,by:-95,zeichne:ballkiste,fund:"Zwischen den Bällen liegt:"}]},
 {titel:"Die Garderobe",
-intro:"Im Kostümwagen machen sich die Artistinnen und Artisten für die Vorstellung fertig. Glitzerkostüme hängen bereit, am Spiegel leuchten kleine Lampen. Findet die Ziffern für das nächste Schloss!",
-introDu:"Im Kostümwagen machen sich die Artistinnen und Artisten für die Vorstellung fertig. Glitzerkostüme hängen bereit, am Spiegel leuchten kleine Lampen. Finde die Ziffern für das nächste Schloss!",
-tuerX:1350,
+intro:"Im Kostümwagen machen sich die Artistinnen und Artisten für die Vorstellung fertig. Glitzerkostüme hängen bereit, am Spiegel leuchten kleine Lampen. Der große Zauberspiegel ist verschlossen. Findet die Ziffern für sein Schloss!",
+introDu:"Im Kostümwagen machen sich die Artistinnen und Artisten für die Vorstellung fertig. Glitzerkostüme hängen bereit, am Spiegel leuchten kleine Lampen. Der große Zauberspiegel ist verschlossen. Finde die Ziffern für sein Schloss!",
+tuerX:1350,tuerArt:"spiegel",
 licht:{ton:'#ff6ab8',a:.07},
 hintergrund:()=>`${defs('#7a4a5a','#3a1a2a','#ffd8f0')}<defs><pattern id="punkte" width="60" height="60" patternUnits="userSpaceOnUse"><circle cx="15" cy="15" r="6" fill="#e8a8c8"/><circle cx="45" cy="45" r="6" fill="#e8a8c8"/></pattern></defs><rect width="1600" height="470" fill="#c87aa8"/><rect width="1600" height="380" fill="url(#punkte)"/>${R(0,380,1600,90,'#7a3a6a')}${linien('rgba(0,0,0,.25)',100,388,470)}${R(0,372,1600,10,'#f4c430')}<rect width="1600" height="40" fill="#4a1a3a"/>${kette(0,1600,50,24,16)}${boden(1)}${lampe(700,110,'#e86ab8')}<rect width="1600" height="470" fill="url(#oben)" opacity=".5"/>`,
 objekte:[
@@ -192,38 +221,38 @@ objekte:[
 {name:"Glitzerkostüm",x:900,y:240,wand:true,by:-90,zeichne:kostuem,fund:"Am Kostüm hängt ein Zettel:"}
 ],
 infoObjekte:[{name:"Foto der Clownin",x:520,y:230,wand:true,by:-80,zeichne:foto,fund:"Hinter dem Foto klebt:"},{name:"Nähmaschine",x:1500,boden:730,fuss:4,by:-130,zeichne:naehmaschine,fund:"Unter der Nähmaschine liegt:"},{name:"Paravent",x:110,boden:720,fuss:4,by:-200,zeichne:paravent,fund:"Hinter dem Paravent liegt:"}]},
-{titel:"Das Requisitenlager",
-intro:"Im Requisitenlager wird alles aufbewahrt, was in der Vorstellung gebraucht wird: Kisten, Seile, Stelzen und Zauberkästen. Nur ein paar Lampen geben Licht. Sucht die Ziffern!",
-introDu:"Im Requisitenlager wird alles aufbewahrt, was in der Vorstellung gebraucht wird: Kisten, Seile, Stelzen und Zauberkästen. Nur ein paar Lampen geben Licht. Suche die Ziffern!",
-tuerX:250,
-licht:{spot:true,dunkel:.6,farbe:'#05050f'},
-hintergrund:()=>`${defs('#6a7078','#262a30','#fff0c0')}<rect width="1600" height="470" fill="#4a5a6a"/>${linien('rgba(0,0,0,.25)',24,40,470)}<rect width="1600" height="40" fill="#2a323a"/>${R(860,140,700,8,'#8a969e')}${R(860,290,700,8,'#8a969e')}<path d="M870 140V470M1550 140V470" stroke="#8a969e" stroke-width="8"/>${[880,980,1090,1200,1330,1440].map((x,k)=>R(x,(k%2?70:90),90,(k%2?70:50),k%3?'#a0784a':'#b89c70','#6b5a3a',2)+R(x+10,226-(k%2)*20,80,64+(k%2)*20,BC[k%5])).join('')}${boden(1)}${lampe(600,120,'#888')}${lampe(1300,100,'#888')}<rect width="1600" height="470" fill="url(#oben)"/>`,
+{titel:"Das Tierzelt",
+intro:"Im Tierzelt wohnen die Ponys, Ziegen und Hunde vom Zirkus. Es riecht nach Heu, und in den Boxen rascheln die Tiere. Das bunte Gatter am Ende des Zelts ist abgeschlossen. Findet die Ziffern für sein Schloss!",
+introDu:"Im Tierzelt wohnen die Ponys, Ziegen und Hunde vom Zirkus. Es riecht nach Heu, und in den Boxen rascheln die Tiere. Das bunte Gatter am Ende des Zelts ist abgeschlossen. Finde die Ziffern für sein Schloss!",
+tuerX:250,tuerArt:"gatter",
+licht:{ton:'#ffb040',a:.08},
+hintergrund:()=>`${defs('#e0c070','#8a6a30','#fff3b0')}<rect width="1600" height="470" fill="#f4e4c8"/>${streifen('#3aa0e8',50,0,470)}<rect width="1600" height="470" fill="url(#oben)"/>${R(0,330,1600,140,'#a0784a')}${linien('rgba(0,0,0,.25)',50,330,470)}${R(0,320,1600,12,'#6b4a24')}${[560,860,1160].map(x=>R(x,352,200,118,'#3a2414')+R(x+8,430,184,40,'#e8c45a')+R(x+30,356,16,16,'#f4c430')).join('')}${kette(0,1600,40,30,14,1)}${boden(1)}${[[780,600,160,26],[1180,700,140,22],[500,740,120,20]].map(([x,y,rx,ry])=>`<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#e8c45a" opacity=".55"/>`).join('')}${lampe(500,100,'#ffd890')}${lampe(1100,110,'#ffd890')}`,
 objekte:[
-{name:"Große Holzkiste",x:600,boden:600,fuss:4,by:-150,zeichne:holzkiste,fund:"In der Holzkiste liegt:"},
-{name:"Stelzen",x:880,boden:560,fuss:4,by:-245,zeichne:stelzen,fund:"An einer Stelze klebt:"},
-{name:"Zauberkasten",x:1150,boden:690,fuss:4,by:-185,zeichne:zauberkasten,fund:"Im doppelten Boden liegt:"},
-{name:"Seilrolle",x:1420,boden:600,fuss:4,by:-115,zeichne:seilrolle,fund:"Im Seil steckt:"},
-{name:"Scheinwerfer",x:1250,y:230,wand:true,by:-70,zeichne:scheinwerfer,fund:"Am Scheinwerfer klebt:"}
+{name:"Heuballen",x:600,boden:620,fuss:4,by:-110,zeichne:heuballen,fund:"Zwischen dem Heu steckt:"},
+{name:"Futtereimer",x:900,boden:720,fuss:4,by:-105,zeichne:futtereimer,fund:"Unter dem Futter liegt:"},
+{name:"Pony Pünktchen",x:1150,boden:600,fuss:4,by:-150,zeichne:pony,fund:"Unter dem Halsband von Pünktchen steckt:"},
+{name:"Ziege Gerda",x:1420,boden:680,fuss:4,by:-125,zeichne:ziege,fund:"Gerda hat etwas im Maul:"},
+{name:"Tiertafel",x:720,y:240,wand:true,by:-85,zeichne:tiertafel,fund:"Hinter der Tiertafel klebt:"}
 ],
-infoObjekte:[{name:"Lagerliste",x:650,y:240,wand:true,by:-90,zeichne:lagerplan,fund:"Unter der Lagerliste steckt:"},{name:"Fass mit Jonglierkeulen",x:380,boden:730,fuss:4,by:-155,zeichne:keulenfass,fund:"Zwischen den Keulen liegt:"},{name:"Farbeimer",x:1520,boden:740,fuss:4,by:-135,zeichne:farbeimer,fund:"Unter einem Farbeimer liegt:"}]},
-{titel:"Der Wohnwagen",
-intro:"Im Wohnwagen wohnen Artistinnen und Artisten, wenn der Zirkus von Stadt zu Stadt reist. Es ist eng, aber gemütlich. Auf dem Herd steht noch der Teekessel. Löst die Aufgaben!",
-introDu:"Im Wohnwagen wohnen Artistinnen und Artisten, wenn der Zirkus von Stadt zu Stadt reist. Es ist eng, aber gemütlich. Auf dem Herd steht noch der Teekessel. Löse die Aufgaben!",
-tuerX:1000,
-licht:{ton:'#ff9a30',a:.1},
-hintergrund:()=>`${defs('#8a5a32','#3f2614','#ffe0a0')}<rect width="1600" height="470" fill="#c89a6a"/>${linien('rgba(90,50,20,.35)',40,40,470)}<path d="M0 0H1600V60Q800 10 0 60Z" fill="#7a4a24"/>${R(0,330,1600,140,'#3f7a4a')}${linien('rgba(0,0,0,.2)',80,330,470)}${R(0,322,1600,10,'#2a4a2a')}${C(250,170,60,'#7cb8e8','#6b4a24',10)}${C(270,150,14,'#fff6c8')}<path d="M180 108Q250 150 320 108V96H180Z" fill="#e8413a"/>${boden(1)}<ellipse cx="760" cy="640" rx="300" ry="70" fill="#c8302a" opacity=".6"/><ellipse cx="760" cy="640" rx="260" ry="54" fill="none" stroke="#f4c430" stroke-width="6" opacity=".7"/>${lampe(780,90,'#f4c430')}`,
+infoObjekte:[{name:"Futterplan",x:1000,y:240,wand:true,by:-90,zeichne:lagerplan,fund:"Auf dem Futterplan steht:"},{name:"Kiste mit Zaumzeug",x:1520,boden:560,fuss:4,by:-150,zeichne:holzkiste,fund:"In der Kiste liegt:"},{name:"Wassertränke",x:450,boden:735,fuss:4,by:-60,zeichne:traenke,fund:"Am Rand der Tränke klebt:"}]},
+{titel:"Die Trapez-Kuppel",
+intro:"Ihr seid hoch oben unter dem Zeltdach! Trapeze und Seile hängen von der Decke, Scheinwerfer leuchten durch die Zeltstoffbahnen. Unten sieht man die Manege ganz klein. Die Rutsche am Rand der Plattform ist mit einer Klappe verschlossen. Findet die Ziffern für ihr Schloss!",
+introDu:"Du bist hoch oben unter dem Zeltdach! Trapeze und Seile hängen von der Decke, Scheinwerfer leuchten durch die Zeltstoffbahnen. Unten siehst du die Manege ganz klein. Die Rutsche am Rand der Plattform ist mit einer Klappe verschlossen. Finde die Ziffern für ihr Schloss!",
+tuerX:1000,tuerArt:"rutsche",
+licht:{spot:true,dunkel:.45,farbe:'#05050f'},
+hintergrund:()=>`${defs('#8a5a3a','#2a1a10','#fff3b0')}<rect width="1600" height="470" fill="#1b1f4a"/>${[...Array(18)].map((_,k)=>`<path d="M800 -80L${k*100-80} 470L${k*100+20} 470Z" fill="${k%2?'#c8302a':'#e8e0c8'}" opacity=".3"/>`).join('')}<rect width="1600" height="470" fill="url(#oben)"/>${[[330,260],[1330,230]].map(([x,y])=>`<path d="M${x-30} 0V${y}M${x+30} 0V${y}" stroke="#e8d9b8" stroke-width="3"/>${R(x-44,y-4,88,10,'#c8302a','#6a1010',2)}`).join('')}<path d="M800 -80V60" stroke="#333" stroke-width="4"/><path d="M800 40L840 52L800 64Z" fill="#f4c430"/>${R(0,440,1600,30,'#6b4a24')}${R(0,440,1600,6,'#f4c430')}${boden(1)}${spot(450,'#fff3b0')}${spot(1150,'#b8e0ff')}${kette(0,1600,50,30,16,1)}`,
 objekte:[
-{name:"Etagenbett",x:250,boden:570,fuss:4,by:-215,zeichne:bett,fund:"Unter dem Kopfkissen liegt:"},
-{name:"Herd mit Teekessel",x:560,boden:620,fuss:4,by:-165,zeichne:herd,fund:"Unter dem Teekessel liegt:"},
-{name:"Klapptisch",x:820,boden:720,fuss:4,by:-110,zeichne:klapptisch,fund:"Unter einer Tasse liegt:"},
-{name:"Reisekoffer",x:1250,boden:600,fuss:4,by:-125,zeichne:koffer,fund:"Im Reisekoffer liegt:"},
-{name:"Regal mit Pokalen",x:600,y:220,wand:true,by:-60,zeichne:pokale,fund:"Im größten Pokal liegt:"}
+{name:"Seilrolle",x:400,boden:600,fuss:4,by:-115,zeichne:seilrolle,fund:"Im Seil steckt:"},
+{name:"Balancierstange",x:650,boden:720,fuss:4,by:-100,zeichne:balancierstange,fund:"An der Stange klebt:"},
+{name:"Lange Stelzen",x:250,boden:560,fuss:4,by:-245,zeichne:stelzen,fund:"An einer Stelze klebt:"},
+{name:"Kreidekasten",x:1300,boden:700,fuss:4,by:-105,zeichne:kreidekasten,fund:"Unter dem Kreidestaub liegt:"},
+{name:"Scheinwerfer",x:700,y:230,wand:true,by:-70,zeichne:scheinwerfer,fund:"Am Scheinwerfer klebt:"}
 ],
-infoObjekte:[{name:"Landkarte der Zirkusreise",x:1350,y:230,wand:true,by:-80,zeichne:tourkarte,fund:"Hinter der Landkarte klebt:"},{name:"Gitarre",x:1500,boden:700,fuss:4,by:-215,zeichne:gitarre,fund:"In der Gitarre liegt:"},{name:"Kaktus",x:1080,boden:745,fuss:4,by:-145,zeichne:kaktus,fund:"Im Blumentopf steckt:"}]},
+infoObjekte:[{name:"Sicherheitstafel",x:450,y:240,wand:true,by:-85,zeichne:regeltafel,fund:"Auf der Sicherheitstafel steht:"},{name:"Fass mit Jonglierkeulen",x:130,boden:740,fuss:4,by:-155,zeichne:keulenfass,fund:"Zwischen den Keulen liegt:"},{name:"Übungstrapez",x:1500,boden:580,fuss:4,by:-200,zeichne:uebungstrapez,fund:"An der Trapezstange klebt:"}]},
 {titel:"Der Vorplatz",
 intro:"Ihr seid draußen auf dem Vorplatz vor dem Zirkuszelt. Es ist schon Abend, bunte Lichterketten leuchten. Gleich kommen die Gäste! Hier liegt das letzte Geheimnis – öffnet das Tor nach draußen!",
 introDu:"Du bist draußen auf dem Vorplatz vor dem Zirkuszelt. Es ist schon Abend, bunte Lichterketten leuchten. Gleich kommen die Gäste! Hier liegt das letzte Geheimnis – öffne das Tor nach draußen!",
-tuerX:450,
+tuerX:450,tuerArt:"tor",
 licht:{ton:'#2a3a9a',a:.17},
 hintergrund:()=>`${defs('#8a7a5a','#3a3020')}<defs><linearGradient id="abend" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b1f4a"/><stop offset=".7" stop-color="#7a3a6a"/><stop offset="1" stop-color="#e8885a"/></linearGradient></defs><rect width="1600" height="470" fill="url(#abend)"/>${[[120,60],[300,110],[620,50],[880,90],[1500,60],[1380,130]].map(([x,y])=>`<use href="#sym-stern" x="${x}" y="${y}" width="14" height="14" color="#fff3b0"/>`).join('')}${C(760,90,26,'#fff6c8')}<path d="M820 470L1000 140H1440L1600 470Z" fill="#f4ecd8"/>${[0,1,2,3,4].map(k=>`<path d="M${860+k*150} 470L${1020+k*90} 140H${1060+k*90}L${930+k*150} 470Z" fill="#c8302a"/>`).join('')}<path d="M1000 140L1220 60L1440 140Z" fill="#c8302a"/><path d="M1220 60V20" stroke="#333" stroke-width="4"/><path d="M1220 20L1250 30L1220 40Z" fill="#f4c430"/><path d="M1160 470V380Q1220 330 1280 380V470Z" fill="#2a1a10"/>${kette(0,800,180,40,10)}${kette(800,1220,180,-60,7)}${kette(1220,1600,100,50,7)}<path d="M0 410H330M570 410H1600M0 440H330M570 440H1600" stroke="#8a5a2a" stroke-width="8"/>${[20,100,180,260,600,680,760].map(x=>R(x,390,12,80,'#6b4a24')).join('')}${boden(0)}<path d="M330 780L380 470H520L570 780Z" fill="#b8a07a" opacity=".6"/>`,
 objekte:[
@@ -237,12 +266,13 @@ infoObjekte:[{name:"Programmtafel",x:1460,y:240,wand:true,by:-100,zeichne:progra
 ],
 tuer,
 vignette:`<rect width="1000" height="600" fill="url(#vig)" pointer-events="none"/>`,
-ausgang:()=>`<defs><linearGradient id="himmel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7cc0e8"/><stop offset=".8" stop-color="#ffe8c8"/></linearGradient></defs>
-   <rect width="1000" height="600" fill="url(#himmel)"/>${C(780,150,55,'#fff6c8')}
-   <path d="M0 430Q250 380 500 410T1000 400V600H0Z" fill="#8cc06a"/><path d="M0 480Q300 450 600 490T1000 470V600H0Z" fill="#6aa04a"/>
-   <path d="M600 420L680 300H840L920 420Z" fill="#f4ecd8"/><path d="M630 420L700 300H730L670 420ZM760 420L760 300H790L810 420ZM850 420L820 300H850L900 420Z" fill="#c8302a"/><path d="M680 300L760 250L840 300Z" fill="#c8302a"/><path d="M760 250V226" stroke="#333" stroke-width="3"/><path d="M760 226L780 232L760 238Z" fill="#f4c430"/>
-   ${[[200,220,'#e8413a'],[260,180,'#3aa0e8'],[330,240,'#f4c430'],[150,280,'#5ac85a']].map(([x,y,c])=>`<path d="M${x} ${y+28}Q${x-10} ${y+60} ${x+4} ${y+90}" stroke="#666" stroke-width="1.5" fill="none"/><ellipse cx="${x}" cy="${y}" rx="22" ry="28" fill="${c}"/>`).join('')}
-   <path d="M420 600Q470 500 520 470Q560 500 600 600Z" fill="#d8c8a0"/>
+ausgang:()=>`<defs><linearGradient id="himmel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b1f4a"/><stop offset=".65" stop-color="#7a3a6a"/><stop offset="1" stop-color="#e8885a"/></linearGradient></defs>
+   <rect width="1000" height="600" fill="url(#himmel)"/>${[[90,60],[200,140],[420,50],[560,90],[880,60],[800,150],[330,200]].map(([x,y])=>`<use href="#sym-stern" x="${x}" y="${y}" width="14" height="14" color="#fff3b0"/>`).join('')}
+   ${[[300,170,'#f4c430'],[690,130,'#e86ab8'],[520,230,'#3aa0e8']].map(([x,y,c])=>[0,1,2,3,4,5,6,7,8,9].map(k=>{const a=k*Math.PI/5;return`<path d="M${x} ${y}L${(x+Math.cos(a)*46).toFixed(0)} ${(y+Math.sin(a)*46).toFixed(0)}" stroke="${c}" stroke-width="4" stroke-linecap="round"/>`+C((x+Math.cos(a)*58).toFixed(0),(y+Math.sin(a)*58).toFixed(0),4,c);}).join('')+C(x,y,6,'#fff')).join('')}
+   <path d="M0 450Q250 410 500 440T1000 430V600H0Z" fill="#3a2a4a"/>
+   <path d="M300 460L420 260H720L840 460Z" fill="#f4ecd8"/>${[0,1,2,3].map(k=>`<path d="M${340+k*130} 460L${440+k*70} 260H${490+k*70}L${400+k*130} 460Z" fill="#c8302a"/>`).join('')}<path d="M420 260L570 180L720 260Z" fill="#c8302a"/><path d="M570 180V150" stroke="#333" stroke-width="3"/><path d="M570 150L598 160L570 170Z" fill="#f4c430"/><path d="M520 460V380Q570 340 620 380V460Z" fill="#ffd890"/>
+   ${[[100,500],[170,520],[240,500],[700,520],[780,500],[860,525]].map(([x,y])=>`<ellipse cx="${x}" cy="${y+24}" rx="16" ry="30" fill="#1a1030"/>`+C(x,y-14,13,'#1a1030')).join('')}
+   <path d="M0 330Q250 380 500 330T1000 340" stroke="#333" stroke-width="2" fill="none"/>${[40,160,280,400,520,640,760,880].map((x,k)=>C(x,340+Math.sin(k*1.6)*14,7,BC[k%5])).join('')}
    <path d="M0 0H1000V600H0Z M180 600V230Q180 70 500 70Q820 70 820 230V600Z" fill="#6a1010" fill-rule="evenodd"/><path d="M180 600V230Q180 70 500 70Q820 70 820 230V600" stroke="#f4c430" stroke-width="18" fill="none"/>`
 };
 })();
