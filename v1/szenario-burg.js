@@ -59,19 +59,57 @@ const fass=()=>`${schatten(46,4)}<path d="M-34 0Q-46 -46 -34 -92H34Q46 -46 34 0Z
 const landkarte=()=>`<rect x="-66" y="-50" width="132" height="100" fill="#e8d6a8" stroke="#6b4a1c" stroke-width="4"/><path d="M-50 20Q-20 -30 10 0T50 -20" stroke="#4a90c8" stroke-width="5" fill="none"/><path d="M-44 -24L-34 -38L-24 -24ZM22 30L32 16L42 30Z" fill="#5a9a4a"/><use href="#sym-turm" x="-12" y="4" width="24" height="24" color="#a33b22"/>`;
 const buecher=()=>`${schatten(38,4)}${[['#a33b22',0],['#2a4a8a',4],['#3a8a4a',-4]].map(([c,d],k)=>`<rect x="${d-30}" y="${-16-k*14}" width="60" height="14" rx="2" fill="${c}" stroke="#3a2010" stroke-width="2"/>`).join('')}`;
 const sanduhr=()=>`${schatten(28,4)}<path d="M-24 -4H24M-24 -96H24" stroke="#6b4a1c" stroke-width="8" stroke-linecap="round"/><path d="M-18 -92H18Q18 -64 3 -50Q18 -36 18 -8H-18Q-18 -36 -3 -50Q-18 -64 -18 -92Z" fill="#d8eef8" stroke="#6b4a1c" stroke-width="2"/><path d="M-12 -8Q0 -28 12 -8ZM-10 -80H10L0 -60Z" fill="#e8c45a"/>`;
-function tuer(n,bereit,def){
-const dx=((def&&def.tuerX)||500)-500;
-let d='';const x0=500-(n-1)*11;for(let k=0;k<n;k++)d+=`<circle cx="${x0+k*22}" cy="330" r="8" fill="#2a1a08" stroke="#d8a73a" stroke-width="2"/>`;
+const schlossPl=(n,y)=>{let d='';const x0=500-(n-1)*11;for(let k=0;k<n;k++)d+=`<circle cx="${x0+k*22}" cy="${y}" r="8" fill="#2a1a08" stroke="#d8a73a" stroke-width="2"/>`;return`<rect x="${500-n*11-12}" y="${y-18}" width="${n*22+24}" height="36" rx="6" fill="#2a1a08" stroke="#d8a73a" stroke-width="2"/>${d}`;};
+const kroneOben=y=>`<use href="#sym-krone" x="474" y="${y}" width="52" height="52" color="#e8c45a"/>`;
+const TSTIL=`<style>.tuer .tb{transition:transform 1.8s ease-in-out}.tuer.offen #vhL{transform:scaleX(.16)}.tuer.offen #vhR{transform:scaleX(.16)}.tuer.offen #kamp{transform:translateX(200px)}.tuer.offen #luke{transform:scaleY(.12)}.tuer.offen #brue{transform:scaleY(.13)}</style>`;
+function tuerGitter(n){
 const bogen='M410 470V250Q410 172 500 172Q590 172 590 250V470Z';
-let niet='';for(const y of[237,417])for(let x=422;x<590;x+=28)niet+=`<circle cx="${x}" cy="${y}" r="3.5" fill="#9aa0a8"/>`;
-return`<defs><clipPath id="tuerclip"><path d="${bogen}"/></clipPath><linearGradient id="platteG" x1="0" x2="1"><stop offset="0" stop-color="#6b4220"/><stop offset=".5" stop-color="#8a5a2c"/><stop offset="1" stop-color="#5a3418"/></linearGradient></defs>
-  <g transform="translate(${dx} 0)"><g class="tuer${bereit?' bereit':''}" role="button" tabindex="0" aria-label="Tür mit Zahlenschloss">
-   <path d="M370 470V244Q370 130 500 130Q630 130 630 244V470Z" fill="#8a8a8e" stroke="#3a3a3e" stroke-width="5"/>
+let st='';for(let k=0;k<7;k++)st+=`<path d="M${428+k*24} 150V470" stroke="#3a3a42" stroke-width="8"/>`;
+return`<path d="M370 470V244Q370 130 500 130Q630 130 630 244V470Z" fill="#8a8a8e" stroke="#3a3a3e" stroke-width="5"/>
    <path d="M370 300H410M590 300H630M370 390H410M590 390H630M384 196L420 214M616 196L580 214M440 146L458 180M560 146L542 180" stroke="#4a4a50" stroke-width="3"/>
-   <path d="${bogen}" fill="#120a04"/>
-   <g clip-path="url(#tuerclip)"><g id="platte"><path d="${bogen}" fill="url(#platteG)"/><path d="M446 172V470M482 172V470M518 172V470M554 172V470" stroke="#3a2010" stroke-width="3"/><path d="M410 237H590M410 417H590" stroke="#3a3a40" stroke-width="16"/>${niet}<use href="#sym-krone" x="474" y="252" width="52" height="52" color="#e8c45a"/><rect x="${500-n*11-12}" y="312" width="${n*22+24}" height="36" rx="6" fill="#2a1a08" stroke="#d8a73a" stroke-width="2"/>${d}<circle cx="566" cy="380" r="12" fill="none" stroke="#3a3a40" stroke-width="5"/></g></g>
-   <path d="M486 126H514L510 172H490Z" fill="#a0a0a4" stroke="#3a3a3e" stroke-width="3"/>
-  </g></g>`;
+   <path d="${bogen}" fill="#120a04"/><path d="M420 470L440 440H560L580 470M440 440L455 410H545L560 440M455 410L468 384H532L545 410" fill="#2a2018" stroke="#3a2c20" stroke-width="3"/>
+   <g clip-path="url(#tuerclip)"><g id="platte">${st}<path d="M410 237H590M410 330H590M410 417H590" stroke="#4a4a52" stroke-width="12"/><circle cx="410" cy="237" r="7" fill="#7a7a84"/><circle cx="590" cy="237" r="7" fill="#7a7a84"/>${kroneOben(252)}${schlossPl(n,330)}</g></g>`;
+}
+function tuerVorhang(n){
+return`<defs><radialGradient id="gangL"><stop offset="0" stop-color="#ffd890" stop-opacity=".9"/><stop offset="1" stop-color="#2a1408" stop-opacity="0"/></radialGradient></defs>
+   <rect x="396" y="226" width="208" height="244" fill="#1a0c06"/><ellipse cx="500" cy="380" rx="70" ry="110" fill="url(#gangL)"/><path d="M470 470L486 400H514L530 470" fill="#3a2410"/>
+   <rect x="380" y="206" width="240" height="24" rx="4" fill="#6b4220" stroke="#3a2010" stroke-width="3"/><rect x="380" y="226" width="22" height="244" fill="#8a5a2c" stroke="#3a2010" stroke-width="3"/><rect x="598" y="226" width="22" height="244" fill="#8a5a2c" stroke="#3a2010" stroke-width="3"/>
+   <path d="M392 236H608" stroke="#3a2a14" stroke-width="5"/>
+   <g id="vhL" class="tb" style="transform-origin:402px 240px"><path d="M402 238H501V470H402Z" fill="#a8302e" stroke="#5a1a18" stroke-width="3"/><path d="M426 240V468M450 240V468M474 240V468" stroke="#7a2020" stroke-width="4"/><path d="M402 462H501" stroke="#e8c45a" stroke-width="6"/></g>
+   <g id="vhR" class="tb" style="transform-origin:598px 240px"><path d="M499 238H598V470H499Z" fill="#a8302e" stroke="#5a1a18" stroke-width="3"/><path d="M526 240V468M550 240V468M574 240V468" stroke="#7a2020" stroke-width="4"/><path d="M499 462H598" stroke="#e8c45a" stroke-width="6"/></g>
+   <path d="M360 190H640L620 206H380Z" fill="#8a8a8e" stroke="#3a3a3e" stroke-width="3"/>${kroneOben(128)}${schlossPl(n,182)}`;
+}
+function tuerKamin(n){
+const op='M410 470V290Q410 236 464 236H536Q590 236 590 290V470Z';
+let br='';for(let y=250;y<470;y+=22)br+=`M410 ${y}H590`;
+return`<defs><clipPath id="kaminclip"><path d="${op}"/></clipPath></defs>
+   <path d="M360 470V140Q360 96 404 96H596Q640 96 640 140V470Z" fill="#9a8e7e" stroke="#4a3a2a" stroke-width="5"/>
+   <path d="M360 200H640M360 300H410M590 300H640M360 390H410M590 390H640M430 96V150M500 96V150M570 96V150" stroke="#6a5e4e" stroke-width="3"/>
+   <rect x="340" y="204" width="320" height="22" rx="4" fill="#6b4a24" stroke="#3a2610" stroke-width="3"/>
+   <path d="${op}" fill="#0e0806"/><path d="M420 470L440 436H560L580 470M440 436L452 404H548L560 436M452 404L464 376H536L548 404M464 376L474 352H526L536 376" fill="#2a2018" stroke="#3a2c20" stroke-width="3"/>
+   <g clip-path="url(#kaminclip)"><g id="kamp" class="tb"><path d="${op}" fill="#3a2a22"/><path d="${br}" stroke="#241610" stroke-width="3"/><circle cx="500" cy="440" r="90" fill="url(#licht)"/><path d="M440 462L560 440M440 440L560 464" stroke="#5a3418" stroke-width="14" stroke-linecap="round"/>${fl(470,446,1.1)}${fl(526,448,1.3)}</g></g>
+   ${kroneOben(100)}${schlossPl(n,166)}`;
+}
+function tuerLuke(n){
+const f='400,484 600,484 640,548 360,548';
+return`<polygon points="388,478 612,478 654,556 346,556" fill="#6b4a24" stroke="#3a2010" stroke-width="4"/>
+   <polygon points="${f}" fill="#0c0a14"/><path d="M380 504H620M372 520H628M366 536H634" stroke="#3a3040" stroke-width="5"/>
+   <g id="luke" class="tb" style="transform-origin:500px 484px"><polygon points="${f}" fill="#8a5a2c" stroke="#3a2010" stroke-width="4"/><path d="M433 484L420 548M466 484L460 548M500 484V548M534 484L540 548M567 484L580 548" stroke="#4a2a12" stroke-width="3"/>${schlossPl(n,516)}<circle cx="500" cy="496" r="7" fill="none" stroke="#3a3a40" stroke-width="4"/></g>`;
+}
+function tuerBruecke(n){
+const ob='M340 470V210Q340 110 500 110Q660 110 660 210V470Z',ib='M385 470V228Q385 150 500 150Q615 150 615 228V470Z';
+let pl='';for(let x=412;x<615;x+=28)pl+=`M${x} 150V470`;
+return`<defs><clipPath id="torclip"><path d="${ib}"/></clipPath><linearGradient id="himmelT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7cc0e8"/><stop offset="1" stop-color="#e8f4d8"/></linearGradient></defs>
+   <path d="${ob}" fill="#8a8a8e" stroke="#3a3a3e" stroke-width="5"/><path d="M340 270H385M615 270H660M340 360H385M615 360H660M356 170L392 190M644 170L608 190M420 130L436 158M580 130L564 158" stroke="#4a4a50" stroke-width="3"/>
+   <g clip-path="url(#torclip)"><rect x="380" y="140" width="240" height="340" fill="url(#himmelT)"/><circle cx="560" cy="200" r="22" fill="#fff6c8"/><path d="M380 360Q440 330 500 352T620 346V430H380Z" fill="#8cc06a"/><path d="M380 395Q450 380 520 396T620 392V430H380Z" fill="#6aa04a"/><path d="M380 424H620V470H380Z" fill="#4a90c8"/><path d="M396 440q10-4 20 0t20 0M540 452q10-4 20 0t20 0M450 460q10-4 20 0t20 0" stroke="#bfe0f0" stroke-width="3" fill="none"/><path d="M380 424H620" stroke="#3a6a9a" stroke-width="3"/>
+   <g id="brue" class="tb" style="transform-origin:500px 470px"><path d="M385 150H615V470H385Z" fill="#a0703a"/><path d="${pl}" stroke="#5a3418" stroke-width="3"/><path d="M385 235H615M385 330H615M385 420H615" stroke="#3a3a40" stroke-width="12"/><path d="M385 150H615V470H385Z" fill="none" stroke="#5a3418" stroke-width="8"/><circle cx="400" cy="170" r="7" fill="#7a7a84"/><circle cx="600" cy="170" r="7" fill="#7a7a84"/>${kroneOben(252)}${schlossPl(n,330)}</g></g>`;
+}
+function tuer(n,bereit,def){
+const dx=((def&&def.tuerX)||500)-500,art=(def&&def.tuerArt)||'gitter';
+const arten={gitter:[tuerGitter,'Gittertor mit Zahlenschloss'],vorhang:[tuerVorhang,'Vorhang mit Zahlenschloss'],kamin:[tuerKamin,'Kamin mit Zahlenschloss'],luke:[tuerLuke,'Luke mit Zahlenschloss'],bruecke:[tuerBruecke,'Zugbrücke mit Zahlenschloss']};
+const a=arten[art]||arten.gitter;
+return`<defs><clipPath id="tuerclip"><path d="M410 470V250Q410 172 500 172Q590 172 590 250V470Z"/></clipPath></defs>${TSTIL}
+  <g transform="translate(${dx} 0)"><g class="tuer${bereit?' bereit':''}" role="button" tabindex="0" aria-label="${a[1]}">${a[0](n)}</g></g>`;
 }
 const ZT=['Krone','Schild','Lilie','Turm','Fahne'];
 SZENARIEN.burg={
@@ -80,7 +118,7 @@ symbole:["krone","schild","lilie","turm","fahne"],
 symbolNamen:ZT,
 emblem:`<svg viewBox="0 0 120 90" width="120" height="90" aria-hidden="true"><path d="M14 84V34H10V22H18V28H26V22H34V34H30V44H90V34H86V22H94V28H102V22H110V34H106V84Z" fill="#c8bca0" stroke="#5a4a3a" stroke-width="3" stroke-linejoin="round"/><path d="M50 84V64Q60 52 70 64V84Z" fill="#5a3418"/><path d="M22 22V6L36 10L22 14" fill="#c0303a" stroke="#5a4a3a" stroke-width="2"/><use href="#sym-krone" x="46" y="18" width="28" height="28" color="#b8862a"/></svg>`,
 texte:{
-einleitung:"Ihr besichtigt eine alte Ritterburg. Unten im Verlies fällt plötzlich die Gittertür hinter euch zu – klack! Zum Glück kennt die kleine Burgmaus einen Weg nach draußen: Jede Tür der Burg hat ein Zahlenschloss. Untersucht die Gegenstände in den Räumen. Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Schafft ihr es bis zur Zugbrücke?",
+einleitung:"Ihr besichtigt eine alte Ritterburg. Unten im Verlies fällt plötzlich die Gittertür hinter euch zu – klack! Zum Glück kennt die kleine Burgmaus einen Weg nach draußen: Jeder Durchgang in der Burg ist mit einem Zahlenschloss gesichert. Untersucht die Gegenstände in den Räumen. Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Schafft ihr es bis zur Zugbrücke?",
 startKnopf:"Die Burg betreten",
 hinweisGeber:"Die Burgmaus flüstert:",
 richtig:"Richtig gelöst!",
@@ -88,18 +126,18 @@ falsch:["Das stimmt leider noch nicht. Versucht es noch einmal!","Die Burgmaus s
 schlossTitel:"Das Zahlenschloss der Burg",
 schlossSymbol:"Über jedem Rad ist ein Zeichen eingraviert. Stellt unter jedem Zeichen die Ziffer ein, die ihr dafür gefunden habt.",
 schlossStelle:"Stellt jede gefundene Ziffer an der richtigen Stelle ein.",
-schlossFalsch:"Das Schloss klickt – aber das Tor bleibt zu. Überprüft eure Ziffern!",
+schlossFalsch:"Das Schloss klickt – aber der Weg bleibt versperrt. Überprüft eure Ziffern!",
 zeitUmTitel:"Die Sonne geht unter!",
 zeitUm:"Eure Zeit ist abgelaufen. Aber gebt nicht auf – ihr dürft weiterspielen und die Zugbrücke trotzdem noch erreichen!",
 geschafft:"Ihr seid frei!",
 abschluss:"Geschafft! Ihr habt alle Rätsel zum Thema <b>{titel}</b> gelöst und seid über die Zugbrücke aus der Ritterburg entkommen. Die Burgmaus jubelt!"
 },
 texteDu:{
-einleitung:"Du besichtigst eine alte Ritterburg. Unten im Verlies fällt plötzlich die Gittertür hinter dir zu – klack! Zum Glück kennt die kleine Burgmaus einen Weg nach draußen: Jede Tür der Burg hat ein Zahlenschloss. Untersuche die Gegenstände in den Räumen. Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Schaffst du es bis zur Zugbrücke?",
+einleitung:"Du besichtigst eine alte Ritterburg. Unten im Verlies fällt plötzlich die Gittertür hinter dir zu – klack! Zum Glück kennt die kleine Burgmaus einen Weg nach draußen: Jeder Durchgang in der Burg ist mit einem Zahlenschloss gesichert. Untersuche die Gegenstände in den Räumen. Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Schaffst du es bis zur Zugbrücke?",
 falsch:["Das stimmt leider noch nicht. Versuche es noch einmal!","Die Burgmaus schüttelt den Kopf … Prüfe deine Antwort!","Fast! Lies die Aufgabe noch einmal ganz genau."],
 schlossSymbol:"Über jedem Rad ist ein Zeichen eingraviert. Stelle unter jedem Zeichen die Ziffer ein, die du dafür gefunden hast.",
 schlossStelle:"Stelle jede gefundene Ziffer an der richtigen Stelle ein.",
-schlossFalsch:"Das Schloss klickt – aber das Tor bleibt zu. Überprüfe deine Ziffern!",
+schlossFalsch:"Das Schloss klickt – aber der Weg bleibt versperrt. Überprüfe deine Ziffern!",
 zeitUm:"Deine Zeit ist abgelaufen. Aber gib nicht auf – du darfst weiterspielen und die Zugbrücke trotzdem noch erreichen!",
 geschafft:"Du bist frei!",
 abschluss:"Geschafft! Du hast alle Rätsel zum Thema <b>{titel}</b> gelöst und bist über die Zugbrücke aus der Ritterburg entkommen. Die Burgmaus jubelt!"
@@ -108,22 +146,22 @@ einfach:{
 name:"Die Ritterburg",
 symbolNamen:['Krone','Schild','Blume','Turm','Fahne'],
 texte:{
-einleitung:"Ihr seid in einer alten Burg. Hier haben früher Ritter gewohnt. Ihr seid in einem Keller mit Gitter. Plötzlich geht die Gitter-Tür zu! Eine kleine Maus hilft euch. An jeder Tür hängt ein Zahlenschloss. Löst die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommt ihr eine Zahl. Findet ihr den Weg zur Brücke vor der Burg?",
+einleitung:"Ihr seid in einer alten Burg. Hier haben früher Ritter gewohnt. Ihr seid in einem Keller mit Gitter. Plötzlich geht die Gitter-Tür zu! Eine kleine Maus hilft euch. An jedem Durchgang hängt ein Zahlenschloss. Löst die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommt ihr eine Zahl. Findet ihr den Weg zur Brücke vor der Burg?",
 falsch:["Das stimmt noch nicht. Versucht es noch einmal!","Leider falsch. Schaut noch einmal genau hin!","Fast! Lest die Aufgabe noch einmal."],
 schlossTitel:"Das Zahlenschloss",
 schlossSymbol:"Über jedem Rad ist ein Zeichen. Stellt unter jedem Zeichen die passende Zahl ein.",
 schlossStelle:"Stellt jede Zahl an die richtige Stelle.",
-schlossFalsch:"Die Tür bleibt zu. Prüft eure Zahlen noch einmal!",
+schlossFalsch:"Der Weg bleibt zu. Prüft eure Zahlen noch einmal!",
 zeitUmTitel:"Die Zeit ist um!",
 zeitUm:"Die Zeit ist vorbei. Aber ihr dürft weiterspielen!",
 abschluss:"Super! Ihr habt alle Aufgaben zum Thema <b>{titel}</b> gelöst. Ihr seid über die Brücke aus der Burg gelaufen!"
 },
 texteDu:{
-einleitung:"Du bist in einer alten Burg. Hier haben früher Ritter gewohnt. Du bist in einem Keller mit Gitter. Plötzlich geht die Gitter-Tür zu! Eine kleine Maus hilft dir. An jeder Tür hängt ein Zahlenschloss. Löse die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommst du eine Zahl. Findest du den Weg zur Brücke vor der Burg?",
+einleitung:"Du bist in einer alten Burg. Hier haben früher Ritter gewohnt. Du bist in einem Keller mit Gitter. Plötzlich geht die Gitter-Tür zu! Eine kleine Maus hilft dir. An jedem Durchgang hängt ein Zahlenschloss. Löse die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommst du eine Zahl. Findest du den Weg zur Brücke vor der Burg?",
 falsch:["Das stimmt noch nicht. Versuche es noch einmal!","Leider falsch. Schau noch einmal genau hin!","Fast! Lies die Aufgabe noch einmal."],
 schlossSymbol:"Über jedem Rad ist ein Zeichen. Stelle unter jedem Zeichen die passende Zahl ein.",
 schlossStelle:"Stelle jede Zahl an die richtige Stelle.",
-schlossFalsch:"Die Tür bleibt zu. Prüfe deine Zahlen noch einmal!",
+schlossFalsch:"Der Weg bleibt zu. Prüfe deine Zahlen noch einmal!",
 zeitUm:"Die Zeit ist vorbei. Aber du darfst weiterspielen!",
 geschafft:"Du bist frei!",
 abschluss:"Super! Du hast alle Aufgaben zum Thema <b>{titel}</b> gelöst. Du bist über die Brücke aus der Burg gelaufen!"
@@ -132,26 +170,26 @@ raeume:[
 {titel:"Der Keller mit Gitter",intro:"Ihr seid ganz unten in der Burg. Hier ist es dunkel. Zwei Fackeln geben Licht. Sucht die Zahlen für das erste Schloss!",introDu:"Du bist ganz unten in der Burg. Hier ist es dunkel. Zwei Fackeln geben Licht. Suche die Zahlen für das erste Schloss!",
 objekte:[{name:"Sack mit Stroh",fund:"Im Stroh liegt:"},{name:"Krug",fund:"Im Krug schwimmt:"},{name:"Eimer",fund:"Im Eimer liegt:"},{name:"Loser Stein",fund:"Unter dem Stein liegt:"},{name:"Kette",fund:"An der Kette hängt:"}],
 infoObjekte:[{name:"Stein mit Schrift",fund:"In einem Spalt im Stein steckt:"},{name:"Hocker",fund:"Unter dem Hocker klebt:"},{name:"Alte Kiste",fund:"In der Kiste liegt:"}]},
-{titel:"Der Raum der Wächter",intro:"Hier haben die Wächter gewartet. Sie haben auf die Burg aufgepasst. An der Wand hängen viele Schlüssel.",
-objekte:[{name:"Schlüssel an der Wand",fund:"Bei den Schlüsseln hängt:"},{name:"Tisch mit Würfeln",fund:"Unter dem Becher liegt:"},{name:"Gestell mit Schilden",fund:"Hinter einem Schild steckt:"},{name:"Lampe",fund:"An der Lampe hängt:"},{name:"Horn",fund:"Im Horn steckt:"}],
-infoObjekte:[{name:"Plan an der Wand",fund:"Hinter dem Plan steckt:"},{name:"Buch der Wächter",fund:"Im Buch steht:"},{name:"Bank",fund:"Unter der Bank liegt:"}]},
 {titel:"Die Küche",intro:"Hier wird für alle gekocht. Im Feuer steht ein großer Topf. Es riecht nach Brot und Suppe.",
 objekte:[{name:"Großer Topf",fund:"Am Löffel klebt:"},{name:"Korb mit Brot",fund:"Unter dem Brot liegt:"},{name:"Sack mit Mehl",fund:"Im Mehl steckt:"},{name:"Kiste mit Gemüse",fund:"Zwischen dem Gemüse liegt:"},{name:"Kräuter",fund:"Zwischen den Kräutern hängt:"}],
 infoObjekte:[{name:"Tafel mit Rezept",fund:"Hinter der Tafel steckt:"},{name:"Regal mit Gewürzen",fund:"Im Regal steht:"},{name:"Buch zum Kochen",fund:"Im Buch liegt:"}]},
 {titel:"Der große Saal",intro:"Hier haben die Ritter gefeiert. Es gibt einen langen Tisch und einen Stuhl für den König. Das bunte Fenster leuchtet.",
 objekte:[{name:"Stuhl des Königs",fund:"Auf dem Kissen liegt:"},{name:"Alte Gitarre",fund:"In der Gitarre klappert:"},{name:"Tisch mit Spiel",fund:"Unter dem Spiel liegt:"},{name:"Kerzen",fund:"Unter den Kerzen liegt:"},{name:"Bild aus Stoff",fund:"Hinter dem Stoff steckt:"}],
 infoObjekte:[{name:"Zeichen der Burg",fund:"Hinter dem Zeichen steckt:"},{name:"Rüstung",fund:"Im Helm liegt:"},{name:"Fass",fund:"Auf dem Fass liegt:"}]},
-{titel:"Das Zimmer im Turm",intro:"Ihr seid oben im Turm. Draußen leuchten die Sterne. Öffnet das letzte Schloss! Dann seid ihr frei.",introDu:"Du bist oben im Turm. Draußen leuchten die Sterne. Öffne das letzte Schloss! Dann bist du frei.",
+{titel:"Das Zimmer im Turm",intro:"Ihr seid oben im Turm. Draußen leuchten die Sterne. Im Boden ist eine Luke mit einem Schloss. Öffnet sie! Dann geht es nach unten.",introDu:"Du bist oben im Turm. Draußen leuchten die Sterne. Im Boden ist eine Luke mit einem Schloss. Öffne sie! Dann geht es nach unten.",
 objekte:[{name:"Fernrohr",fund:"Im Fernrohr steckt:"},{name:"Schatzkiste",fund:"In der Kiste liegt:"},{name:"Tisch mit Brief",fund:"Im Brief steht:"},{name:"Taube",fund:"Die Taube bringt:"},{name:"Bild mit Sternen",fund:"Hinter dem Bild steckt:"}],
-infoObjekte:[{name:"Karte vom Land",fund:"Hinter der Karte steckt:"},{name:"Sanduhr",fund:"Unter der Uhr liegt:"},{name:"Stapel mit Büchern",fund:"Zwischen den Büchern steckt:"}]}
+infoObjekte:[{name:"Karte vom Land",fund:"Hinter der Karte steckt:"},{name:"Sanduhr",fund:"Unter der Uhr liegt:"},{name:"Stapel mit Büchern",fund:"Zwischen den Büchern steckt:"}]},
+{titel:"Das Tor-Haus",intro:"Hier haben die Wächter gewartet. Sie haben auf das Burg-Tor aufgepasst. Die Brücke ist hoch. Findet die letzten Zahlen! Dann kommt die Brücke herunter.",introDu:"Hier haben die Wächter gewartet. Sie haben auf das Burg-Tor aufgepasst. Die Brücke ist hoch. Finde die letzten Zahlen! Dann kommt die Brücke herunter.",
+objekte:[{name:"Schlüssel an der Wand",fund:"Bei den Schlüsseln hängt:"},{name:"Tisch mit Würfeln",fund:"Unter dem Becher liegt:"},{name:"Gestell mit Schilden",fund:"Hinter einem Schild steckt:"},{name:"Lampe",fund:"An der Lampe hängt:"},{name:"Horn",fund:"Im Horn steckt:"}],
+infoObjekte:[{name:"Plan an der Wand",fund:"Hinter dem Plan steckt:"},{name:"Buch der Wächter",fund:"Im Buch steht:"},{name:"Bank",fund:"Unter der Bank liegt:"}]}
 ]
 },
 welt:{w:1600,h:780},
 raeume:[
 {titel:"Das Verlies",
-intro:"Ihr sitzt im Verlies tief unten in der Burg. Durch ein kleines Gitterfenster fällt ein Lichtstrahl, zwei Fackeln flackern an den Steinwänden. Irgendwo hier sind die Ziffern für das erste Schloss versteckt …",
-introDu:"Du sitzt im Verlies tief unten in der Burg. Durch ein kleines Gitterfenster fällt ein Lichtstrahl, zwei Fackeln flackern an den Steinwänden. Irgendwo hier sind die Ziffern für das erste Schloss versteckt …",
-tuerX:800,
+intro:"Ihr sitzt im Verlies tief unten in der Burg. Durch ein kleines Gitterfenster fällt ein Lichtstrahl, zwei Fackeln flackern an den Steinwänden. Irgendwo hier sind die Ziffern für das erste Schloss versteckt. Das Gittertor ist mit einem Zahlenschloss gesichert …",
+introDu:"Du sitzt im Verlies tief unten in der Burg. Durch ein kleines Gitterfenster fällt ein Lichtstrahl, zwei Fackeln flackern an den Steinwänden. Irgendwo hier sind die Ziffern für das erste Schloss versteckt. Das Gittertor ist mit einem Zahlenschloss gesichert …",
+tuerX:800,tuerArt:"gitter",
 hintergrund:()=>`${defs('#4e4e54','#1e1e22','#ffb060')}<rect width="1600" height="470" fill="#3e4350"/>${steine(40,470,52,120,'rgba(0,0,0,.35)')}<rect width="1600" height="40" fill="#22252c"/><rect x="1100" y="80" width="100" height="74" fill="#9ec8e0" stroke="#2a2d34" stroke-width="8"/><path d="M1125 80V154M1150 80V154M1175 80V154" stroke="#2a2d34" stroke-width="6"/><polygon points="1104,154 1196,154 1120,780 880,780" fill="#e8f4ff" opacity=".07"/><path d="M0 440H1600" stroke="rgba(60,90,50,.4)" stroke-width="6"/>${boden(1)}${fackel(560,200)}${fackel(1040,200)}${stroh(180,660)}${stroh(430,720)}${stroh(1200,640)}${stroh(940,560)}`,
 objekte:[
 {name:"Strohsack",x:250,boden:640,fuss:4,by:-80,zeichne:strohsack,fund:"Im Stroh versteckt liegt:"},
@@ -164,25 +202,9 @@ infoObjekte:[
 {name:"Steintafel",x:1400,y:240,wand:true,by:-64,zeichne:steintafel,fund:"In einer Ritze der Steintafel steckt:"},
 {name:"Holzschemel",x:1490,boden:560,fuss:4,by:-75,zeichne:schemel,fund:"Unter dem Schemel klebt:"},
 {name:"Alte Holzkiste",x:760,boden:740,fuss:4,by:-85,zeichne:kiste,fund:"In der alten Kiste liegt:"}]},
-{titel:"Die Wachstube",
-intro:"Ihr seid in der Wachstube. Hier hielten die Wachen Tag und Nacht Ausschau. Durch die schmalen Fensterschlitze pfeift der Wind. Findet die Ziffern für das nächste Schloss!",
-introDu:"Du bist in der Wachstube. Hier hielten die Wachen Tag und Nacht Ausschau. Durch die schmalen Fensterschlitze pfeift der Wind. Finde die Ziffern für das nächste Schloss!",
-tuerX:1350,
-hintergrund:()=>`${defs('#8a5a32','#3a2412','#ffd890')}<rect width="1600" height="470" fill="#c4a678"/>${steine(330,470,35,90,'rgba(70,40,20,.3)')}<rect y="320" width="1600" height="10" fill="#5a3418"/>${[290,1180].map(x=>`<rect x="${x-16}" y="140" width="32" height="110" rx="4" fill="#9a8a72"/><rect x="${x-8}" y="150" width="16" height="90" rx="8" fill="#26303a"/>`).join('')}${[100,480,860,1570].map(x=>`<rect x="${x-14}" y="40" width="28" height="430" fill="#5a3418"/>`).join('')}<rect width="1600" height="40" fill="#3a2010"/><rect y="40" width="1600" height="24" fill="#6b4220"/>${[200,580,940].map(x=>`<g transform="translate(${x} 64)"><path d="M0 0V40" stroke="#222" stroke-width="3"/><circle cy="60" r="90" fill="url(#licht)"/><rect x="-12" y="40" width="24" height="30" fill="#ffe7a0" stroke="#3a3a3a" stroke-width="3"/>${fl(0,66,.3)}</g>`).join('')}${boden()}`,
-objekte:[
-{name:"Schlüsselbrett",x:680,y:230,wand:true,by:-70,zeichne:schluesselbrett,fund:"Zwischen den Schlüsseln hängt:"},
-{name:"Würfelspiel",x:700,boden:650,fuss:4,by:-125,zeichne:wuerfeltisch,fund:"Unter dem Würfelbecher liegt:"},
-{name:"Waffenständer",x:220,boden:590,fuss:4,by:-192,zeichne:staender,fund:"Hinter einem Schild steckt:"},
-{name:"Laterne",x:1000,boden:560,fuss:4,by:-125,zeichne:laterne,fund:"An der Laterne hängt:"},
-{name:"Signalhorn",x:1100,boden:720,fuss:4,by:-110,zeichne:horn,fund:"Im Horn steckt ein Zettel:"}
-],
-infoObjekte:[
-{name:"Wachplan",x:1050,y:220,wand:true,by:-80,zeichne:wachplan,fund:"Hinter dem Wachplan steckt:"},
-{name:"Wachbuch",x:470,boden:560,fuss:4,by:-100,zeichne:wachbuch,fund:"Im Wachbuch steht:"},
-{name:"Sitzbank",x:1530,boden:610,fuss:4,by:-70,zeichne:bank,fund:"Unter der Sitzbank liegt:"}]},
 {titel:"Die Burgküche",
-intro:"In der Burgküche ist es warm. Im großen Kamin brennt ein Feuer, darüber blubbert die Suppe im Kessel. Unter der Decke trocknen Kräuter. Hier wurde für alle in der Burg gekocht.",
-tuerX:220,
+intro:"In der Burgküche ist es warm. Im großen Kamin brennt ein Feuer, darüber blubbert die Suppe im Kessel. Unter der Decke trocknen Kräuter. Hier wurde für alle in der Burg gekocht. Hinter dem roten Vorhang liegt ein kleiner Gang, doch das Schloss hält ihn zu.",
+tuerX:220,tuerArt:"vorhang",
 hintergrund:()=>`${defs('#9a5a3a','#4a2414','#ffb050')}<rect width="1600" height="470" fill="#c98a52"/>${steine(40,470,46,110,'rgba(90,40,10,.3)')}<rect width="1600" height="40" fill="#4a2a14"/><circle cx="800" cy="400" r="420" fill="url(#licht)"/><path d="M620 40H980L1040 172H560Z" fill="#a89a88" stroke="#4a3a2a" stroke-width="4"/><rect x="540" y="168" width="520" height="26" fill="#6b4a24"/><rect x="560" y="194" width="480" height="276" fill="#8a7e70" stroke="#4a3a2a" stroke-width="4"/><path d="M610 470V250Q610 214 650 214H950Q990 214 990 250V470Z" fill="#2a1408"/><path d="M700 466L900 450M700 450L900 468" stroke="#5a3418" stroke-width="14" stroke-linecap="round"/>${fl(720,456,1.3)}${fl(800,452,1.7)}${fl(880,456,1.3)}${[170,270].map(y=>`<rect x="1100" y="${y}" width="250" height="10" fill="#6b4a24"/>`).join('')}${[[1130,'#b8643a'],[1180,'#e8dcc0'],[1240,'#5a7a9a'],[1300,'#b8643a']].map(([x,c],k)=>`<path d="M${x-16} 170V${142-k%2*10}H${x+16}V170Z" fill="${c}" stroke="#4a2a12" stroke-width="2"/><circle cx="${x+4}" cy="250" r="${14+k%2*4}" fill="${k%2?'#d8a73a':'#c0303a'}"/>`).join('')}${boden(1)}`,
 objekte:[
 {name:"Suppenkessel",x:800,boden:520,fuss:4,by:-170,zeichne:kessel,fund:"Am Kochlöffel klebt:"},
@@ -196,9 +218,9 @@ infoObjekte:[
 {name:"Gewürzregal",x:1490,boden:560,fuss:4,by:-135,zeichne:regal,fund:"Zwischen den Gewürzen steht:"},
 {name:"Kochbuch",x:300,boden:720,fuss:4,by:-95,zeichne:kochbuch,fund:"Im Kochbuch liegt:"}]},
 {titel:"Der Rittersaal",
-intro:"Ihr betretet den prächtigen Rittersaal. Bunte Banner hängen von der Decke, durch das Glasfenster fällt farbiges Licht. An der langen Tafel feierten Ritter und Burgfräulein ihre Feste.",
-introDu:"Du betrittst den prächtigen Rittersaal. Bunte Banner hängen von der Decke, durch das Glasfenster fällt farbiges Licht. An der langen Tafel feierten Ritter und Burgfräulein ihre Feste.",
-tuerX:1050,
+intro:"Ihr betretet den prächtigen Rittersaal. Bunte Banner hängen von der Decke, durch das Glasfenster fällt farbiges Licht. An der langen Tafel feierten Ritter und Burgfräulein ihre Feste. Der große Kamin sieht merkwürdig aus: Er hat ein Zahlenschloss!",
+introDu:"Du betrittst den prächtigen Rittersaal. Bunte Banner hängen von der Decke, durch das Glasfenster fällt farbiges Licht. An der langen Tafel feierten Ritter und Burgfräulein ihre Feste. Der große Kamin sieht merkwürdig aus: Er hat ein Zahlenschloss!",
+tuerX:1050,tuerArt:"kamin",
 hintergrund:()=>`${defs('#9a8a72','#3a3028','#fff0c0')}<rect width="1600" height="470" fill="#d4c8a8"/>${steine(40,470,60,160,'rgba(90,70,40,.25)')}<rect width="1600" height="40" fill="#6b4a24"/><clipPath id="glas"><path d="M420 300V130Q420 60 480 60Q540 60 540 130V300Z"/></clipPath><g clip-path="url(#glas)">${['#c0303a','#2a5aa8','#e8c45a','#3a8a4a','#8a4aa8','#e8843a'].map((c,k)=>`<rect x="${420+(k%3)*40}" y="${60+Math.floor(k/3)*120}" width="40" height="120" fill="${c}"/>`).join('')}<circle cx="480" cy="130" r="26" fill="#f3d27a"/></g><path d="M420 300V130Q420 60 480 60Q540 60 540 130V300ZM460 60V300M500 60V300M420 180H540" stroke="#3a3028" stroke-width="5" fill="none"/>${banner(250,'#c0303a','#f3d27a','lilie')}${banner(700,'#2a5aa8','#f4ecd8','turm')}${banner(1550,'#3a8a4a','#f3d27a','fahne')}<rect x="200" y="408" width="620" height="16" fill="#7a4a24" stroke="#3a2010" stroke-width="2"/><path d="M230 424V470M790 424V470" stroke="#3a2010" stroke-width="12"/>${[260,380,500,620,740].map(x=>`<ellipse cx="${x}" cy="405" rx="20" ry="4" fill="#e8e2d2"/><path d="M${x+30} 406V390M${x+24} 380H${x+36}L${x+33} 392H${x+27}Z" stroke="#b8862a" stroke-width="3" fill="#d8a73a"/>`).join('')}${boden()}${['#c0303a','#2a5aa8','#e8c45a'].map((c,k)=>`<ellipse cx="${430+k*55}" cy="${540+k*12}" rx="60" ry="16" fill="${c}" opacity=".2"/>`).join('')}`,
 objekte:[
 {name:"Thron",x:1400,boden:560,fuss:4,by:-235,zeichne:thron,fund:"Auf dem Thronkissen liegt:"},
@@ -212,9 +234,9 @@ infoObjekte:[
 {name:"Ritterrüstung",x:1240,boden:610,fuss:4,by:-235,zeichne:ruestung,fund:"Im Helm der Rüstung liegt:"},
 {name:"Holzfass",x:1000,boden:740,fuss:4,by:-115,zeichne:fass,fund:"Auf dem Deckel des Fasses liegt:"}]},
 {titel:"Das Turmzimmer",
-intro:"Eine Wendeltreppe führt hinauf ins Turmzimmer. Vom Fenster aus seht ihr weit über das Land, am Himmel funkeln die Sterne. Hier wartet das letzte Schloss – öffnet es, dann ist die Zugbrücke nicht mehr weit!",
-introDu:"Eine Wendeltreppe führt hinauf ins Turmzimmer. Vom Fenster aus siehst du weit über das Land, am Himmel funkeln die Sterne. Hier wartet das letzte Schloss – öffne es, dann ist die Zugbrücke nicht mehr weit!",
-tuerX:500,
+intro:"Eine Wendeltreppe führt hinauf ins Turmzimmer. Vom Fenster aus seht ihr weit über das Land, am Himmel funkeln die Sterne. Im Boden ist eine Luke mit einem Zahlenschloss. Öffnet sie, dann geht es hinunter zum Burgtor!",
+introDu:"Eine Wendeltreppe führt hinauf ins Turmzimmer. Vom Fenster aus siehst du weit über das Land, am Himmel funkeln die Sterne. Im Boden ist eine Luke mit einem Zahlenschloss. Öffne sie, dann geht es hinunter zum Burgtor!",
+tuerX:500,tuerArt:"luke",
 hintergrund:()=>`${defs('#4a4a5a','#1a1a26','#c8d0ff')}<rect width="1600" height="470" fill="#3a4266"/>${steine(40,470,44,90,'rgba(0,0,0,.3)')}<rect width="1600" height="470" fill="url(#vig)"/><rect width="1600" height="40" fill="#1e2238"/><rect x="138" y="0" width="24" height="470" fill="#2a2e48"/>${[...Array(9)].map((_,k)=>{const x=150+Math.round(70*Math.sin(k*.9));return`<path d="M${x-60} ${452-k*52}H${x+60}L${x+50} ${468-k*52}H${x-50}Z" fill="#6a6e88" stroke="#22253a" stroke-width="2"/>`;}).join('')}<path d="M900 330V180Q900 80 1050 80Q1200 80 1200 180V330Z" fill="#1b2a5a"/>${[[940,170],[990,120],[1080,110],[1150,190],[1010,210],[960,250],[1170,250]].map(([x,y],k)=>stern(x,y,4+k%3*2)).join('')}<circle cx="1120" cy="140" r="20" fill="#fff1b8"/><path d="M900 330V280Q960 250 1020 276Q1090 240 1200 270V330Z" fill="#2a4a3a"/><path d="M900 330V300Q1000 284 1100 304Q1150 296 1200 302V330Z" fill="#1e3a2c"/><path d="M1040 286V270L1052 262L1064 270V286Z" fill="#4a5a50"/><path d="M900 330V180Q900 80 1050 80Q1200 80 1200 180V330Z" fill="none" stroke="#8a8ea6" stroke-width="16"/><rect x="880" y="330" width="340" height="16" fill="#8a8ea6"/><circle cx="1050" cy="300" r="320" fill="#8fa8f0" opacity=".1"/>${boden(1)}`,
 objekte:[
 {name:"Fernrohr",x:1050,boden:560,fuss:4,by:-142,zeichne:fernrohr,fund:"Im Fernrohr steckt:"},
@@ -226,7 +248,23 @@ objekte:[
 infoObjekte:[
 {name:"Landkarte",x:760,y:220,wand:true,by:-70,zeichne:landkarte,fund:"Hinter der Landkarte steckt:"},
 {name:"Sanduhr",x:1510,boden:560,fuss:4,by:-120,zeichne:sanduhr,fund:"Unter der Sanduhr liegt:"},
-{name:"Bücherstapel",x:520,boden:735,fuss:4,by:-75,zeichne:buecher,fund:"Zwischen den Büchern steckt:"}]}
+{name:"Bücherstapel",x:520,boden:735,fuss:4,by:-75,zeichne:buecher,fund:"Zwischen den Büchern steckt:"}]},
+{titel:"Das Torhaus",
+intro:"Ihr seid im Torhaus am Burgtor. Hier hielten die Wachen Tag und Nacht Ausschau. Die Zugbrücke ist hochgezogen und das Tor ist fest verschlossen. Findet die letzten Ziffern, dann kommt die Brücke herunter!",
+introDu:"Du bist im Torhaus am Burgtor. Hier hielten die Wachen Tag und Nacht Ausschau. Die Zugbrücke ist hochgezogen und das Tor ist fest verschlossen. Finde die letzten Ziffern, dann kommt die Brücke herunter!",
+tuerX:1300,tuerArt:"bruecke",
+hintergrund:()=>`${defs('#8a5a32','#3a2412','#ffd890')}<rect width="1600" height="470" fill="#c4a678"/>${steine(330,470,35,90,'rgba(70,40,20,.3)')}<rect y="320" width="1600" height="10" fill="#5a3418"/>${[290,960].map(x=>`<rect x="${x-16}" y="140" width="32" height="110" rx="4" fill="#9a8a72"/><rect x="${x-8}" y="150" width="16" height="90" rx="8" fill="#26303a"/>`).join('')}${[100,480,860,1570].map(x=>`<rect x="${x-14}" y="40" width="28" height="430" fill="#5a3418"/>`).join('')}<rect width="1600" height="40" fill="#3a2010"/><rect y="40" width="1600" height="24" fill="#6b4220"/>${[200,580,940].map(x=>`<g transform="translate(${x} 64)"><path d="M0 0V40" stroke="#222" stroke-width="3"/><circle cy="60" r="90" fill="url(#licht)"/><rect x="-12" y="40" width="24" height="30" fill="#ffe7a0" stroke="#3a3a3a" stroke-width="3"/>${fl(0,66,.3)}</g>`).join('')}${boden()}`,
+objekte:[
+{name:"Schlüsselbrett",x:680,y:230,wand:true,by:-70,zeichne:schluesselbrett,fund:"Zwischen den Schlüsseln hängt:"},
+{name:"Würfelspiel",x:700,boden:650,fuss:4,by:-125,zeichne:wuerfeltisch,fund:"Unter dem Würfelbecher liegt:"},
+{name:"Waffenständer",x:220,boden:590,fuss:4,by:-192,zeichne:staender,fund:"Hinter einem Schild steckt:"},
+{name:"Laterne",x:1000,boden:560,fuss:4,by:-125,zeichne:laterne,fund:"An der Laterne hängt:"},
+{name:"Signalhorn",x:1100,boden:720,fuss:4,by:-110,zeichne:horn,fund:"Im Horn steckt ein Zettel:"}
+],
+infoObjekte:[
+{name:"Wachplan",x:1050,y:220,wand:true,by:-80,zeichne:wachplan,fund:"Hinter dem Wachplan steckt:"},
+{name:"Wachbuch",x:470,boden:560,fuss:4,by:-100,zeichne:wachbuch,fund:"Im Wachbuch steht:"},
+{name:"Sitzbank",x:1530,boden:610,fuss:4,by:-70,zeichne:bank,fund:"Unter der Sitzbank liegt:"}]}
 ],
 tuer,
 vignette:`<rect width="1000" height="600" fill="url(#vig)" pointer-events="none"/>`,
