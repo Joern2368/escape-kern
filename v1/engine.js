@@ -208,7 +208,6 @@ wahrfalsch:{
 html:r=>r.aussagen.map((a,k)=>`<div class="zeile" data-k="${k}"><span>${a.text}</span><span class="wf"><button data-w="1">Wahr</button><button data-w="0">Falsch</button></span></div>`).join(''),
 binden:m=>m.querySelectorAll('.zeile').forEach(z=>z.querySelectorAll('button').forEach(b=>b.onclick=()=>{z.querySelectorAll('button').forEach(x=>x.classList.toggle('an',x===b));z.dataset.w=b.dataset.w;z.classList.remove('falsch');})),
 pruefe:(m,r)=>{const z=[...m.querySelectorAll('.zeile')];if(z.some(x=>x.dataset.w===undefined))return null;let ok=true;z.forEach((x,k)=>{if((x.dataset.w==='1')!==!!r.aussagen[k].wahr){ok=false;m._falsch.push(k);}});return ok;},
-teil:r=>r.aussagen.map(a=>a.hinweis),teilName:'Satz',
 lesen:r=>r.aussagen.map((a,k)=>`Satz ${k+1}: ${a.text}`).join(' '),
 loesung:r=>r.aussagen.map(a=>`${a.text} → ${a.wahr?'wahr':'falsch'}`).join(' | ')
 },
