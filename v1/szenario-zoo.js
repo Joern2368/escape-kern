@@ -68,19 +68,53 @@ const tafel=()=>`${L('M-60 0V240M60 0V240','#7a5230',10)}${R(-90,-60,180,110,'#f
 const mk=(x,h)=>`${E(x,-h,10,26,'#c89a5a')}${E(x,-h-30,8,9,'#c89a5a')}${E(x,-h-14,6,9,'#ecd0a0')}${C(x-3,-h-32,2.4,'#222')}${C(x+3,-h-32,2.4,'#222')}${C(x,-h-27,2,'#4a3018')}`;
 const erdmaennchen=()=>`${sch(56)}${mk(-22,48)}${mk(24,58)}${P('M-60 0Q-40 -40 0 -40Q40 -40 60 0Z','#d8b070','#a07a40',2)}${E(0,-24,14,7,'#4a3018')}`;
 const zebra=()=>`${sch(58)}${L('M-36 -60V0M-20 -60V0M24 -60V0M38 -60V0','#f4f4f4',9)}${L('M-36 -8V0M-20 -8V0M24 -8V0M38 -8V0','#222',9)}${L('M-50 -86Q-62 -76 -58 -56','#222',3)}${E(0,-82,50,26,'#f4f4f4','#222',2)}${P('M30 -96L56 -144L76 -134L52 -84Z','#f4f4f4','#222',2)}${L('M50 -150L26 -104','#222',6)}${E(74,-138,18,11,'#f4f4f4','#222',2)}${E(88,-134,7,7,'#666')}${C(72,-142,2.5,'#222')}${L('M-30 -104q4 22 0 44M-14 -108q4 24 0 50M2 -108q4 24 0 50M18 -106q4 22 0 44M40 -108l10 12M46 -122l12 10M60 -150l4 -10M68 -148l4 -10','#222',4)}`;
+const sPl=(n,y)=>{let d='';const x0=500-(n-1)*11;for(let k=0;k<n;k++)d+=`<circle cx="${x0+k*22}" cy="${y}" r="8" fill="#2a1a08" stroke="#f2c14e" stroke-width="2"/>`;return`<rect x="${500-n*11-12}" y="${y-18}" width="${n*22+24}" height="36" rx="6" fill="#2a1a08" stroke="#f2c14e" stroke-width="2"/>${d}`;};
+const TSTIL=`<style>.tuer .tb{transition:transform 1.8s ease-in-out,opacity 1.8s ease-in-out}.tuer.offen #lvl{transform:scaleX(.14)}.tuer.offen #lvr{transform:scaleX(.14)}.tuer.offen .pl{opacity:0}.tuer.offen #wt{transform:translateY(-290px)}.tuer.offen #hl{transform:scaleX(.14)}.tuer.offen #hr{transform:scaleX(.14)}.tuer.offen .ei{transform:translateY(290px)}.tuer.offen #sb{transform:rotate(-78deg)}</style>`;
+function tuerLiane(n){
+const g=['#2f8a3a','#3f9a4a','#1f6a2a'];
+let a='',b='';
+for(let k=0;k<5;k++){const x=416+k*17,y=584-k*17;a+=L(`M${x} 190Q${x+10} 270 ${x-4} 340T${x+6} 470`,g[k%3],10);b+=L(`M${y} 190Q${y-10} 270 ${y+4} 340T${y-6} 470`,g[(k+1)%3],10);}
+return`${R(410,190,180,280,'#1e3a22')}${C(500,330,110,'url(#licht)')}${P('M470 470L490 300H510L530 470Z','#c8b078')}
+   ${R(384,170,26,300,'#6a4a24','#3a2810',3)}${R(590,170,26,300,'#6a4a24','#3a2810',3)}${P('M384 192Q500 120 616 192V208Q500 152 384 208Z','#6a4a24','#3a2810',3)}${E(404,182,24,12,'#2f8a3a')}${E(596,182,24,12,'#3f9a4a')}${E(500,150,26,12,'#2f8a3a')}
+   <g id="lvl" class="tb" style="transform-origin:410px 330px">${a}${E(432,240,18,9,'#4aaa52')}${E(470,340,18,9,'#4aaa52')}${E(448,420,18,9,'#4aaa52')}</g>
+   <g id="lvr" class="tb" style="transform-origin:590px 330px">${b}${E(568,240,18,9,'#3f9a4a')}${E(530,340,18,9,'#3f9a4a')}${E(552,420,18,9,'#3f9a4a')}</g>
+   <g class="tb pl">${sPl(n,330)}</g>`;
+}
+function tuerWasser(n){
+return`<defs><clipPath id="wclip"><rect x="410" y="190" width="180" height="280"/></clipPath></defs>
+   <path d="M380 470V170H620V470Z" fill="#8a9aa4" stroke="#4a5a64" stroke-width="5"/>
+   ${R(410,190,180,280,'#4aa8d8')}${R(410,330,180,140,'#2a78b0')}${L('M410 400Q430 392 450 400T490 400T530 400T570 400T590 400','#bfe8ff',3)}${L('M410 440Q430 432 450 440T490 440T530 440T570 440T590 440','#bfe8ff',3)}
+   <g clip-path="url(#wclip)"><g id="wt" class="tb">${R(410,190,180,280,'#5a7a8a','#2a3a44',4)}${L('M410 240H590M410 300H590M410 400H590M410 440H590','#3a5260',6)}${[[424,204],[576,204],[424,456],[576,456]].map(([x,y])=>C(x,y,5,'#9ab0bc')).join('')}${sPl(n,330)}</g></g>
+   ${R(370,160,260,26,'#7a8a94','#4a5a64',4)}${U('fisch',474,164,52,'#e8f4ff')}`;
+}
+function tuerHolz(n){
+let a='',b='';
+for(let k=0;k<5;k++){const f=k%2?'#a0703e':'#8a5a2c';a+=R(410+k*18,190,18,280,f,'#3a2410',2);b+=R(500+k*18,190,18,280,f,'#3a2410',2);}
+return`${R(410,190,180,280,'#d8c08a')}${P('M410 400Q470 350 530 390T590 370V470H410Z','#8cc06a','',0)}${R(536,330,8,40,'#6b4a24')}${C(540,320,24,'#4f9a5a')}
+   ${R(380,160,30,310,'#7a5230','#3a2410',3)}${R(590,160,30,310,'#7a5230','#3a2410',3)}${R(374,150,42,16,'#8a8a90','#4a4a52',3)}${R(584,150,42,16,'#8a8a90','#4a4a52',3)}${R(380,160,240,20,'#7a5230','#3a2410',3)}${L('M440 176Q420 130 462 120','#f4ecd8',9)}${L('M560 176Q580 130 538 120','#f4ecd8',9)}
+   <g id="hl" class="tb" style="transform-origin:410px 330px">${a}${R(410,240,90,12,'#4a2a12')}${R(410,410,90,12,'#4a2a12')}</g>
+   <g id="hr" class="tb" style="transform-origin:590px 330px">${b}${R(500,240,90,12,'#4a2a12')}${R(500,410,90,12,'#4a2a12')}</g>
+   <g class="tb pl">${sPl(n,330)}</g>`;
+}
+function tuerEis(n){
+const op='M410 470V240Q410 190 460 190H540Q590 190 590 240V470Z',fa=['#bfe8ff','#d8f4ff','#a8d8f0'];
+const gr=(a,b)=>{let o='';for(let j=a;j<b;j++)for(let i=0;i<3;i++){const x=410+i*60,y=190+j*46.7;o+=R(x,y,60,46.7,fa[(i+j)%3],'#7ab8d8',2)+R(x+4,y+4,52,6,'rgba(255,255,255,.7)');}return o;};
+return`<defs><clipPath id="eclip"><path d="${op}"/></clipPath></defs>
+   <path d="M376 470V240Q376 160 500 160Q624 160 624 240V470Z" fill="#f4f8ff" stroke="#9ab8cc" stroke-width="5"/>${E(410,168,34,14,'#fff','#9ab8cc',2)}${E(590,168,34,14,'#fff','#9ab8cc',2)}
+   <path d="${op}" fill="#12304a"/>${C(500,330,110,'url(#licht)')}${[[440,260],[540,300],[470,380],[560,430],[430,440]].map(([x,y])=>R(x,y,6,6,'#fff')).join('')}
+   <g clip-path="url(#eclip)"><g class="tb ei" style="transition-delay:.7s">${gr(0,2)}</g><g class="tb ei" style="transition-delay:.35s">${gr(2,4)}${sPl(n,330)}</g><g class="tb ei">${gr(4,6)}</g></g>`;
+}
+function tuerSchranke(n){
+let s='';for(let k=0;k<5;k++)s+=R(412+k*40,320,40,20,k%2?'#fff':'#e74c3c','#8a2a1a',2);
+return`${P('M430 470L470 400H530L570 470Z','#d8c8a0','',0)}${R(604,310,22,160,'#5a6a7a','#2a3440',3)}${R(490,430,20,40,'#6b4a24','#3a2410',3)}${R(420,372,160,56,'#8a5a30','#3a2410',4)}${sPl(n,400)}
+   <g id="sb" class="tb" style="transform-origin:412px 330px">${s}</g>
+   ${R(380,290,50,180,'#5a6a7a','#2a3440',4)}${C(405,310,10,'#e74c3c','#2a3440',2)}${R(398,350,14,40,'#2a3440')}`;
+}
 function tuer(n,bereit,def){
-const dx=((def&&def.tuerX)||500)-500;
-let d='';const x0=500-(n-1)*11;for(let k=0;k<n;k++)d+=`<circle cx="${x0+k*22}" cy="330" r="8" fill="#2a1a08" stroke="#f2c14e" stroke-width="2"/>`;
-let b='';for(let x=420;x<=580;x+=20)b+=`M${x} 196V470`;
-const bogen='M410 470V196H590V470Z';
-return`<defs><clipPath id="tuerclip"><path d="${bogen}"/></clipPath></defs>
-  <g transform="translate(${dx} 0)"><g class="tuer${bereit?' bereit':''}" role="button" tabindex="0" aria-label="Gittertor mit Zahlenschloss">
-   <path d="M380 470V180H620V470Z" fill="#2f6a4a" stroke="#14382a" stroke-width="5"/>
-   <path d="${bogen}" fill="#2a3a22"/>
-   <g clip-path="url(#tuerclip)"><g id="platte"><path d="${b}" stroke="#8a969e" stroke-width="8" fill="none"/><path d="M410 230H590M410 410H590M410 410L590 230" stroke="#6a747a" stroke-width="10" fill="none"/><rect x="${500-n*11-12}" y="312" width="${n*22+24}" height="36" rx="6" fill="#2a1a08" stroke="#f2c14e" stroke-width="2"/>${d}</g></g>
-   <path d="M356 184L500 124L644 184Z" fill="#2f6a4a" stroke="#14382a" stroke-width="4"/>
-   <use href="#sym-pfote" x="470" y="138" width="60" height="60" color="#f2c14e"/>
-  </g></g>`;
+const dx=((def&&def.tuerX)||500)-500,art=(def&&def.tuerArt)||'liane';
+const arten={liane:[tuerLiane,'Lianenvorhang mit Zahlenschloss'],wasser:[tuerWasser,'Schleusentor mit Zahlenschloss'],holz:[tuerHolz,'Holztor mit Zahlenschloss'],eis:[tuerEis,'Eistor mit Zahlenschloss'],schranke:[tuerSchranke,'Schranke mit Zahlenschloss']};
+const a=arten[art]||arten.liane;
+return`${TSTIL}<g transform="translate(${dx} 0)"><g class="tuer${bereit?' bereit':''}" role="button" tabindex="0" aria-label="${a[1]}">${a[0](n)}</g></g>`;
 }
 SZENARIEN.zoo={
 name:"Der Zoo",
@@ -88,12 +122,12 @@ symbole:["pfote","banane","fisch","giraffe","blatt"],
 symbolNamen:["Pfote","Banane","Fisch","Giraffe","Blatt"],
 emblem:`<svg viewBox="0 0 120 90" width="120" height="90" aria-hidden="true"><circle cx="60" cy="45" r="40" fill="#f2c14e" stroke="#8a5a10" stroke-width="3"/><use href="#sym-giraffe" x="24" y="8" width="64" height="72" color="#8a5a10"/><use href="#sym-pfote" x="70" y="44" width="30" height="30" color="#c0392b"/><use href="#sym-blatt" x="22" y="48" width="26" height="26" color="#3f8a3a"/></svg>`,
 texte:{
-einleitung:"Ihr seid bei einer Abendführung im Zoo. Die Tiere machen sich gerade bereit für die Nacht. Plötzlich fällt das Eingangstor hinter euch ins Schloss! Die Tierpflegerinnen und Tierpfleger haben ein Rätselspiel für euch vorbereitet: Ihr geht von Gehege zu Gehege, und jedes Gittertor hat ein Zahlenschloss. Untersucht die Gegenstände in den Gehegen. Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Findet ihr den Weg zurück zum Ausgang?",
+einleitung:"Ihr seid bei einer Abendführung im Zoo. Die Tiere machen sich gerade bereit für die Nacht. Plötzlich fällt das Eingangstor hinter euch ins Schloss! Die Tierpflegerinnen und Tierpfleger haben ein Rätselspiel für euch vorbereitet: Ihr geht von Gehege zu Gehege, und jedes Tor hat ein Zahlenschloss. Untersucht die Gegenstände in den Gehegen. Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Findet ihr den Weg zurück zum Ausgang?",
 startKnopf:"Den Zoo betreten",
 hinweisGeber:"Der kleine Papagei krächzt:",
 richtig:"Richtig gelöst!",
 falsch:["Das stimmt leider noch nicht. Versucht es noch einmal!","Der Papagei schüttelt den Kopf … Prüft eure Antwort!","Fast! Lest die Aufgabe noch einmal ganz genau."],
-schlossTitel:"Das Zahlenschloss am Gittertor",
+schlossTitel:"Das Zahlenschloss am Tor",
 schlossSymbol:"Über jedem Rad ist ein Zeichen eingebrannt. Stellt unter jedem Zeichen die Ziffer ein, die ihr dafür gefunden habt.",
 schlossStelle:"Stellt jede gefundene Ziffer an der richtigen Stelle ein.",
 schlossFalsch:"Das Schloss klickt – aber das Tor bleibt zu. Überprüft eure Ziffern!",
@@ -103,7 +137,7 @@ geschafft:"Ihr seid frei!",
 abschluss:"Geschafft! Ihr habt alle Rätsel zum Thema <b>{titel}</b> gelöst und den Weg aus dem Zoo gefunden. Die Tierpflegerinnen und Tierpfleger sind stolz auf euch – und die Giraffe winkt zum Abschied!"
 },
 texteDu:{
-einleitung:"Du bist bei einer Abendführung im Zoo. Die Tiere machen sich gerade bereit für die Nacht. Plötzlich fällt das Eingangstor hinter dir ins Schloss! Die Tierpflegerinnen und Tierpfleger haben ein Rätselspiel für dich vorbereitet: Du gehst von Gehege zu Gehege, und jedes Gittertor hat ein Zahlenschloss. Untersuche die Gegenstände in den Gehegen. Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Findest du den Weg zurück zum Ausgang?",
+einleitung:"Du bist bei einer Abendführung im Zoo. Die Tiere machen sich gerade bereit für die Nacht. Plötzlich fällt das Eingangstor hinter dir ins Schloss! Die Tierpflegerinnen und Tierpfleger haben ein Rätselspiel für dich vorbereitet: Du gehst von Gehege zu Gehege, und jedes Tor hat ein Zahlenschloss. Untersuche die Gegenstände in den Gehegen. Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Findest du den Weg zurück zum Ausgang?",
 falsch:["Das stimmt leider noch nicht. Versuche es noch einmal!","Der Papagei schüttelt den Kopf … Prüfe deine Antwort!","Fast! Lies die Aufgabe noch einmal ganz genau."],
 schlossSymbol:"Über jedem Rad ist ein Zeichen eingebrannt. Stelle unter jedem Zeichen die Ziffer ein, die du dafür gefunden hast.",
 schlossStelle:"Stelle jede gefundene Ziffer an der richtigen Stelle ein.",
@@ -116,28 +150,28 @@ einfach:{
 name:"Der Zoo",
 symbolNamen:["Pfote","Banane","Fisch","Giraffe","Blatt"],
 texte:{
-einleitung:"Ihr seid am Abend im Zoo. Die Tiere gehen bald schlafen. Plötzlich geht das Tor hinter euch zu! Ihr geht von Gehege zu Gehege. An jedem Gittertor hängt ein Zahlenschloss. Löst die Aufgaben in den Gehegen. Für jede richtige Aufgabe bekommt ihr eine Zahl. Findet ihr den Weg nach draußen?",
+einleitung:"Ihr seid am Abend im Zoo. Die Tiere gehen bald schlafen. Plötzlich geht das Tor hinter euch zu! Ihr geht von Gehege zu Gehege. An jedem Tor hängt ein Zahlenschloss. Löst die Aufgaben in den Gehegen. Für jede richtige Aufgabe bekommt ihr eine Zahl. Findet ihr den Weg nach draußen?",
 falsch:["Das stimmt noch nicht. Versucht es noch einmal!","Leider falsch. Schaut noch einmal genau hin!","Fast! Lest die Aufgabe noch einmal."],
-schlossTitel:"Das Zahlenschloss am Gittertor",
+schlossTitel:"Das Zahlenschloss am Tor",
 schlossSymbol:"Über jedem Rad ist ein Zeichen. Stellt unter jedem Zeichen die passende Zahl ein.",
 schlossStelle:"Stellt jede Zahl an die richtige Stelle.",
-schlossFalsch:"Das Gittertor bleibt zu. Prüft eure Zahlen noch einmal!",
+schlossFalsch:"Das Tor bleibt zu. Prüft eure Zahlen noch einmal!",
 zeitUmTitel:"Die Zeit ist um!",
 zeitUm:"Die Zeit ist vorbei. Aber ihr dürft weiterspielen!",
 abschluss:"Super! Ihr habt alle Aufgaben zum Thema <b>{titel}</b> gelöst und den Weg nach draußen gefunden!"
 },
 texteDu:{
-einleitung:"Du bist am Abend im Zoo. Die Tiere gehen bald schlafen. Plötzlich geht das Tor hinter dir zu! Du gehst von Gehege zu Gehege. An jedem Gittertor hängt ein Zahlenschloss. Löse die Aufgaben in den Gehegen. Für jede richtige Aufgabe bekommst du eine Zahl. Findest du den Weg nach draußen?",
+einleitung:"Du bist am Abend im Zoo. Die Tiere gehen bald schlafen. Plötzlich geht das Tor hinter dir zu! Du gehst von Gehege zu Gehege. An jedem Tor hängt ein Zahlenschloss. Löse die Aufgaben in den Gehegen. Für jede richtige Aufgabe bekommst du eine Zahl. Findest du den Weg nach draußen?",
 falsch:["Das stimmt noch nicht. Versuche es noch einmal!","Leider falsch. Schau noch einmal genau hin!","Fast! Lies die Aufgabe noch einmal."],
 schlossSymbol:"Über jedem Rad ist ein Zeichen. Stelle unter jedem Zeichen die passende Zahl ein.",
 schlossStelle:"Stelle jede Zahl an die richtige Stelle.",
-schlossFalsch:"Das Gittertor bleibt zu. Prüfe deine Zahlen noch einmal!",
+schlossFalsch:"Das Tor bleibt zu. Prüfe deine Zahlen noch einmal!",
 zeitUm:"Die Zeit ist vorbei. Aber du darfst weiterspielen!",
 geschafft:"Du bist frei!",
 abschluss:"Super! Du hast alle Aufgaben zum Thema <b>{titel}</b> gelöst und den Weg nach draußen gefunden!"
 },
 raeume:[
-{titel:"Das Urwald-Gehege",intro:"Hier ist es warm und feucht. Überall wachsen große Pflanzen. Findet die Zahlen für das Gittertor!",introDu:"Hier ist es warm und feucht. Überall wachsen große Pflanzen. Finde die Zahlen für das Gittertor!",
+{titel:"Das Urwald-Gehege",intro:"Hier ist es warm und feucht. Überall wachsen große Pflanzen. Findet die Zahlen für den Lianenvorhang!",introDu:"Hier ist es warm und feucht. Überall wachsen große Pflanzen. Finde die Zahlen für den Lianenvorhang!",
 objekte:[{name:"Bananen-Pflanze",fund:"Bei den Bananen hängt:"},{name:"Baum mit Faultier",fund:"Das Faultier hält etwas fest:"},{name:"Kanne mit Wasser",fund:"In der Kanne steckt:"},{name:"Kasten mit Schmetterlingen",fund:"Im Kasten liegt:"},{name:"Papagei",fund:"Der Papagei lässt etwas fallen:"}],
 infoObjekte:[{name:"Glas mit Frosch",fund:"Hinter dem Glas klebt:"},{name:"Blume im Topf",fund:"Im Topf steckt:"},{name:"Schildkröte",fund:"Neben der Schildkröte liegt:"}]},
 {titel:"Das Robben-Gehege",intro:"Hier ist ein großes Becken mit Wasser. Seelöwen und Robben schwimmen hier. Die Sonne scheint.",
@@ -157,9 +191,9 @@ infoObjekte:[{name:"Tafel am Weg",fund:"Hinter der Tafel klebt:"},{name:"Erdmän
 welt:{w:1600,h:780},
 raeume:[
 {titel:"Das Urwald-Gehege",
-intro:"Im Urwald-Gehege ist es warm und feucht wie im Regenwald. Riesige Blätter wachsen bis in den Himmel, ein Wasserfall plätschert. Findet die Ziffern für das Gittertor!",
-introDu:"Im Urwald-Gehege ist es warm und feucht wie im Regenwald. Riesige Blätter wachsen bis in den Himmel, ein Wasserfall plätschert. Finde die Ziffern für das Gittertor!",
-tuerX:1350,
+intro:"Im Urwald-Gehege ist es warm und feucht wie im Regenwald. Riesige Blätter wachsen bis in den Himmel, ein Wasserfall plätschert. Findet die Ziffern für den Lianenvorhang!",
+introDu:"Im Urwald-Gehege ist es warm und feucht wie im Regenwald. Riesige Blätter wachsen bis in den Himmel, ein Wasserfall plätschert. Finde die Ziffern für den Lianenvorhang!",
+tuerX:1350,tuerArt:"liane",
 hintergrund:()=>`${defs('#6a5a30','#2a2410','#f0ffd0')}${R(0,0,1600,470,'#a8d8b0')}${R(0,0,1600,200,'#7cc0a0')}${[230,700,1200,1500].map(x=>`${R(x-20,40,40,430,'#6b4a24','#3a2410',3)}${C(x,50,110,'#2f8a3a')}${C(x-70,90,80,'#3fa04a')}${C(x+70,80,85,'#2a7a34')}`).join('')}${L('M300 0Q320 120 290 240M700 0Q680 90 710 180M1100 0Q1120 100 1090 200','#3f8a3a',5)}${R(40,140,90,330,'#8ad0f0')}${L('M60 150V460M85 150V460M110 150V460','rgba(255,255,255,.6)',3)}${P('M20 150Q85 110 150 150Z','#5a6a6a')}${busch(140,470,1.1,'#2f8a3a')}${busch(760,470,1,'#3fa04a')}${busch(1580,470,1.2,'#2f8a3a')}${zaun(390,'#4a5258',30)}${boden(1)}${E(85,478,80,14,'#5dade2')}`,
 objekte:[
 {name:"Bananenstaude",x:250,boden:580,fuss:4,by:-260,zeichne:bananen,fund:"Zwischen den Bananen hängt:"},
@@ -170,8 +204,8 @@ objekte:[
 ],
 infoObjekte:[{name:"Froschterrarium",x:400,y:260,wand:true,by:-70,zeichne:froschglas,fund:"Hinter dem Terrarium klebt:"},{name:"Orchideentopf",x:1530,boden:730,fuss:4,by:-155,zeichne:orchidee,fund:"Im Orchideentopf steckt:"},{name:"Landschildkröte",x:420,boden:735,fuss:4,by:-85,zeichne:schildkroete,fund:"Neben der Schildkröte liegt:"}]},
 {titel:"Das Robben-Gehege",
-intro:"Im Robben-Gehege glitzert ein großes Wasserbecken. Seelöwen flitzen durch das Wasser, die Sonne scheint auf die Felsen. Irgendwo hier sind die Ziffern für das nächste Gittertor versteckt …",
-tuerX:220,
+intro:"Im Robben-Gehege glitzert ein großes Wasserbecken. Seelöwen flitzen durch das Wasser, die Sonne scheint auf die Felsen. Irgendwo hier sind die Ziffern für das Schleusentor versteckt …",
+tuerX:220,tuerArt:"wasser",
 hintergrund:()=>`${defs('#d0c098','#8a7a58','#e8f8ff')}${R(0,0,1600,470,'url(#himmel)')}${C(1300,130,130,'url(#licht)')}${C(1300,130,50,'#fff6c8')}${P('M0 470V210Q200 150 420 190T820 170T1240 200T1600 160V470Z','#8f8f96','#5a5a62',4)}${L('M120 260Q200 240 260 280M900 230Q980 210 1040 250M1250 300Q1320 280 1380 310','#6a6a72',4)}${R(0,300,1600,100,'#3aa0d8')}${L('M0 325q40-10 80 0'+'t80 0'.repeat(19),'rgba(255,255,255,.5)',3)}${L('M0 365q40-10 80 0'+'t80 0'.repeat(19),'rgba(255,255,255,.35)',3)}${R(0,400,1600,70,'#d0c098')}${zaun(400,'#e8eef2',34)}${boden()}`,
 objekte:[
 {name:"Seelöwe mit Ball",x:1000,boden:560,fuss:4,by:-215,zeichne:seeloewe,fund:"Auf dem Ball des Seelöwen liegt:"},
@@ -182,8 +216,8 @@ objekte:[
 ],
 infoObjekte:[{name:"Fischtafel",x:1470,y:230,wand:true,by:-80,zeichne:fischtafel,fund:"Hinter der Fischtafel steckt:"},{name:"Seesternbecken",x:600,boden:660,fuss:4,by:-95,zeichne:streichelbecken,fund:"Am Rand des Beckens liegt:"},{name:"Korallenstein",x:380,boden:735,fuss:4,by:-110,zeichne:koralle,fund:"Unter dem Korallenstein liegt:"}]},
 {titel:"Das Elefanten-Gehege",
-intro:"Im Elefanten-Gehege liegt warmer Sand. Die Elefanten sind riesig und trotzdem ganz sanft. In den Futterställen riecht es nach Obst, Gemüse und frischem Heu.",
-tuerX:1000,
+intro:"Im Elefanten-Gehege liegt warmer Sand. Die Elefanten sind riesig und trotzdem ganz sanft. In den Futterställen riecht es nach Obst, Gemüse und frischem Heu. Das große Holztor hat ein Zahlenschloss.",
+tuerX:1000,tuerArt:"holz",
 hintergrund:()=>`${defs('#d8b878','#8a6a38','#fff0b0')}${R(0,0,1600,470,'#f6d79a')}${C(1050,120,150,'url(#licht)')}${C(1050,120,56,'#fff3c0')}${P('M0 380Q300 300 700 370T1600 350V470H0Z','#e0b870')}${[[900,380],[1150,365]].map(([x,y])=>`${L(`M${x} ${y}V${y-70}M${x} ${y-50}L${x-30} ${y-80}M${x} ${y-50}L${x+30} ${y-80}`,'#5a4a2a',6)}${E(x,y-86,70,14,'#7a8a3a')}`).join('')}${R(0,100,780,370,'#c89a5a','#7a5a2a',5)}${P('M-20 100L0 60H780L800 100Z','#a0522d','#5a2a14',3)}${[...Array(26)].map((_,k)=>R(k*30,104,2,366,'rgba(90,50,20,.35)')).join('')}${R(1260,140,340,330,'#c89a5a','#7a5a2a',5)}${P('M1240 140L1270 100H1600V140Z','#a0522d','#5a2a14',3)}${[...Array(11)].map((_,k)=>R(1262+k*30,144,2,326,'rgba(90,50,20,.35)')).join('')}${L('M0 400H1600M0 440H1600','#4a5258',10)}${[...Array(9)].map((_,k)=>R(k*200+20,380,16,90,'#4a5258')).join('')}${boden()}`,
 objekte:[
 {name:"Elefant",x:520,boden:600,fuss:4,by:-230,zeichne:elefant,fund:"Der Elefant hält etwas im Rüssel:"},
@@ -194,8 +228,8 @@ objekte:[
 ],
 infoObjekte:[{name:"Dosenregal",x:1420,y:230,wand:true,by:-70,zeichne:dosenregal,fund:"Hinter einer Dose steckt:"},{name:"Schubkarre mit Heu",x:1500,boden:730,fuss:4,by:-110,zeichne:schubkarre,fund:"Im Heu liegt:"},{name:"Wassertrog",x:800,boden:740,fuss:4,by:-60,zeichne:wassertrog,fund:"Neben dem Wassertrog liegt:"}]},
 {titel:"Das Pinguin-Gehege",
-intro:"Im Pinguin-Gehege ist es eisig kalt. Schnee und Eis glitzern, und die Pinguine watscheln über den Rand ihres Beckens. Neben dem Becken steht das kleine Futterhaus.",
-tuerX:760,
+intro:"Im Pinguin-Gehege ist es eisig kalt. Schnee und Eis glitzern, und die Pinguine watscheln über den Rand ihres Beckens. Neben dem Becken steht das kleine Futterhaus. Das Eistor hat ein Zahlenschloss.",
+tuerX:760,tuerArt:"eis",
 hintergrund:()=>`${defs('#eaf2f8','#9ab4c4','#ffffff')}${R(0,0,1600,470,'#cfe6f2')}${P('M0 300L200 120L360 260L560 80L780 280L980 140L1200 290L1400 110L1600 270V470H0Z','#e8f4fa','#a8c8dc',3)}${P('M200 120L260 190L220 200L180 170ZM560 80L630 170L580 190L530 150ZM1400 110L1460 180L1420 190Z','#fff')}${R(0,330,1600,70,'#6ab8e0')}${L('M0 355q40-10 80 0'+'t80 0'.repeat(19),'rgba(255,255,255,.5)',3)}${R(960,150,440,250,'#e8eef2','#7a8a96',5)}${P('M940 150L1000 100H1360L1420 150Z','#7a8a96')}${R(0,400,1600,70,'#e8f2f8')}${zaun(400,'#9ab0bc',30)}${boden()}`,
 objekte:[
 {name:"Pinguin",x:300,boden:640,fuss:4,by:-160,zeichne:pinguin,fund:"Der Pinguin hält etwas fest:"},
@@ -206,9 +240,9 @@ objekte:[
 ],
 infoObjekte:[{name:"Eistafel",x:1290,y:240,wand:true,by:-75,zeichne:eistafel,fund:"Hinter der Eistafel klebt:"},{name:"Schneehaufen",x:120,boden:735,fuss:4,by:-110,zeichne:schneehaufen,fund:"Im Schnee steckt:"},{name:"Spülbecken",x:1500,boden:730,fuss:4,by:-160,zeichne:spuele,fund:"Neben dem Spülbecken liegt:"}]},
 {titel:"Das Savannen-Gehege",
-intro:"Draußen im Savannen-Gehege geht die Sonne unter. Giraffen knabbern an den Bäumen, Zebras grasen friedlich. Hinter dem letzten Tor liegt der Ausgang – öffnet das letzte Schloss!",
-introDu:"Draußen im Savannen-Gehege geht die Sonne unter. Giraffen knabbern an den Bäumen, Zebras grasen friedlich. Hinter dem letzten Tor liegt der Ausgang – öffne das letzte Schloss!",
-tuerX:500,
+intro:"Draußen im Savannen-Gehege geht die Sonne unter. Giraffen knabbern an den Bäumen, Zebras grasen friedlich. Die Schranke zum Ausgang hat das letzte Schloss – öffnet es!",
+introDu:"Draußen im Savannen-Gehege geht die Sonne unter. Giraffen knabbern an den Bäumen, Zebras grasen friedlich. Die Schranke zum Ausgang hat das letzte Schloss – öffne es!",
+tuerX:500,tuerArt:"schranke",
 hintergrund:()=>`${defs('#c8b45a','#7a6a28','#ffe0a0')}${R(0,0,1600,470,'url(#himmel)')}${C(1250,150,160,'url(#licht)')}${C(1250,150,60,'#fff0b0')}${P('M0 380Q300 300 700 370T1600 350V470H0Z','#d8c070')}${P('M0 430Q400 390 800 420T1600 410V470H0Z','#c0a850')}${[[200,380],[1000,360],[1450,370]].map(([x,y])=>`${L(`M${x} ${y}V${y-70}M${x} ${y-50}L${x-30} ${y-80}M${x} ${y-50}L${x+30} ${y-80}`,'#5a4a2a',6)}${E(x,y-86,70,14,'#7a8a3a')}`).join('')}${L('M300 120l10 6 10-6M340 100l8 5 8-5M700 90l9 5 9-5','#5a4a2a',2.5)}${[...Array(33)].map((_,k)=>R(k*50,400,10,70,'#8a5a30')).join('')}${L('M0 420H1600M0 450H1600','#8a5a30',7)}${boden(1)}`,
 objekte:[
 {name:"Giraffe an der Akazie",x:1000,boden:560,fuss:4,by:-300,zeichne:giraffe,fund:"Die Giraffe lässt etwas fallen:"},
@@ -221,13 +255,14 @@ infoObjekte:[{name:"Tafel der Savanne",x:820,y:230,wand:true,by:-110,zeichne:taf
 ],
 tuer,
 vignette:`<rect width="1000" height="600" fill="url(#vig)" pointer-events="none"/>`,
-ausgang:()=>`<defs><linearGradient id="himmelA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7cc0e8"/><stop offset=".8" stop-color="#e8f4d8"/></linearGradient></defs>
-   <rect width="1000" height="600" fill="url(#himmelA)"/><circle cx="700" cy="270" r="80" fill="#fff6c8" opacity=".4"/><circle cx="700" cy="270" r="45" fill="#fff6c8"/>
+ausgang:()=>`<defs><linearGradient id="himmelA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6a7ad0"/><stop offset=".6" stop-color="#f08a5a"/><stop offset="1" stop-color="#ffd890"/></linearGradient></defs>
+   <rect width="1000" height="600" fill="url(#himmelA)"/><circle cx="560" cy="390" r="90" fill="#fff6c8" opacity=".4"/><circle cx="560" cy="390" r="48" fill="#fff0b0"/>
    <path d="M0 420Q200 360 420 400T1000 380V600H0Z" fill="#8cc06a"/><path d="M0 470Q300 430 600 480T1000 460V600H0Z" fill="#6aa04a"/>
    <path d="M420 600Q470 500 520 470Q560 500 600 600Z" fill="#d8c8a0"/>
    ${[[230,400],[330,420],[700,410],[820,430]].map(([x,y])=>`${R(x-6,y-60,12,60,'#6b4a24')}${C(x,y-80,40,'#3f8a4a')}${C(x-20,y-60,26,'#4f9a5a')}`).join('')}
    ${[[300,300,'#e74c3c'],[340,270,'#f2c14e'],[380,310,'#2e86c1'],[660,280,'#2ecc71']].map(([x,y,c])=>`${L(`M${x} ${y+30}Q${x+10} ${y+80} ${x} ${y+130}`,'#555',1.5)}${E(x,y,20,26,c)}`).join('')}
    ${L('M300 120l10 6 10-6M340 100l8 5 8-5M560 90l9 5 9-5','#3a2a17',2.5)}
+   <path d="M420 470L470 330" stroke="#fff" stroke-width="16" fill="none"/><path d="M420 470L470 330" stroke="#e74c3c" stroke-width="16" stroke-dasharray="20 20" fill="none"/>${R(402,440,36,70,'#5a6a7a','#2a3440',3)}${[260,740].map(x=>`${L(`M${x} 470V350`,'#333',5)}${C(x,336,50,'rgba(255,226,138,.3)')}${C(x,336,16,'#ffe28a','#333',3)}`).join('')}${U('giraffe',610,300,110,'#8a5a10')}
    <path d="M0 0H1000V600H0Z M200 600V180H800V600Z" fill="#2f5a3a" fill-rule="evenodd"/><path d="M200 600V180H800V600" stroke="#8a5a30" stroke-width="18" fill="none"/><path d="M150 186L500 40L850 186Z" fill="#a0522d" stroke="#5a2a14" stroke-width="6"/>${U('pfote',470,84,60,'#f2c14e')}`
 };
 })();
