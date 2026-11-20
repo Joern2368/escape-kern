@@ -67,18 +67,61 @@ const himmelskarte=()=>P('kkkkkkkkkkkk|knnnnnnnnnnk|knynnnnnynnk|knnnnynnnnnk|kn
 const turmfahne=()=>P('llllllllll|.gggggggg.|.gggwwggg.|.ggwwwwgg.|.gggwwggg.|.gggggggg.|.gg....gg.|.g......g.',10,'l#7a4420 g#3aa8a0 w#ffffff',-50,-40);
 const sonnenuhr=()=>`${sch(50)}${P('....k.....|....kk....|....kkk...|ssssssssss|.mmmmmmmm.|..mmmmmm..|..mmmmmm..|.mmmmmmmm.',12,'s#e8e0d0 k#555566 m#b8b0c8')}`;
 const vogelnest=()=>`${sch(50)}${P('...bbb....|..bbwbbr..|..bbbbbrr.|...bbb....|nnnnnnnnnn|.nnnnnnnn.|..nnnnnn..',12,'b#6ab8e8 w#ffffff r#f0a020 n#a07040')}`;
+const sPl=(n,y)=>{let d='';const x0=500-(n-1)*12;for(let k=0;k<n;k++)d+=`<rect x="${x0+k*24-8}" y="${y-8}" width="16" height="16" fill="#1d2440" stroke="#ffd34a" stroke-width="2"/>`;return`<rect x="${500-n*12-12}" y="${y-18}" width="${n*24+24}" height="36" fill="#2a2238" stroke="#ffd34a" stroke-width="3"/>${d}`;};
+const TSTIL=`<style>.tuer .tb{transition:transform 1.1s ease-in-out,opacity 1.1s ease-in-out}.tuer .lang{transition:transform 1.8s ease-in-out,opacity 1.8s ease-in-out}.tuer.offen #luke{transform:scaleY(.12)}.tuer.offen #pslab{transform:translateY(262px)}.tuer.offen #pwir rect{animation:pw .6s ease-in-out infinite alternate}@keyframes pw{from{opacity:.3}to{opacity:1}}.tuer.offen .wh{transform:translateY(-130px);opacity:0}.tuer .bl{transform:translateY(46px);opacity:0}.tuer.offen .bl{transform:translateY(0);opacity:1}.tuer.offen #bal{transform:translateY(-240px)}.tuer.offen #bseil{opacity:0}</style>`;
+function tuerLuke(n){
+const f='400,484 600,484 640,548 360,548';
+return`<polygon points="388,478 612,478 654,556 346,556" fill="#8a5228" stroke="#3a2010" stroke-width="4"/>
+   <polygon points="${f}" fill="#0c0a14"/><path d="M452 488L440 546M548 488L560 546" stroke="#d8a050" stroke-width="8"/><path d="M448 504H552M444 520H556M441 536H559" stroke="#d8a050" stroke-width="6"/>
+   <g id="luke" class="lang" style="transform-origin:500px 484px"><polygon points="${f}" fill="#c27a36" stroke="#3a2010" stroke-width="4"/><path d="M433 484L420 548M466 484L460 548M500 484V548M534 484L540 548M567 484L580 548" stroke="#7a4420" stroke-width="3"/>${sPl(n,516)}</g>`;
+}
+function tuerPortal(n){
+const c=['#4a4468','#59e0f0','#3a3458','#e870d0','#463e66','#7ae070'];
+let r='',w='';
+for(let i=0;i<5;i++){r+=K(380,210+i*52,50,52,c[i%6])+K(570,210+i*52,50,52,c[(i+3)%6]);}
+for(let i=0;i<6;i++)r+=K(380+i*40,158,40,52,c[(i*5+1)%6]);
+[[440,230,'#59e0f0'],[470,270,'#e870d0'],[520,250,'#ffffff'],[550,300,'#7ae070'],[450,340,'#ffffff'],[500,370,'#59e0f0'],[540,410,'#e870d0'],[460,430,'#7ae070'],[500,300,'#c8faff'],[480,220,'#ffd34a']].forEach((q,k)=>{w+=`<rect x="${q[0]}" y="${q[1]}" width="16" height="16" fill="${q[2]}" style="animation-delay:${(k*.13).toFixed(2)}s"/>`;});
+return`<defs><clipPath id="pclip"><rect x="430" y="210" width="140" height="260"/></clipPath></defs>
+   <rect x="430" y="210" width="140" height="260" fill="#2a1a50"/>
+   <g clip-path="url(#pclip)"><circle cx="500" cy="340" r="130" fill="url(#licht)"/><g id="pwir">${w}</g>
+   <g id="pslab" class="lang">${K(430,210,140,87,'#7a7498')}${K(430,297,140,87,'#6a6488')}${K(430,384,140,86,'#7a7498')}${sPl(n,300)}</g></g>${r}`;
+}
+function tuerKran(n){
+const fa=['#e0566b','#ffd34a','#4a8ae8','#3aa860'];
+const reihen=(a,b)=>{let o='';for(let j=a;j<b;j++)for(let i=0;i<3;i++)o+=K(410+i*60,190+j*40,60,40,fa[(i+j*2)%4]);return o;};
+return`<defs><linearGradient id="himmelK" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7cc8f4"/><stop offset="1" stop-color="#e8f8d8"/></linearGradient></defs>
+   <rect x="410" y="190" width="180" height="280" fill="url(#himmelK)"/><path d="M410 400Q470 350 520 385T590 370V470H410Z" fill="#8cc06a"/>${wolke(430,250,8)}
+   <g class="tb wh" style="transition-delay:.7s">${reihen(5,7)}</g>
+   <g class="tb wh" style="transition-delay:.35s">${reihen(2,5)}${sPl(n,330)}</g>
+   <g class="tb wh">${reihen(0,2)}<path d="M500 160V196" stroke="#333" stroke-width="4"/><rect x="490" y="196" width="20" height="14" fill="#555566"/></g>
+   ${saeule(378,160,470,31,'#ffc23a')}${saeule(591,160,470,31,'#ffc23a')}${K(378,129,244,31,'#ffc23a')}${R(486,160,28,8,'#555566')}`;
+}
+function tuerBruecke(n){
+const g=['#3a9a50','#2e8a44','#46a85c'];
+let h='',b='',s='';
+for(let i=0;i<6;i++)h+=K(380+i*40,150,40,40,g[i%3])+K(380+i*40,190,40,40,g[(i+1)%3]);
+for(let j=0;j<6;j++)h+=K(380,230+j*40,40,40,g[j%3])+K(580,230+j*40,40,40,g[(j+2)%3]);
+[420,540].forEach(x=>{b+=K(x,330,40,28,'#7ac860')+K(x,358,40,28,'#8a5228')+K(x,386,40,28,'#6a4420')+K(x,414,40,28,'#8a5228')+K(x,442,40,28,'#6a4420');});
+for(let i=0;i<4;i++)s+=`<g class="tb bl" style="transition-delay:${(i*.2).toFixed(1)}s">${K(460+i*20,330,20,24,i%2?'#e0566b':'#ffd34a')}</g>`;
+return`<defs><linearGradient id="himmelB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7cc0e8"/><stop offset="1" stop-color="#e8f4d8"/></linearGradient></defs>
+   <rect x="420" y="230" width="160" height="240" fill="url(#himmelB)"/>${wolke(436,252,6)}<path d="M420 330V290Q470 262 505 288T580 280V330Z" fill="#8cc06a"/><rect x="460" y="330" width="80" height="140" fill="#1a2a50"/><path d="M460 380H540M460 420H540M460 456H540" stroke="#2a3c70" stroke-width="4"/>${b}${s}${h}${sPl(n,170)}`;
+}
+function tuerBallon(n){
+const c=['#a898cc','#8a7ab8','#b8a8d8'];
+let r='';
+for(let i=0;i<7;i++){r+=K(380,190+i*40,40,40,c[i%3])+K(580,190+i*40,40,40,c[(i+1)%3]);}
+for(let i=0;i<6;i++)r+=K(380+i*40,150,40,40,c[(i+2)%3]);
+return`<defs><clipPath id="aclip"><rect x="420" y="190" width="160" height="280"/></clipPath><linearGradient id="himmelA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5ab4f0"/><stop offset="1" stop-color="#ffe8f0"/></linearGradient></defs>
+   <rect x="420" y="190" width="160" height="280" fill="url(#himmelA)"/>
+   <g clip-path="url(#aclip)">${wolke(425,300,6)}${wolke(520,360,7)}
+   <g id="bal" class="lang">${P('...rrrr...|..rryyrr..|.rryyyyrr.|.rrrrrrrr.|.rryyyyrr.|..rryyrr..|...rrrr...|...k..k...|...k..k...|...k..k...|...bbbb...|...bbbb...',14,'r#e0566b y#ffd34a k#555566 b#c08a44',430,212)}<g id="bseil" class="lang"><path d="M480 380L466 420M520 380L534 420" stroke="#6a4a28" stroke-width="4"/></g></g></g>
+   ${K(420,420,160,50,'#a07040')}${sPl(n,445)}${r}`;
+}
 function tuer(n,bereit,def){
-const dx=((def&&def.tuerX)||500)-500;
-let d='',f='',p='';const x0=500-(n-1)*12;
-for(let k=0;k<n;k++)d+=`<rect x="${x0+k*24-8}" y="322" width="16" height="16" fill="#1d2440" stroke="#ffd34a" stroke-width="2"/>`;
-for(let y=158;y<470;y+=39)f+=K(384,y,36,39,'#8f88b0')+K(580,y,36,39,'#a098c0');
-for(let y=190,r=0;y<470;y+=40,r++)p+=K(420,y,80,40,r%2?'#d08840':'#c27a36')+K(500,y,80,40,r%2?'#c27a36':'#d08840');
-return`<defs><clipPath id="tuerclip"><rect x="420" y="190" width="160" height="280"/></clipPath></defs>
-  <g transform="translate(${dx} 0)"><g class="tuer${bereit?' bereit':''}" role="button" tabindex="0" aria-label="Tür mit Zahlenschloss">
-   ${f}${K(420,158,160,32,'#8f88b0')}${R(420,190,160,280,'#140f20')}
-   <g clip-path="url(#tuerclip)"><g id="platte">${p}<use href="#sym-kristall" x="472" y="232" width="56" height="56" color="#7ff0ff"/>${R(500-n*12-12,312,n*24+24,36,'#2a2238')}${d}</g></g>
-   ${K(484,124,32,32,'#ffd34a')}
-  </g></g>`;
+const dx=((def&&def.tuerX)||500)-500,art=(def&&def.tuerArt)||'luke';
+const arten={luke:[tuerLuke,'Kellerluke mit Zahlenschloss'],portal:[tuerPortal,'Portal mit Zahlenschloss'],kran:[tuerKran,'Blockwand mit Zahlenschloss'],bruecke:[tuerBruecke,'Brücke mit Zahlenschloss'],ballon:[tuerBallon,'Ballon mit Zahlenschloss']};
+const a=arten[art]||arten.luke;
+return`${TSTIL}<g transform="translate(${dx} 0)"><g class="tuer${bereit?' bereit':''}" role="button" tabindex="0" aria-label="${a[1]}">${a[0](n)}</g></g>`;
 }
 SZENARIEN.kloetzchenwelt={
 name:"Die Klötzchenwelt",
@@ -86,7 +129,7 @@ symbole:["kristall","apfel","blume","schluessel","stern"],
 symbolNamen:["Kristall","Apfel","Blume","Schlüssel","Stern"],
 emblem:`<svg viewBox="0 0 120 90" width="120" height="90" aria-hidden="true"><path d="M60 8L100 26L60 44L20 26Z" fill="#ffd34a" stroke="#6a4a1a" stroke-width="3"/><path d="M20 26L60 44V84L20 66Z" fill="#ff8a5c" stroke="#6a4a1a" stroke-width="3"/><path d="M100 26L60 44V84L100 66Z" fill="#d9576b" stroke="#6a4a1a" stroke-width="3"/><path d="M28 34L60 48L92 34" stroke="#fff" stroke-width="3" fill="none" opacity=".5"/><use href="#sym-kristall" x="88" y="0" width="28" height="28" color="#59e0f0"/></svg>`,
 texte:{
-einleitung:"Ihr seid in der Klötzchenwelt gelandet! Hier ist alles aus bunten Blöcken gebaut: Häuser, Bäume, Höhlen und sogar die Wolken. Die Baumeisterin dieser Welt hat jede Tür mit einem Zahlenschloss gesichert. Untersucht die Gegenstände in den Räumen. Hinter jeder gelösten Aufgabe steckt eine Ziffer. Findet ihr den Weg hinaus?",
+einleitung:"Ihr seid in der Klötzchenwelt gelandet! Hier ist alles aus bunten Blöcken gebaut: Häuser, Bäume, Höhlen und sogar die Wolken. Die Baumeisterin dieser Welt hat jeden Durchgang mit einem Zahlenschloss gesichert. Untersucht die Gegenstände in den Räumen. Hinter jeder gelösten Aufgabe steckt eine Ziffer. Findet ihr den Weg hinaus?",
 startKnopf:"Die Klötzchenwelt betreten",
 hinweisGeber:"Die kleine Pixelbiene summt:",
 richtig:"Richtig gelöst!",
@@ -94,18 +137,18 @@ falsch:["Das stimmt leider noch nicht. Versucht es noch einmal!","Die Pixelbiene
 schlossTitel:"Das Zahlenschloss aus Blöcken",
 schlossSymbol:"Über jedem Rad leuchtet ein Pixelzeichen. Stellt unter jedem Zeichen die Ziffer ein, die ihr dafür gefunden habt.",
 schlossStelle:"Stellt jede gefundene Ziffer an der richtigen Stelle ein.",
-schlossFalsch:"Die Blöcke wackeln – aber die Tür bleibt zu. Überprüft eure Ziffern!",
+schlossFalsch:"Die Blöcke wackeln – aber der Weg bleibt zu. Überprüft eure Ziffern!",
 zeitUmTitel:"Die Sonne geht unter!",
 zeitUm:"Eure Zeit ist abgelaufen. Aber gebt nicht auf – ihr dürft weiterspielen und den Ausgang trotzdem noch finden!",
 geschafft:"Ihr seid frei!",
 abschluss:"Geschafft! Ihr habt alle Rätsel zum Thema <b>{titel}</b> gelöst und den Weg aus der Klötzchenwelt gefunden. Die Baumeisterin ist stolz auf euch!"
 },
 texteDu:{
-einleitung:"Du bist in der Klötzchenwelt gelandet! Hier ist alles aus bunten Blöcken gebaut: Häuser, Bäume, Höhlen und sogar die Wolken. Die Baumeisterin dieser Welt hat jede Tür mit einem Zahlenschloss gesichert. Untersuche die Gegenstände in den Räumen. Hinter jeder gelösten Aufgabe steckt eine Ziffer. Findest du den Weg hinaus?",
+einleitung:"Du bist in der Klötzchenwelt gelandet! Hier ist alles aus bunten Blöcken gebaut: Häuser, Bäume, Höhlen und sogar die Wolken. Die Baumeisterin dieser Welt hat jeden Durchgang mit einem Zahlenschloss gesichert. Untersuche die Gegenstände in den Räumen. Hinter jeder gelösten Aufgabe steckt eine Ziffer. Findest du den Weg hinaus?",
 falsch:["Das stimmt leider noch nicht. Versuche es noch einmal!","Die Pixelbiene summt leise … Prüfe deine Antwort!","Fast! Lies die Aufgabe noch einmal ganz genau."],
 schlossSymbol:"Über jedem Rad leuchtet ein Pixelzeichen. Stelle unter jedem Zeichen die Ziffer ein, die du dafür gefunden hast.",
 schlossStelle:"Stelle jede gefundene Ziffer an der richtigen Stelle ein.",
-schlossFalsch:"Die Blöcke wackeln – aber die Tür bleibt zu. Überprüfe deine Ziffern!",
+schlossFalsch:"Die Blöcke wackeln – aber der Weg bleibt zu. Überprüfe deine Ziffern!",
 zeitUm:"Deine Zeit ist abgelaufen. Aber gib nicht auf – du darfst weiterspielen und den Ausgang trotzdem noch finden!",
 geschafft:"Du bist frei!",
 abschluss:"Geschafft! Du hast alle Rätsel zum Thema <b>{titel}</b> gelöst und den Weg aus der Klötzchenwelt gefunden. Die Baumeisterin ist stolz auf dich!"
@@ -114,40 +157,40 @@ einfach:{
 name:"Die Klötzchenwelt",
 symbolNamen:["Kristall","Apfel","Blume","Schlüssel","Stern"],
 texte:{
-einleitung:"Ihr seid in der Klötzchenwelt. Hier ist alles aus bunten Blöcken gebaut. Plötzlich geht die Tür hinter euch zu! An jeder Tür hängt ein Zahlenschloss. Löst die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommt ihr eine Zahl. Findet ihr den Weg nach draußen?",
+einleitung:"Ihr seid in der Klötzchenwelt. Hier ist alles aus bunten Blöcken gebaut. Plötzlich ist der Weg zurück zu! An jedem Durchgang hängt ein Zahlenschloss. Löst die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommt ihr eine Zahl. Findet ihr den Weg nach Hause?",
 falsch:["Das stimmt noch nicht. Versucht es noch einmal!","Leider falsch. Schaut noch einmal genau hin!","Fast! Lest die Aufgabe noch einmal."],
 schlossTitel:"Das Zahlenschloss",
 schlossSymbol:"Über jedem Rad ist ein Zeichen. Stellt unter jedem Zeichen die passende Zahl ein.",
 schlossStelle:"Stellt jede Zahl an die richtige Stelle.",
-schlossFalsch:"Die Tür bleibt zu. Prüft eure Zahlen noch einmal!",
+schlossFalsch:"Der Weg bleibt zu. Prüft eure Zahlen noch einmal!",
 zeitUmTitel:"Die Zeit ist um!",
 zeitUm:"Die Zeit ist vorbei. Aber ihr dürft weiterspielen!",
-abschluss:"Super! Ihr habt alle Aufgaben zum Thema <b>{titel}</b> gelöst und den Weg nach draußen gefunden!"
+abschluss:"Super! Ihr habt alle Aufgaben zum Thema <b>{titel}</b> gelöst und den Weg nach Hause gefunden!"
 },
 texteDu:{
-einleitung:"Du bist in der Klötzchenwelt. Hier ist alles aus bunten Blöcken gebaut. Plötzlich geht die Tür hinter dir zu! An jeder Tür hängt ein Zahlenschloss. Löse die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommst du eine Zahl. Findest du den Weg nach draußen?",
+einleitung:"Du bist in der Klötzchenwelt. Hier ist alles aus bunten Blöcken gebaut. Plötzlich ist der Weg zurück zu! An jedem Durchgang hängt ein Zahlenschloss. Löse die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommst du eine Zahl. Findest du den Weg nach Hause?",
 falsch:["Das stimmt noch nicht. Versuche es noch einmal!","Leider falsch. Schau noch einmal genau hin!","Fast! Lies die Aufgabe noch einmal."],
 schlossSymbol:"Über jedem Rad ist ein Zeichen. Stelle unter jedem Zeichen die passende Zahl ein.",
 schlossStelle:"Stelle jede Zahl an die richtige Stelle.",
-schlossFalsch:"Die Tür bleibt zu. Prüfe deine Zahlen noch einmal!",
+schlossFalsch:"Der Weg bleibt zu. Prüfe deine Zahlen noch einmal!",
 zeitUm:"Die Zeit ist vorbei. Aber du darfst weiterspielen!",
 geschafft:"Du bist frei!",
-abschluss:"Super! Du hast alle Aufgaben zum Thema <b>{titel}</b> gelöst und den Weg nach draußen gefunden!"
+abschluss:"Super! Du hast alle Aufgaben zum Thema <b>{titel}</b> gelöst und den Weg nach Hause gefunden!"
 },
 raeume:[
 {titel:"Das Blockhaus",intro:"Ein warmes Haus aus Holz-Blöcken. Im Ofen brennt ein Feuer. Hier sind die Zahlen für das erste Schloss versteckt.",
 objekte:[{name:"Ofen",fund:"Neben dem Ofen liegt:"},{name:"Truhe aus Holz",fund:"In der Truhe liegt:"},{name:"Bett",fund:"Unter dem Kissen liegt:"},{name:"Tisch mit Kuchen",fund:"Unter dem Teller liegt:"},{name:"Uhr",fund:"Hinter der Uhr klebt:"}],
 infoObjekte:[{name:"Bild mit Berg",fund:"Hinter dem Bild klebt:"},{name:"Stapel Bücher",fund:"Im Buch liegt:"},{name:"Korb mit Wolle",fund:"In der Wolle steckt:"}]},
-{titel:"Die Höhle mit Kristallen",intro:"Ihr seid in einer dunklen Höhle. Bunte Kristalle leuchten an den Wänden. Findet die Zahlen für das nächste Schloss!",introDu:"Du bist in einer dunklen Höhle. Bunte Kristalle leuchten an den Wänden. Finde die Zahlen für das nächste Schloss!",
+{titel:"Die Höhle mit Kristallen",intro:"Ihr seid in einer dunklen Höhle. Bunte Kristalle leuchten an den Wänden. Findet die Zahlen für das Schloss am Block-Portal!",introDu:"Du bist in einer dunklen Höhle. Bunte Kristalle leuchten an den Wänden. Finde die Zahlen für das Schloss am Block-Portal!",
 objekte:[{name:"Kristalle",fund:"Zwischen den Kristallen liegt:"},{name:"Wagen mit Steinen",fund:"Im Wagen liegt:"},{name:"Pilze",fund:"Unter einem Pilz liegt:"},{name:"Stein-Säule",fund:"An der Säule klebt:"},{name:"Glitzer an der Wand",fund:"In der Wand steckt:"}],
 infoObjekte:[{name:"Bild an der Wand",fund:"Neben dem Bild steckt:"},{name:"Lampe",fund:"Unter der Lampe liegt:"},{name:"Kiste mit Steinen",fund:"In der Kiste liegt:"}]},
 {titel:"Die Werkstatt",intro:"Hier bauen Menschen mit Blöcken. Überall liegen Werkzeuge und bunte Steine.",
 objekte:[{name:"Tisch zum Bauen",fund:"Auf dem Tisch liegt:"},{name:"Kran",fund:"Am Kran hängt:"},{name:"Eimer mit Farbe",fund:"Unter einem Eimer liegt:"},{name:"Schubkarre",fund:"In der Schubkarre liegt:"},{name:"Plan an der Wand",fund:"Hinter dem Plan steckt:"}],
 infoObjekte:[{name:"Wand mit Werkzeug",fund:"Hinter dem Werkzeug hängt:"},{name:"Turm aus Blöcken",fund:"Zwischen den Blöcken steckt:"},{name:"Kiste mit Blöcken",fund:"In der Kiste liegt:"}]},
-{titel:"Die Wiese mit Bienen",intro:"Ihr seid draußen auf einer Wiese. Bienen summen um die Blumen. Öffnet das Tor in der Hecke!",introDu:"Du bist draußen auf einer Wiese. Bienen summen um die Blumen. Öffne das Tor in der Hecke!",
+{titel:"Die Wiese mit Bienen",intro:"Ihr seid draußen auf einer Wiese. Bienen summen um die Blumen. Baut die Brücke!",introDu:"Du bist draußen auf einer Wiese. Bienen summen um die Blumen. Baue die Brücke!",
 objekte:[{name:"Haus für Bienen",fund:"Neben dem Bienenhaus liegt:"},{name:"Korb für Bienen",fund:"Unter dem Korb liegt:"},{name:"Gießkanne",fund:"In der Gießkanne liegt:"},{name:"Baum",fund:"Im Baum hängt:"},{name:"Haus für Vögel",fund:"Im Vogelhaus liegt:"}],
 infoObjekte:[{name:"Schild mit Blumen",fund:"Hinter dem Schild klebt:"},{name:"Töpfe mit Honig",fund:"Unter dem Honig liegt:"},{name:"Beet",fund:"Zwischen den Blumen steckt:"}]},
-{titel:"Der Turm über den Wolken",intro:"Ihr seid ganz oben im Turm. Unter euch sind die Wolken. Öffnet das letzte Schloss!",introDu:"Du bist ganz oben im Turm. Unter dir sind die Wolken. Öffne das letzte Schloss!",
+{titel:"Der Turm über den Wolken",intro:"Ihr seid ganz oben im Turm. Unter euch sind die Wolken. Löst das letzte Schloss, dann fliegt der Ballon los!",introDu:"Du bist ganz oben im Turm. Unter dir sind die Wolken. Löse das letzte Schloss, dann fliegt der Ballon los!",
 objekte:[{name:"Fernrohr",fund:"Im Fernrohr steckt:"},{name:"Windrad",fund:"Am Windrad hängt:"},{name:"Schatzkiste",fund:"In der Kiste liegt:"},{name:"Korb vom Ballon",fund:"Im Korb liegt:"},{name:"Karte mit Sternen",fund:"Hinter der Karte steckt:"}],
 infoObjekte:[{name:"Fahne",fund:"An der Fahne hängt:"},{name:"Uhr mit Sonne",fund:"Unter der Uhr liegt:"},{name:"Nest",fund:"Im Nest liegt:"}]}
 ]
@@ -155,8 +198,8 @@ infoObjekte:[{name:"Fahne",fund:"An der Fahne hängt:"},{name:"Uhr mit Sonne",fu
 welt:{w:1600,h:780},
 raeume:[
 {titel:"Das Blockhaus",
-intro:"Ein gemütliches Blockhaus, gebaut aus warmen Holzblöcken. Im Ofen knistert ein Feuer, durch die Fenster scheint die Sonne. Irgendwo hier sind die Ziffern für das erste Schloss versteckt …",
-tuerX:1250,
+intro:"Ein gemütliches Blockhaus, gebaut aus warmen Holzblöcken. Im Ofen knistert ein Feuer, durch die Fenster scheint die Sonne. Irgendwo hier sind die Ziffern für das erste Schloss versteckt. Es hält die Kellerluke mit der Leiter zu …",
+tuerX:1250,tuerArt:"luke",
 hintergrund:()=>`${defs('#ffd890',muster(40,['#c98a4c','#b8773a','#d49556']))}${R(0,0,1600,470,'url(#wm)')}${saeule(180,40,470,40,'#7a4420')}${saeule(1020,40,470,40,'#7a4420')}${reihe(0,40,'#6a3a1a')}${fenster(420,200,'#9fd8ff',wolke(372,170,8))}${fenster(1480,200,'#9fd8ff')}${reihe(430,40,'#8a5228')}${boden(['#8a5228','#9a6232','#7a4420'])}${lampe(300,100,'#e0566b')}${lampe(780,100,'#e0566b')}`,
 objekte:[
 {name:"Blockofen",x:300,boden:560,fuss:0,by:-170,zeichne:ofen,fund:"Neben dem Ofen liegt:"},
@@ -167,9 +210,9 @@ objekte:[
 ],
 infoObjekte:[{name:"Bild vom Blockberg",x:860,y:220,wand:true,by:-65,zeichne:bergbild,fund:"Hinter dem Bild klebt:"},{name:"Bücherstapel",x:150,boden:740,fuss:0,by:-100,zeichne:buecher,fund:"Im obersten Buch liegt:"},{name:"Wollkorb",x:1150,boden:740,fuss:0,by:-100,zeichne:wollkorb,fund:"Zwischen den Wollknäueln steckt:"}]},
 {titel:"Die Kristallhöhle",
-intro:"Ihr klettert hinab in eine Höhle aus dunklen Steinblöcken. An den Wänden leuchten Kristalle in Blau und Rosa. Findet die Ziffern für das nächste Schloss!",
-introDu:"Du kletterst hinab in eine Höhle aus dunklen Steinblöcken. An den Wänden leuchten Kristalle in Blau und Rosa. Finde die Ziffern für das nächste Schloss!",
-tuerX:300,
+intro:"Ihr klettert hinab in eine Höhle aus dunklen Steinblöcken. An den Wänden leuchten Kristalle in Blau und Rosa. Findet die Ziffern für das Schloss am Block-Portal!",
+introDu:"Du kletterst hinab in eine Höhle aus dunklen Steinblöcken. An den Wänden leuchten Kristalle in Blau und Rosa. Finde die Ziffern für das Schloss am Block-Portal!",
+tuerX:300,tuerArt:"portal",
 hintergrund:()=>`${defs('#7ff0ff',muster(48,['#3a3458','#2e2a48','#463e66']))}${R(0,0,1600,470,'url(#wm)')}${zapfen(150,4,'#2a2440')}${zapfen(640,3,'#2a2440')}${zapfen(1100,5,'#2a2440')}${zapfen(1480,3,'#2a2440')}<circle cx="600" cy="380" r="180" fill="url(#licht)"/><circle cx="1450" cy="360" r="160" fill="url(#licht)"/>${glitzer(560,410,'#59e0f0','#c8faff')}${glitzer(1420,410,'#e870d0','#ffc8f0')}${glitzer(40,410,'#7ae070','#d8ffd0')}${boden(['#3a3450','#2e2a42','#443c5c'])}`,
 objekte:[
 {name:"Kristallgruppe",x:700,boden:580,fuss:0,by:-110,zeichne:kristalle,fund:"Zwischen den Kristallen liegt:"},
@@ -181,7 +224,7 @@ objekte:[
 infoObjekte:[{name:"Höhlenbild",x:1250,y:240,wand:true,by:-65,zeichne:malerei,fund:"Neben dem Höhlenbild steckt:"},{name:"Grubenlampe",x:160,boden:740,fuss:0,by:-105,zeichne:grubenlampe,fund:"Unter der Grubenlampe liegt:"},{name:"Edelsteinkiste",x:1250,boden:520,fuss:0,by:-105,zeichne:edelsteinkiste,fund:"In der Edelsteinkiste liegt:"}]},
 {titel:"Die Bauwerkstatt",
 intro:"In der hellen Bauwerkstatt entstehen neue Häuser, Brücken und Türme. Ein kleiner Kran hebt bunte Blöcke, auf der Werkbank liegen Baupläne. Hier haben Baumeisterinnen und Baumeister ein Rätsel versteckt.",
-tuerX:800,
+tuerX:800,tuerArt:"kran",
 hintergrund:()=>`${defs('#fff3d0',muster(40,['#f2e2b8','#e8d4a0','#f8ecc8']))}${R(0,0,1600,470,'url(#wm)')}${reihe(0,40,'#3aa8a0')}${reihe(390,40,'#3aa8a0')}${reihe(430,40,'#2e8a84')}${fenster(1440,190,'#bfe8ff',wolke(1390,170,8))}<circle cx="1440" cy="300" r="260" fill="url(#licht)"/>${P('rybgr|g...b|byrgy|y...r|rgbyg',36,'r#e0566b y#ffd34a b#4a8ae8 g#3aa860',60,170,1)}${boden(['#b8bcc8','#a8acb8','#c8ccd8'])}${lampe(560,100,'#4a8ae8')}${lampe(1020,100,'#4a8ae8')}`,
 objekte:[
 {name:"Werkbank",x:350,boden:600,fuss:0,by:-105,zeichne:werkbank,fund:"Auf der Werkbank liegt:"},
@@ -192,9 +235,9 @@ objekte:[
 ],
 infoObjekte:[{name:"Werkzeugwand",x:1150,y:240,wand:true,by:-65,zeichne:werkzeugwand,fund:"Hinter dem Lineal hängt:"},{name:"Blockstapel",x:130,boden:720,fuss:0,by:-90,zeichne:blockstapel,fund:"Zwischen den Blöcken steckt:"},{name:"Klötzchenkiste",x:1500,boden:690,fuss:0,by:-85,zeichne:klotzkiste,fund:"In der Klötzchenkiste liegt:"}]},
 {titel:"Die Blumenwiese",
-intro:"Endlich draußen! Auf der Blumenwiese summen Bienen von Blüte zu Blüte. Eine hohe Hecke aus Blätterblöcken versperrt den Weg – nur ein Tor führt hindurch. Öffnet es!",
-introDu:"Endlich draußen! Auf der Blumenwiese summen Bienen von Blüte zu Blüte. Eine hohe Hecke aus Blätterblöcken versperrt den Weg – nur ein Tor führt hindurch. Öffne es!",
-tuerX:1350,
+intro:"Endlich draußen! Auf der Blumenwiese summen Bienen von Blüte zu Blüte. Hinter der Hecke ist eine tiefe Schlucht. Die Brücke aus Blöcken fehlt noch – das Schloss baut sie. Öffnet es!",
+introDu:"Endlich draußen! Auf der Blumenwiese summen Bienen von Blüte zu Blüte. Hinter der Hecke ist eine tiefe Schlucht. Die Brücke aus Blöcken fehlt noch – das Schloss baut sie. Öffne es!",
+tuerX:1350,tuerArt:"bruecke",
 hintergrund:()=>`${defs('#fff8c0',muster(30,['#3a9a50','#2e8a44','#46a85c']),'#4aa8f0','#d8f4ff')}${R(0,0,1600,470,'url(#himmel)')}${P('.yy.|yyyy|yyyy|.yy.',22,'y#ffe066',140,40,1)}<circle cx="184" cy="84" r="120" fill="url(#licht)"/>${wolke(480,70)}${wolke(980,110)}${wolke(1380,50,12)}${P('......hh..........hhh.......|...hhhhhhh.....hhhhhhhh.....|hhhhhhhhhhhhhhhhhhhhhhhhhhhh',58,'h#8ac8a0',0,74)}${R(0,250,1600,220,'url(#wm)')}${[90,420,560,1000,1120,1560].map((x,k)=>P('.r.|rwr|.r.',8,'r'+['#e0566b','#ffd34a','#a07cf0'][k%3]+' w#ffffff',x,300+(k%2)*80)).join('')}${boden(['#7ac860','#6ab850','#8ad070'],[180,520,880,1180,1460].map((x,k)=>P('.y.|ywy|.g.',6,'y'+['#ffd34a','#e0566b','#ffffff'][k%3]+' w#ff9a3a g#3a8a40',x,600+(k%3)*50)).join(''))}`,
 objekte:[
 {name:"Bienenstock",x:300,boden:580,fuss:0,by:-135,zeichne:bienenstock,fund:"Neben dem Bienenstock liegt:"},
@@ -205,9 +248,9 @@ objekte:[
 ],
 infoObjekte:[{name:"Blumenschild",x:250,y:290,wand:true,by:-65,zeichne:blumenschild,fund:"Hinter dem Blumenschild klebt:"},{name:"Honigtöpfe",x:820,boden:640,fuss:0,by:-95,zeichne:honig,fund:"Unter einem Honigtopf liegt:"},{name:"Blumenbeet",x:130,boden:740,fuss:0,by:-100,zeichne:blumenbeet,fund:"Zwischen den Blumen steckt:"}]},
 {titel:"Der Turm über den Wolken",
-intro:"Eine lange Treppe aus Blöcken führt hinauf in den Turm über den Wolken. Durch die großen Öffnungen seht ihr weit über das Wolkenmeer. Hier wartet das letzte Schloss – öffnet es!",
-introDu:"Eine lange Treppe aus Blöcken führt hinauf in den Turm über den Wolken. Durch die großen Öffnungen siehst du weit über das Wolkenmeer. Hier wartet das letzte Schloss – öffne es!",
-tuerX:550,
+intro:"Eine lange Treppe aus Blöcken führt hinauf in den Turm über den Wolken. Durch die großen Öffnungen seht ihr weit über das Wolkenmeer. Hier wartet der Ballon. Das letzte Schloss hält ihn fest – öffnet es!",
+introDu:"Eine lange Treppe aus Blöcken führt hinauf in den Turm über den Wolken. Durch die großen Öffnungen siehst du weit über das Wolkenmeer. Hier wartet der Ballon. Das letzte Schloss hält ihn fest – öffne es!",
+tuerX:550,tuerArt:"ballon",
 hintergrund:()=>`${defs('#fff6d0',muster(44,['#d8d0e8','#c8bedc','#e4dcf0']),'#3a8ae8','#ffe8f0')}${R(0,0,1600,470,'url(#wm)')}${bogen(850)}${bogen(1400)}${reihe(0,44,'#8a7ab8')}${reihe(426,44,'#a898cc')}<circle cx="1100" cy="300" r="320" fill="url(#licht)"/>${boden(['#e8e0f0','#d8d0e8','#f4eef8'])}`,
 objekte:[
 {name:"Fernrohr",x:1000,boden:580,fuss:0,by:-130,zeichne:fernrohr,fund:"Im Fernrohr steckt:"},
@@ -220,11 +263,11 @@ infoObjekte:[{name:"Turmfahne",x:250,y:240,wand:true,by:-65,zeichne:turmfahne,fu
 ],
 tuer,
 vignette:`<rect width="1000" height="600" fill="url(#vig)" pointer-events="none"/>`,
-ausgang:()=>`<defs><linearGradient id="himmel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5ab4f0"/><stop offset=".8" stop-color="#e8f8ff"/></linearGradient></defs>
-   <rect width="1000" height="600" fill="url(#himmel)"/>${P('.yy.|yyyy|yyyy|.yy.',24,'y#ffe066',560,150,1)}${wolke(240,90)}${wolke(520,150,12)}
-   ${P('..........gggg........|.....gggggggggggg.....|gggggggggggggggggggggg|hhhhhhhhhhhhhhhhhhhhhh|hhhhhhhhhhhhhhhhhhhhhh|hhhhhhhhhhhhhhhhhhhhhh',50,'g#7ac860 h#5aa848',-50,360)}
-   ${P('...ss...|..ssss..|.ssssss.',40,'s#e8d8b0',340,480)}
-   ${[[260,430],[760,420]].map(([x,y])=>`<g transform="translate(${x} ${y}) scale(.8)">${P('.gggg.|gglggg|gggggl|.gggg.|..tt..|..tt..',18,'g#3aa860 l#7ad870 t#8a5228')}</g>`).join('')}
+ausgang:()=>`<defs><linearGradient id="himmelX" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4aa8f0"/><stop offset=".75" stop-color="#ffe8c8"/></linearGradient></defs>
+   <rect width="1000" height="600" fill="url(#himmelX)"/>${P('.yy.|yyyy|yyyy|.yy.',20,'y#ffe066',630,190,1)}${wolke(120,110,12)}${wolke(520,60,10)}
+   ${P('...rrrr...|..rryyrr..|.rryyyyrr.|.rrrrrrrr.|.rryyyyrr.|..rryyrr..|...rrrr...|...k..k...|...k..k...|...k..k...|...bbbb...|...bbbb...',6,'r#4a8ae8 y#ffffff k#555566 b#c08a44',690,300)}
+   ${P('...rrrr...|..rryyrr..|.rryyyyrr.|.rrrrrrrr.|.rryyyyrr.|..rryyrr..|...rrrr...|...k..k...|...k..k...|...k..k...|...bbbb...|...bbbb...',22,'r#e0566b y#ffd34a k#555566 b#c08a44',330,120)}
+   ${R(0,470,1000,130,'#f4f8ff')}${wolke(-20,430,22)}${wolke(260,450,18)}${wolke(560,420,24)}${wolke(840,448,16)}${wolke(120,520,20)}${wolke(520,530,22)}
    <path d="M0 0H1000V600H0Z M180 600V240H220V180H280V130H360V100H640V130H720V180H780V240H820V600Z" fill="#2a2440" fill-rule="evenodd"/>`
 };
 })();
