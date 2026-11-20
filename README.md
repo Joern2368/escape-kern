@@ -2,7 +2,7 @@
 
 Spieldateien für Escape Games, die in einer kleinen HTML-Datei per `<script src>` geladen werden.
 
-- `v1/`: Engine (`engine.js`), Design (`spiel.css`) und 17 Szenarien (`szenario-<kennwort>.js`)
+- `v1/`: Engine (`engine.js`), Design (`spiel.css`) und 18 Szenarien (`szenario-<kennwort>.js`)
 - `fonts/`: Schrift Andika
 - Wurzel (`zirkus.css`, `zirkus-szenario.js`, `engine.js`): erster Test mit dem Zirkus
 
