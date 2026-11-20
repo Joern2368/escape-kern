@@ -21,7 +21,6 @@ function bild(w,h,innen){return`${R(-w/2-14,-h/2-14,w+28,h+28,'#d8a73a','#8a6420
 const LAND=`${R(0,0,100,100,'#9fd0ec')}${C(76,24,10,'#fff0a0')}${P('M0 70Q30 40 60 62T100 54V100H0Z','#6aa04a')}${P('M0 84Q40 66 100 80V100H0Z','#3f7a3a')}${R(22,52,4,20,'#6b4a24')}${C(24,48,10,'#2f6a3a')}`;
 const OBST=`${R(0,0,100,100,'#3a2a3a')}${R(0,70,100,30,'#6b4a24')}${P('M20 72Q50 90 80 72Z','#c9b07a')}${C(40,64,10,'#c83a2a')}${C(58,62,10,'#e8b830')}${C(50,52,9,'#6aa04a')}`;
 const KOPF=`${R(0,0,100,100,'#2f4a5a')}${P('M15 100Q15 64 50 60Q85 64 85 100Z','#6a3a2a')}${C(50,40,18,'#e8c0a0')}${P('M32 38Q32 16 50 16Q68 16 68 38Q60 24 50 26Q40 24 32 38Z','#4a2a14')}`;
-function gitter(x0,x1){let d='';for(let x=x0;x<=x1;x+=28)d+=`M${x} 70V470`;return`${R(x0-10,60,x1-x0+20,14,'#3a4046')}${P(d,0,'#2a3036',8)}${P(`M${x0} 180H${x1}M${x0} 340H${x1}`,0,'#3a4046',10)}`;}
 function vitrinenglas(x,y,w,h){return`${R(x,y,w,h,'#cfe8ef','#8aa8b0',3)}<path d="M${x+8} ${y+h-10}L${x+w/2} ${y+8}" stroke="#fff" stroke-width="4" opacity=".6"/>`;}
 const kasse=()=>`${S(66)}${R(-62,-74,124,72,'#8a5a32','#3a2010',3)}${R(-68,-82,136,10,'#5a3418','#3a2010',2)}${R(-50,-60,100,24,'#a0703e')}<text x="0" y="-42" font-size="15" font-weight="bold" text-anchor="middle" fill="#f4ecd8" font-family="Arial,sans-serif">KASSE</text>${R(-34,-118,54,36,'#4a5a6a','#222',2,4)}${R(-28,-112,32,10,'#9fe0a0')}${[0,1,2].map(k=>C(-24+k*10,-94,3,'#ddd')).join('')}${R(8,-130,10,14,'#fff','#999',1)}${P('M30 -82L42 -96L54 -82Z','#d8a73a','#8a6420',2)}`;
 const garderobe=()=>`${S(40)}${P('M-28 0L0 -12L28 0',0,'#5a3418',6)}${P('M0 -8V-172',0,'#5a3418',7)}${C(0,-176,7,'#5a3418')}${P('M0 -162L-24 -150M0 -162L24 -150',0,'#5a3418',5)}${P('M-24 -152Q-40 -110 -36 -66H-8Q-6 -110 -16 -152Z','#3f6aa0','#1f3a60',2)}${P('M-30 -120L-14 -118',0,'#1f3a60',2)}<ellipse cx="25" cy="-146" rx="17" ry="4" fill="#a33b22"/>${P('M14 -146Q14 -164 25 -164Q36 -164 36 -146Z','#a33b22','#6a1a1a',2)}${P('M18 -140Q14 -110 22 -92',0,'#e8c45a',6)}`;
@@ -47,12 +46,15 @@ const palette=()=>`${S(42)}${P('M-28 0L-22 -50M28 0L22 -50',0,'#6b4a24',6)}${R(-
 const eimer=(x,y,f)=>`${P(`M${x-24} ${y-46}L${x-20} ${y}H${x+20}L${x+24} ${y-46}Z`,'#c9ccce','#5a646c',2)}${P(`M${x-24} ${y-46}H${x+24}V${y-38}Q${x+12} ${y-30} ${x+6} ${y-38}Q${x-6} ${y-24} ${x-12} ${y-38}H${x-24}Z`,f)}${P(`M${x-22} ${y-44}Q${x} ${y-74} ${x+22} ${y-44}`,0,'#5a646c',2)}`;
 const farbeimer=()=>`${S(54)}${eimer(-24,0,'#2a6aa0')}${eimer(28,0,'#c83a2a')}${eimer(2,-48,'#e8b830')}`;
 const pinnwand=()=>`${R(-82,-58,164,116,'#c9955a','#6b4a1c',5)}${[[-48,-18,-6,'#f8f4ea'],[0,-16,5,'#fff6c0'],[48,-14,-3,'#f8f4ea'],[-20,26,4,'#e8f0f8'],[34,28,-5,'#f8f4ea']].map(([x,y,w,f],k)=>`<g transform="rotate(${w} ${x} ${y})">${R(x-22,y-24,44,46,f,'#b8a888',1)}${k%2?C(x,y,10,'none','#8a7a5a',2):P(`M${x-14} ${y+10}Q${x} ${y-20} ${x+14} ${y+10}`,0,'#8a7a5a',2)}${C(x,y-22,4,'#c83a2a')}</g>`).join('')}`;
-const krone=()=>`${S(42)}${sockel(60,70,'#4a4f58','#1e2228')}${P('M-36 -82Q-40 -100 -20 -98H20Q40 -100 36 -82Z','#a32a4a','#5a1020',2)}${P('M-24 -98V-134L-12 -116L0 -140L12 -116L24 -134V-98Z','#e8c03a','#8a6420',2)}${C(0,-108,5,'#2a6aa0')}${C(-14,-106,4,'#c83a2a')}${C(14,-106,4,'#3f8a4a')}${C(0,-142,4,'#f0d060')}`;
-const truhe=()=>`${S(72)}${P('M-60 -62L-56 -116Q0 -138 56 -116L60 -62Z','#6b3a1c','#3a2010',3)}${P('M-56 -62L-40 -80L-20 -72L0 -86L20 -74L44 -82L56 -62Z','#e8c03a','#8a6420',2)}${C(-30,-78,5,'#f0d060')}${C(22,-80,5,'#f0d060')}${C(-4,-90,4,'#c83a2a')}${R(-64,-64,128,62,'#7a4a24','#3a2010',3)}${P('M-40 -2V-64M40 -2V-64',0,'#b8862a',6)}${R(-10,-48,20,18,'#d8a73a','#6b4a1c',2)}`;
-const barren=(x,y)=>P(`M${x-24} ${y}L${x-18} ${y-16}H${x+18}L${x+24} ${y}Z`,'#e8c03a','#8a6420',2);
-const goldbarren=()=>`${S(60)}${R(-60,-12,120,10,'#5a3418')}${[-48,0,48].map(x=>barren(x,-12)).join('')}${[-24,24].map(x=>barren(x,-28)).join('')}${barren(0,-44)}${P('M-10 -40H6',0,'#fff6c0',3)}`;
-const edelstein=()=>`${S(40)}${sockel(56,70,'#4a4f58','#1e2228')}${P('M-20 -112L-10 -124H10L20 -112L0 -86Z','#3ab0c8','#1a5a6a',2)}${P('M-20 -112H20M-10 -124L-4 -112L0 -86M10 -124L4 -112',0,'#1a5a6a',1.5)}${P('M-30 -82V-138Q-30 -166 0 -166Q30 -166 30 -138V-82Z','#cfe8ef','#8aa8b0',3)}`.split('#cfe8ef').join('rgba(207,232,239,.35)');
-const muenzen=()=>`${R(-82,-58,164,116,'#2a2e36','#9aa2aa',5)}${R(-72,-48,144,96,'#3a2a3a')}${[0,1,2].map(r=>[0,1,2,3,4].map(c=>`${C(-56+c*28,-28+r*28,10,(r+c)%3?'#e8c03a':'#c9ccce','#6a5a3a',2)}${C(-56+c*28,-28+r*28,5,'none','#8a6420',1)}`).join('')).join('')}${P('M-70 40L-30 -46',0,'#fff',4)}`;
+const schornstein=()=>`${S(46)}${R(-34,-170,68,168,'#a8553a','#5a2a1a',3)}${P('M-34 -130H34M-34 -90H34M-34 -50H34M-12 -170V-130M12 -130V-90M-12 -90V-50M12 -50V-8',0,'#5a2a1a',2)}${R(-42,-190,84,22,'#8a8a90','#4a4a52',3)}${R(-24,-210,16,22,'#c0704a','#5a2a1a',2)}${R(8,-210,16,22,'#c0704a','#5a2a1a',2)}`;
+const wetterfahne=()=>`${S(22)}${R(-12,-10,24,10,'#4a4a52','#22222a',2)}${P('M0 -10V-230',0,'#3a3a42',6)}${P('M-26 -150H26M0 -170V-130',0,'#3a3a42',4)}${C(0,-232,7,'#d8a73a','#8a6420',2)}${P('M-50 -200H22V-212L50 -196L22 -180V-192H-50Z','#c9a03a','#6a4a1a',2)}`;
+const regentonne=()=>`${S(54)}${R(-44,-92,88,92,'#7a5230','#3a2410',3,10)}${P('M-14 -92V0M14 -92V0',0,'#3a2410',3)}${P('M-44 -66H44M-44 -26H44',0,'#3a3a40',5)}<ellipse cx="0" cy="-92" rx="42" ry="10" fill="#7fc0e0" stroke="#3a2410" stroke-width="3"/>`;
+const taubenschlag=()=>`${S(36)}${R(-6,-96,12,96,'#6a4a24','#3a2410',2)}${R(-48,-176,96,84,'#e8d8b8','#7a5a2a',3)}${P('M-58 -174L0 -222L58 -174Z','#a0402a','#5a1a0a',3)}${C(-16,-136,10,'#2a1a10')}${C(16,-136,10,'#2a1a10')}${R(-24,-122,16,4,'#7a5a2a')}${R(8,-122,16,4,'#7a5a2a')}<ellipse cx="-34" cy="-186" rx="13" ry="8" fill="#b8bcc8" stroke="#6a6a72" stroke-width="2"/>${C(-24,-194,5,'#b8bcc8','#6a6a72',2)}`;
+const turmuhr=()=>`${C(0,0,52,'#f4ecd8','#5a3a1c',7)}${P('M0 -42V-34M0 42V34M-42 0H-34M42 0H34',0,'#333',3)}${P('M0 0V-30',0,'#222',4)}${P('M0 0L22 14',0,'#222',4)}${C(0,0,4,'#222')}`;
+const bronzetafel=()=>`${R(-54,-68,108,136,'#b8864a','#6a4a1a',5,6)}${C(0,-38,16,'#d8a860','#6a4a1a',3)}${P('M0 -48V-28M-10 -38H10',0,'#6a4a1a',3)}${P('M-40 -8H40M-40 6H34M-40 20H40M-40 34H28M-40 48H38',0,'#6a4a1a',3)}${[[-46,-60],[46,-60],[-46,60],[46,60]].map(([x,y])=>C(x,y,3,'#6a4a1a')).join('')}`;
+const stadtfernrohr=()=>`${S(46)}${P('M0 -84L-34 0M0 -84L34 0M0 -84V-4',0,'#5a5a62',6)}${P('M-44 -126L38 -104',0,'#3a4a8a',24)}${P('M-44 -126L38 -104',0,'#5a6ab0',16)}${C(42,-103,13,'#9fd8ff','#222',3)}${R(-22,-96,10,16,'#8a8a92','#333',2)}`;
+const dachbeet=()=>`${S(70)}${R(-70,-40,140,40,'#8a5a32','#3a2010',3)}${R(-64,-52,128,14,'#4a3220','#2a1a10',2)}${[[-48,'#e0566b'],[-20,'#ffd34a'],[8,'#e87ab0'],[36,'#a07cf0']].map(([x,f],k)=>P(`M${x} -52V${-84-k*6}`,0,'#3f8a4a',4)+C(x,-88-k*6,11,f,'#6a3a3a',2)+C(x,-88-k*6,4,'#fff3b0')).join('')}`;
+function ziegel(x0,x1,y0,y1,h,w,f){let d='';for(let y=y0,r=0;y<y1;y+=h,r++){d+=`M${x0} ${y}H${x1}`;for(let x=x0+(r%2)*w/2;x<x1;x+=w)d+=`M${x} ${y}V${Math.min(y+h,y1)}`;}return P(d,0,f,2);}
 const infotafel=()=>`${R(-58,-72,116,144,'#f4f0e6','#3a4a5a',4,6)}${C(-30,-44,14,'#2a6aa0')}${R(-32,-42,4,13,'#fff')}${C(-30,-50,2.6,'#fff')}${P('M-8 -48H40M-8 -38H30M-42 -14H42M-42 -2H38M-42 10H42M-42 22H24',0,'#8a8a8a',3)}${R(-42,34,84,26,'#c8d8c0','#8a8a8a',1)}`;
 const vitrine=()=>`${S(46)}${R(-40,-70,80,68,'#5a3418','#2a1608',3)}${R(-44,-78,88,10,'#6b4a24','#2a1608',2)}${P('M-10 -80Q-20 -100 -8 -118H8Q20 -100 10 -80Z','#c86a3a','#6a2a14',2)}${P('M-14 -100H14',0,'#2a1a10',2)}${vitrinenglas(-40,-150,80,72)}`.split('#cfe8ef').join('rgba(207,232,239,.3)');
 const bank=()=>`${S(68)}${P('M-56 0V-32M56 0V-32',0,'#333',6)}${R(-68,-44,136,16,'#3a5a8a','#1a2a4a',3,6)}${P('M-58 -36H58',0,'#5a7aaa',2)}`;
@@ -65,22 +67,45 @@ const katalog=()=>`${S(44)}${P('M-34 -2V-42M34 -2V-42',0,'#3a2010',5)}${R(-44,-5
 const anleitung=()=>`${R(-50,-66,100,132,'#a0703e','#4a2a12',3,6)}${R(-40,-54,80,112,'#fff','#b8a888',1)}${R(-18,-72,36,14,'#8a969e','#4a5258',2,3)}${[-34,-12,10,32].map(y=>C(-28,y,5,'none','#3f8a4a',2)+P(`M-16 ${y}H32`,0,'#8a8a8a',3)).join('')}`;
 const regal=()=>`${S(56)}${R(-52,-150,104,148,'#8a5a2a','#3a2010',3)}${P('M-48 -78H48',0,'#3a2010',4)}${[-80,-6].map(b=>[0,1,2,3,4,5].map(k=>{const h=40-(k%3)*5;return R(-44+k*15,b-h,12,h,['#c83a2a','#2a6aa0','#e8b830','#3f8a4a','#8a4a8a','#d86a3a'][k],'#222',1);}).join('')).join('')}`;
 const fundkiste=()=>`${S(56)}${P('M-20 -60L-14 -92H8L14 -60Z','#c86a3a','#6a2a14',2)}${C(28,-64,10,'#d8a73a','#8a6420',2)}${P('M-48 -54Q-30 -70 -12 -58Q2 -68 18 -58Q34 -70 48 -54Z','#e8d080','#a8864a',2)}${R(-52,-56,104,54,'#b8864a','#5a3418',3)}${P('M-52 -38H52M-52 -20H52',0,'#5a3418',2)}`;
-const liste=()=>`${R(-56,-70,112,140,'#c9ccce','#4a5258',4,4)}${[[-46,-60],[46,-60],[-46,60],[46,60]].map(([x,y])=>C(x,y,3,'#4a5258')).join('')}<use href="#sym-muenze" x="-16" y="-60" width="32" height="32" color="#8a6420"/>${P('M-40 -14H40M-40 0H34M-40 14H40M-40 28H30M-40 42H40',0,'#4a5258',3)}`;
-const tresor=()=>`${S(50)}${R(-40,-8,14,8,'#22282e')}${R(26,-8,14,8,'#22282e')}${R(-46,-106,92,100,'#6a747c','#22282e',4,6)}${R(-36,-96,72,80,'#7a848c','#22282e',2,4)}${C(0,-56,18,'#a8b0b8','#22282e',3)}${P('M0 -56L10 -66M-26 -56H-18M18 -56H26',0,'#22282e',3)}`;
-const kontrolle=()=>`${S(60)}${R(-56,-60,112,58,'#3a4046','#16191c',3)}${P('M-60 -60L-50 -76H50L60 -60Z','#5a646c','#16191c',2)}${[[-40,'#c83a2a'],[-26,'#3f8a4a'],[-12,'#e8b830']].map(([x,f])=>C(x,-68,4,f)).join('')}${R(-2,-128,58,46,'#22282e','#111',3,4)}${R(4,-122,46,32,'#3ab0c8')}${P('M27 -82V-76',0,'#111',5)}`;
 const B=(name,x,boden,by,zeichne,fund)=>({name,x,boden,fuss:4,by,zeichne,fund});
 const W=(name,x,y,by,zeichne,fund)=>({name,x,y,wand:true,by,zeichne,fund});
+const sPl=(n,y)=>{let d='';const x0=500-(n-1)*11;for(let k=0;k<n;k++)d+=`<circle cx="${x0+k*22}" cy="${y}" r="8" fill="#14201c" stroke="#d8a73a" stroke-width="2"/>`;return`<rect x="${500-n*11-12}" y="${y-18}" width="${n*22+24}" height="36" rx="6" fill="#14201c" stroke="#d8a73a" stroke-width="2"/>${d}`;};
+const TSTIL=`<style>.tuer .tb{transition:transform 1.8s ease-in-out,opacity 1.8s ease-in-out}.tuer.offen #rg{transform:scaleY(.1)}.tuer.offen #sg{transform:scaleX(.12)}.tuer.offen #gm{transform:scaleX(.16)}.tuer.offen #et{transform:scaleX(.14)}.tuer.offen #ku{transform:rotate(-80deg)}</style>`;
+function tuerGitter(n){
+let s='';for(let k=0;k<20;k++)s+=R(410,196+k*14,180,10,k%2?'#8a949c':'#a8b0b8','#4a5258',1);
+return`<path d="M380 470V152H620V470Z" fill="#d8d0c0" stroke="#5a5248" stroke-width="5"/><path d="M364 154L500 96L636 154Z" fill="#ece6da" stroke="#5a5248" stroke-width="5"/>
+   <rect x="410" y="182" width="180" height="288" fill="#1e2a24"/><circle cx="500" cy="400" r="110" fill="url(#licht)"/>${P('M430 470Q440 380 500 360Q560 380 570 470',0,'#9a9684',10)}
+   <g id="rg" class="tb" style="transform-origin:500px 196px">${s}${sPl(n,330)}</g>
+   <rect x="396" y="168" width="208" height="28" rx="4" fill="#5a646c" stroke="#22282e" stroke-width="3"/>`;
+}
+function tuerLift(n){
+let g='';for(let k=0;k<6;k++){const y=190+k*46.7,z=y+46.7;g+=`M410 ${y}L455 ${z}L500 ${y}L545 ${z}L590 ${y}M410 ${z}L455 ${y}L500 ${z}L545 ${y}L590 ${z}`;}
+return`<path d="M388 470V160H612V470Z" fill="#5a5a62" stroke="#22222a" stroke-width="5"/>
+   <rect x="410" y="190" width="180" height="280" fill="#d8b070"/><path d="M410 330H590M410 400H590" stroke="#a8803c" stroke-width="3"/><rect x="410" y="300" width="180" height="8" fill="#8a5a2a"/><circle cx="500" cy="300" r="120" fill="url(#licht)"/><rect x="410" y="462" width="180" height="8" fill="#6a4a24"/>
+   <g id="sg" class="tb" style="transform-origin:410px 330px"><path d="${g}" fill="none" stroke="#3a3a42" stroke-width="5"/>${sPl(n,330)}</g>
+   <rect x="396" y="160" width="208" height="30" fill="#44444c" stroke="#22222a" stroke-width="3"/><circle cx="500" cy="175" r="6" fill="#e8c03a"/>`;
+}
+function tuerBild(n){
+return`<rect x="411" y="201" width="178" height="258" fill="#0e0a10"/><circle cx="500" cy="330" r="110" fill="url(#licht)"/><path d="M420 459L470 380H530L580 459M470 380V240M530 380V240" stroke="#3a2a3a" stroke-width="3" fill="none"/>
+   <g id="gm" class="tb" style="transform-origin:411px 330px"><g transform="translate(500 330)">${bild(150,230,KOPF)}</g>${sPl(n,425)}</g>`;
+}
+function tuerEisen(n){
+const op='M410 470V230Q410 190 450 190H550Q590 190 590 230V470Z';
+let st='';for(let k=0;k<7;k++)st+=R(424+k*18,440-k*34,84,12,'#8a8a92','#4a4a52',2);
+return`<path d="M376 470V230Q376 146 500 146Q624 146 624 230V470Z" fill="#9a9a94" stroke="#3a3a36" stroke-width="5"/><path d="M376 330H410M590 330H624M420 150L430 190M580 150L570 190" stroke="#6a6a64" stroke-width="3" fill="none"/>
+   <path d="${op}" fill="#14181c"/><circle cx="540" cy="240" r="80" fill="url(#licht)"/>${st}
+   <g id="et" class="tb" style="transform-origin:410px 330px"><path d="${op}" fill="#3a4650" stroke="#1a2228" stroke-width="4"/><path d="M440 190V470M470 190V470M500 190V470M530 190V470M560 190V470" stroke="#2a343c" stroke-width="3"/><rect x="410" y="250" width="180" height="12" fill="#22282e"/><rect x="410" y="420" width="180" height="12" fill="#22282e"/>${[0,1,2,3].map(k=>C(424+k*50,256,3,'#8a949c')+C(424+k*50,426,3,'#8a949c')).join('')}${sPl(n,330)}</g>`;
+}
+function tuerKuppel(n){
+return`<ellipse cx="500" cy="520" rx="116" ry="30" fill="#8a8a92" stroke="#4a4a52" stroke-width="4"/>
+   <ellipse cx="500" cy="520" rx="98" ry="24" fill="#0e1218"/><path d="M458 522V548M542 522V548M458 530H542M458 538H542M458 546H542" stroke="#c0904a" stroke-width="6"/>
+   <g id="ku" class="tb" style="transform-origin:392px 520px"><path d="M388 520A112 104 0 0 1 612 520Z" fill="rgba(170,215,240,.55)" stroke="#5a7a8a" stroke-width="5"/><path d="M500 416V520M444 436Q448 480 440 520M556 436Q552 480 560 520" stroke="#5a7a8a" stroke-width="4" fill="none"/><path d="M420 450Q450 430 478 428" stroke="#fff" stroke-width="5" opacity=".6" fill="none"/>${sPl(n,478)}</g>`;
+}
 function tuer(n,bereit,def){
-const dx=((def&&def.tuerX)||500)-500;
-let d='';const x0=500-(n-1)*11;for(let k=0;k<n;k++)d+=`<circle cx="${x0+k*22}" cy="330" r="8" fill="#14201c" stroke="#d8a73a" stroke-width="2"/>`;
-const off='M410 470V182H590V470Z';
-return`<defs><clipPath id="tuerclip"><path d="${off}"/></clipPath><linearGradient id="platteG" x1="0" x2="1"><stop offset="0" stop-color="#26403a"/><stop offset=".5" stop-color="#3f645a"/><stop offset="1" stop-color="#22382f"/></linearGradient></defs>
-  <g transform="translate(${dx} 0)"><g class="tuer${bereit?' bereit':''}" role="button" tabindex="0" aria-label="Tür mit Zahlenschloss">
-   <path d="M380 470V152H620V470Z" fill="#d8d0c0" stroke="#5a5248" stroke-width="5"/><path d="M364 154L500 96L636 154Z" fill="#ece6da" stroke="#5a5248" stroke-width="5"/>
-   <path d="${off}" fill="#0a0806"/>
-   <g clip-path="url(#tuerclip)"><g id="platte"><path d="${off}" fill="url(#platteG)"/><path d="M500 182V470" stroke="#14201c" stroke-width="4"/><rect x="424" y="376" width="62" height="80" rx="4" fill="none" stroke="#b8862a" stroke-width="3"/><rect x="514" y="376" width="62" height="80" rx="4" fill="none" stroke="#b8862a" stroke-width="3"/><circle cx="500" cy="248" r="34" fill="#22382f" stroke="#d8a73a" stroke-width="3"/><use href="#sym-rahmen" x="474" y="222" width="52" height="52" color="#d8a73a"/><rect x="${500-n*11-12}" y="312" width="${n*22+24}" height="36" rx="6" fill="#14201c" stroke="#d8a73a" stroke-width="2"/>${d}</g></g>
-   <circle cx="500" cy="134" r="8" fill="#d8a73a" stroke="#6b4a1c" stroke-width="2"/>
-  </g></g>`;
+const dx=((def&&def.tuerX)||500)-500,art=(def&&def.tuerArt)||'gitter';
+const arten={gitter:[tuerGitter,'Rollgitter mit Zahlenschloss'],lift:[tuerLift,'Lastenaufzug mit Zahlenschloss'],bild:[tuerBild,'Geheimtür hinter dem Bild mit Zahlenschloss'],eisen:[tuerEisen,'Eisentür mit Zahlenschloss'],kuppel:[tuerKuppel,'Glaskuppel mit Zahlenschloss']};
+const a=arten[art]||arten.gitter;
+return`${TSTIL}<g transform="translate(${dx} 0)"><g class="tuer${bereit?' bereit':''}" role="button" tabindex="0" aria-label="${a[1]}">${a[0](n)}</g></g>`;
 }
 SZENARIEN.museum={
 name:"Das Museum",
@@ -88,7 +113,7 @@ symbole:["knochen","pinsel","rahmen","muenze","lupe"],
 symbolNamen:["Knochen","Pinsel","Bilderrahmen","Münze","Lupe"],
 emblem:`<svg viewBox="0 0 120 90" width="120" height="90" aria-hidden="true"><path d="M8 30L60 6L112 30Z" fill="#ece6da" stroke="#5a5248" stroke-width="3"/><rect x="12" y="30" width="96" height="8" fill="#d8d0c0" stroke="#5a5248" stroke-width="2"/>${[22,42,70,90].map(x=>`<rect x="${x}" y="38" width="8" height="38" fill="#ece6da" stroke="#5a5248" stroke-width="2"/>`).join('')}<rect x="6" y="76" width="108" height="8" fill="#d8d0c0" stroke="#5a5248" stroke-width="2"/><use href="#sym-knochen" x="46" y="42" width="28" height="28" color="#a33b22"/></svg>`,
 texte:{
-einleitung:"Ihr besucht das große Museum der Stadt – mit Dinosauriern, Gemälden und echten Schätzen. Ihr schaut euch so lange um, dass ihr die Durchsage überhört: Das Museum schließt! Alle Türen sind verriegelt. Doch die Museumsleiterin hat ein Rätselspiel für euch versteckt: Jede Tür hat ein Zahlenschloss. Untersucht die Ausstellungsstücke. Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Findet ihr den Weg hinaus?",
+einleitung:"Ihr besucht das große Museum der Stadt – mit Dinosauriern, Gemälden und alten Funden. Ihr schaut euch so lange um, dass ihr die Durchsage überhört: Das Museum schließt! Alle Ausgänge sind verriegelt. Doch die Museumsleiterin hat ein Rätselspiel für euch versteckt: Jeder Durchgang hat ein Zahlenschloss. Untersucht die Ausstellungsstücke. Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Findet ihr den Weg hinaus?",
 startKnopf:"Das Museum betreten",
 hinweisGeber:"Der Museumswächter flüstert:",
 richtig:"Richtig gelöst!",
@@ -96,18 +121,18 @@ falsch:["Das stimmt leider noch nicht. Versucht es noch einmal!","Der Museumswä
 schlossTitel:"Das Zahlenschloss des Museums",
 schlossSymbol:"Über jedem Rad ist ein Zeichen eingraviert. Stellt unter jedem Zeichen die Ziffer ein, die ihr dafür gefunden habt.",
 schlossStelle:"Stellt jede gefundene Ziffer an der richtigen Stelle ein.",
-schlossFalsch:"Das Schloss klickt – aber die Tür bleibt zu. Überprüft eure Ziffern!",
+schlossFalsch:"Das Schloss klickt – aber der Weg bleibt zu. Überprüft eure Ziffern!",
 zeitUmTitel:"Die Nacht ist vorbei!",
 zeitUm:"Eure Zeit ist abgelaufen. Aber gebt nicht auf – ihr dürft weiterspielen und den Ausgang trotzdem noch finden!",
 geschafft:"Ihr seid frei!",
 abschluss:"Geschafft! Ihr habt alle Rätsel zum Thema <b>{titel}</b> gelöst und den Weg aus dem Museum gefunden. Die Museumsleiterin ist stolz auf euch!"
 },
 texteDu:{
-einleitung:"Du besuchst das große Museum der Stadt – mit Dinosauriern, Gemälden und echten Schätzen. Du schaust dich so lange um, dass du die Durchsage überhörst: Das Museum schließt! Alle Türen sind verriegelt. Doch die Museumsleiterin hat ein Rätselspiel für dich versteckt: Jede Tür hat ein Zahlenschloss. Untersuche die Ausstellungsstücke. Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Findest du den Weg hinaus?",
+einleitung:"Du besuchst das große Museum der Stadt – mit Dinosauriern, Gemälden und alten Funden. Du schaust dich so lange um, dass du die Durchsage überhörst: Das Museum schließt! Alle Ausgänge sind verriegelt. Doch die Museumsleiterin hat ein Rätselspiel für dich versteckt: Jeder Durchgang hat ein Zahlenschloss. Untersuche die Ausstellungsstücke. Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Findest du den Weg hinaus?",
 falsch:["Das stimmt leider noch nicht. Versuche es noch einmal!","Der Museumswächter schüttelt den Kopf … Prüfe deine Antwort!","Fast! Lies die Aufgabe noch einmal ganz genau."],
 schlossSymbol:"Über jedem Rad ist ein Zeichen eingraviert. Stelle unter jedem Zeichen die Ziffer ein, die du dafür gefunden hast.",
 schlossStelle:"Stelle jede gefundene Ziffer an der richtigen Stelle ein.",
-schlossFalsch:"Das Schloss klickt – aber die Tür bleibt zu. Überprüfe deine Ziffern!",
+schlossFalsch:"Das Schloss klickt – aber der Weg bleibt zu. Überprüfe deine Ziffern!",
 zeitUm:"Deine Zeit ist abgelaufen. Aber gib nicht auf – du darfst weiterspielen und den Ausgang trotzdem noch finden!",
 geschafft:"Du bist frei!",
 abschluss:"Geschafft! Du hast alle Rätsel zum Thema <b>{titel}</b> gelöst und den Weg aus dem Museum gefunden. Die Museumsleiterin ist stolz auf dich!"
@@ -116,28 +141,28 @@ einfach:{
 name:"Das Museum",
 symbolNamen:["Knochen","Pinsel","Rahmen","Münze","Lupe"],
 texte:{
-einleitung:"Ihr seid in einem großen Museum. Dort gibt es Dinosaurier, Bilder und Schätze. Plötzlich macht das Museum zu! Die Türen sind verschlossen. An jeder Tür hängt ein Zahlenschloss. Löst die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommt ihr eine Zahl. Findet ihr den Weg nach draußen?",
+einleitung:"Ihr seid in einem großen Museum. Dort gibt es Dinosaurier, Bilder und alte Funde. Plötzlich macht das Museum zu! Alle Wege sind verschlossen. An jedem Durchgang hängt ein Zahlenschloss. Löst die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommt ihr eine Zahl. Findet ihr den Weg nach draußen?",
 falsch:["Das stimmt noch nicht. Versucht es noch einmal!","Leider falsch. Schaut noch einmal genau hin!","Fast! Lest die Aufgabe noch einmal."],
 schlossTitel:"Das Zahlenschloss",
 schlossSymbol:"Über jedem Rad ist ein Zeichen. Stellt unter jedem Zeichen die passende Zahl ein.",
 schlossStelle:"Stellt jede Zahl an die richtige Stelle.",
-schlossFalsch:"Die Tür bleibt zu. Prüft eure Zahlen noch einmal!",
+schlossFalsch:"Der Weg bleibt zu. Prüft eure Zahlen noch einmal!",
 zeitUmTitel:"Die Zeit ist um!",
 zeitUm:"Die Zeit ist vorbei. Aber ihr dürft weiterspielen!",
 abschluss:"Super! Ihr habt alle Aufgaben zum Thema <b>{titel}</b> gelöst und den Weg nach draußen gefunden!"
 },
 texteDu:{
-einleitung:"Du bist in einem großen Museum. Dort gibt es Dinosaurier, Bilder und Schätze. Plötzlich macht das Museum zu! Die Türen sind verschlossen. An jeder Tür hängt ein Zahlenschloss. Löse die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommst du eine Zahl. Findest du den Weg nach draußen?",
+einleitung:"Du bist in einem großen Museum. Dort gibt es Dinosaurier, Bilder und alte Funde. Plötzlich macht das Museum zu! Alle Wege sind verschlossen. An jedem Durchgang hängt ein Zahlenschloss. Löse die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommst du eine Zahl. Findest du den Weg nach draußen?",
 falsch:["Das stimmt noch nicht. Versuche es noch einmal!","Leider falsch. Schau noch einmal genau hin!","Fast! Lies die Aufgabe noch einmal."],
 schlossSymbol:"Über jedem Rad ist ein Zeichen. Stelle unter jedem Zeichen die passende Zahl ein.",
 schlossStelle:"Stelle jede Zahl an die richtige Stelle.",
-schlossFalsch:"Die Tür bleibt zu. Prüfe deine Zahlen noch einmal!",
+schlossFalsch:"Der Weg bleibt zu. Prüfe deine Zahlen noch einmal!",
 zeitUm:"Die Zeit ist vorbei. Aber du darfst weiterspielen!",
 geschafft:"Du bist frei!",
 abschluss:"Super! Du hast alle Aufgaben zum Thema <b>{titel}</b> gelöst und den Weg nach draußen gefunden!"
 },
 raeume:[
-{titel:"Die Eingangshalle",intro:"Ihr seid in der großen Halle. Hier gibt es hohe Säulen und eine breite Treppe. Sucht die Zahlen für das erste Schloss!",introDu:"Du bist in der großen Halle. Hier gibt es hohe Säulen und eine breite Treppe. Suche die Zahlen für das erste Schloss!",
+{titel:"Die Eingangshalle",intro:"Ihr seid in der großen Halle. Hier gibt es hohe Säulen und eine breite Treppe. Sucht die Zahlen für das Schloss am Rollgitter!",introDu:"Du bist in der großen Halle. Hier gibt es hohe Säulen und eine breite Treppe. Suche die Zahlen für das Schloss am Rollgitter!",
 objekte:[{name:"Kasse",fund:"In der Kasse liegt:"},{name:"Kleiderständer",fund:"In der Jacke steckt:"},{name:"Rotes Seil",fund:"Am Seil hängt:"},{name:"Schirmständer",fund:"Zwischen den Schirmen steckt:"},{name:"Plan vom Museum",fund:"Hinter dem Plan klebt:"}],
 infoObjekte:[{name:"Schild an der Wand",fund:"Hinter dem Schild klebt:"},{name:"Glaskasten",fund:"Im Glaskasten liegt:"},{name:"Bank",fund:"Unter der Bank liegt:"}]},
 {titel:"Der Saal der Dinosaurier",intro:"Hier steht ein riesiges Skelett. Es ist von einem Dinosaurier. Dinosaurier lebten vor sehr langer Zeit.",
@@ -149,17 +174,17 @@ infoObjekte:[{name:"Zettel über die Malerin",fund:"Hinter dem Zettel steckt:"},
 {titel:"Die Werkstatt",intro:"Hier reparieren Menschen alte Bilder und Funde. Auf den Tischen liegen Pinsel und Farben.",
 objekte:[{name:"Holzständer mit Bild",fund:"Hinter dem Bild klemmt:"},{name:"Tisch mit Lupe",fund:"Unter der Lupe liegt:"},{name:"Brett mit Farben",fund:"Zwischen den Farben steht:"},{name:"Eimer mit Farbe",fund:"Unter dem Eimer klebt:"},{name:"Pinnwand mit Bildern",fund:"Zwischen den Zetteln hängt:"}],
 infoObjekte:[{name:"Zettel mit Anleitung",fund:"Unter dem Zettel klemmt:"},{name:"Regal mit Büchern",fund:"Zwischen den Büchern steckt:"},{name:"Kiste mit alten Sachen",fund:"In der Kiste liegt:"}]},
-{titel:"Die Schatzkammer",intro:"Hier liegen die Schätze vom Museum. Die Wände sind aus Stahl. Öffnet das letzte Schloss!",introDu:"Hier liegen die Schätze vom Museum. Die Wände sind aus Stahl. Öffne das letzte Schloss!",
-objekte:[{name:"Krone",fund:"Unter der Krone liegt:"},{name:"Schatzkiste",fund:"Die Kiste geht auf! Darin liegt:"},{name:"Gold",fund:"Auf dem Gold steht:"},{name:"Großer Edelstein",fund:"Im Stein glitzert ein Zeichen:"},{name:"Münzen",fund:"Zwischen den Münzen liegt:"}],
-infoObjekte:[{name:"Liste mit allen Schätzen",fund:"Hinter der Liste klebt:"},{name:"Schrank aus Stahl",fund:"Im Schrank liegt:"},{name:"Tisch mit Bildschirm",fund:"Neben dem Bildschirm liegt:"}]}
+{titel:"Das Dach",intro:"Ihr seid auf dem Dach vom Museum. Die Sonne geht auf. Öffnet das letzte Schloss!",introDu:"Du bist auf dem Dach vom Museum. Die Sonne geht auf. Öffne das letzte Schloss!",
+objekte:[{name:"Schornstein",fund:"Hinter dem Schornstein klemmt:"},{name:"Wetterfahne",fund:"Unter der Wetterfahne liegt:"},{name:"Regentonne",fund:"In der Tonne schwimmt:"},{name:"Taubenhaus",fund:"Im Taubenhaus liegt:"},{name:"Uhr an der Wand",fund:"Hinter der Uhr klebt:"}],
+infoObjekte:[{name:"Tafel aus Metall",fund:"Hinter der Tafel klebt:"},{name:"Fernrohr",fund:"Im Fernrohr steckt:"},{name:"Beet mit Blumen",fund:"Zwischen den Blumen steckt:"}]}
 ]
 },
 welt:{w:1600,h:780},
 raeume:[
 {titel:"Die Eingangshalle",
-intro:"Ihr steht in der hohen Eingangshalle. Marmorsäulen tragen die Decke, eine breite Treppe führt nach oben. An der Kasse sitzt niemand mehr. Irgendwo hier sind die Ziffern für das erste Schloss versteckt …",
-introDu:"Du stehst in der hohen Eingangshalle. Marmorsäulen tragen die Decke, eine breite Treppe führt nach oben. An der Kasse sitzt niemand mehr. Irgendwo hier sind die Ziffern für das erste Schloss versteckt …",
-tuerX:800,
+intro:"Ihr steht in der hohen Eingangshalle. Marmorsäulen tragen die Decke, eine breite Treppe führt nach oben. An der Kasse sitzt niemand mehr. Irgendwo hier sind die Ziffern für das Schloss am Rollgitter versteckt …",
+introDu:"Du stehst in der hohen Eingangshalle. Marmorsäulen tragen die Decke, eine breite Treppe führt nach oben. An der Kasse sitzt niemand mehr. Irgendwo hier sind die Ziffern für das Schloss am Rollgitter versteckt …",
+tuerX:800,tuerArt:"gitter",
 hintergrund:()=>`${defs('#e8dcc8','#8a7a64')}<rect width="1600" height="470" fill="#ece6da"/>${steine(50,470,84,220,'rgba(140,120,90,.2)')}${decke('#c9bea8',50)}<text x="800" y="37" font-size="30" font-weight="bold" letter-spacing="14" text-anchor="middle" fill="#6a6050" font-family="Arial,sans-serif">MUSEUM</text>${saeule(100)}${saeule(600)}${saeule(1000)}${[...Array(8)].map((_,k)=>R(1290+k*40,444-k*26,310-k*40,26,k%2?'#e0d8c8':'#d0c8b6','#9a907c',2)).join('')}${P('M1290 420L1600 218',0,'#8a5a32',8)}${[0,2,4,6].map(k=>P(`M${1300+k*40} ${444-k*26}V${414-k*26}`,0,'#8a5a32',4)).join('')}${boden('rgba(90,70,40,.18)')}${lampe(380,100,'#d8a73a')}${lampe(1420,90,'#d8a73a')}`,
 objekte:[
 B("Kasse",300,590,-150,kasse,"In der Kassenschublade liegt:"),
@@ -170,9 +195,9 @@ W("Museumsplan",380,250,-85,plan,"Hinter dem Museumsplan klebt:")
 ],
 infoObjekte:[W("Infotafel",1180,240,-95,infotafel,"Hinter der Infotafel klebt:"),B("Ausstellungsvitrine",1010,720,-175,vitrine,"Neben dem Ausstellungsstück liegt:"),B("Sitzbank",130,720,-75,bank,"Unter der Sitzbank liegt:")]},
 {titel:"Der Dinosaurier-Saal",
-intro:"Im Dinosaurier-Saal ist es dämmrig. Das riesige Skelett eines Tyrannosaurus ragt über euch auf. Fossilien und Funde aus der Urzeit warten darauf, untersucht zu werden. Findet die Ziffern für das nächste Schloss!",
-introDu:"Im Dinosaurier-Saal ist es dämmrig. Das riesige Skelett eines Tyrannosaurus ragt über dir auf. Fossilien und Funde aus der Urzeit warten darauf, untersucht zu werden. Finde die Ziffern für das nächste Schloss!",
-tuerX:1350,
+intro:"Im Dinosaurier-Saal ist es dämmrig. Das riesige Skelett eines Tyrannosaurus ragt über euch auf. Fossilien und Funde aus der Urzeit warten darauf, untersucht zu werden. Findet die Ziffern für das Schloss am Lastenaufzug!",
+introDu:"Im Dinosaurier-Saal ist es dämmrig. Das riesige Skelett eines Tyrannosaurus ragt über dir auf. Fossilien und Funde aus der Urzeit warten darauf, untersucht zu werden. Finde die Ziffern für das Schloss am Lastenaufzug!",
+tuerX:1350,tuerArt:"lift",
 hintergrund:()=>`${defs('#5a625a','#1e2420','#e8f0d8')}<rect width="1600" height="470" fill="#34483e"/>${steine(40,400,60,240,'rgba(0,0,0,.18)')}${R(0,400,1600,70,'#4a524e')}${R(0,400,1600,8,'rgba(0,0,0,.3)')}${decke('#1e2a24')}${P('M0 40L200 90H1400L1600 40',0,'#26332c',10)}${skelett()}${boden()}${lampe(1180,70,'#5a6a5a')}`,
 objekte:[
 B("Dino-Ei im Nest",280,610,-135,dinoei,"Neben dem Dino-Ei liegt:"),
@@ -183,9 +208,9 @@ W("Ammoniten-Fossil",1030,230,-85,ammonit,"In die Steinplatte ist etwas eingerit
 ],
 infoObjekte:[W("Zeitleiste der Urzeit",130,240,-72,zeitleiste,"Hinter der Zeitleiste klebt:"),B("Forscherpult mit Buch",1130,540,-110,pult,"Im Buch auf dem Pult liegt:"),B("Gesteinssammlung",120,740,-125,gestein,"Zwischen den Gesteinen liegt:")]},
 {titel:"Die Gemäldegalerie",
-intro:"Rote Wände, goldene Rahmen und helle Scheinwerfer: In der Gemäldegalerie hängen berühmte Bilder. Eine Ritterrüstung bewacht den Saal. Schaut genau hin – Kunst steckt voller Geheimnisse!",
-introDu:"Rote Wände, goldene Rahmen und helle Scheinwerfer: In der Gemäldegalerie hängen berühmte Bilder. Eine Ritterrüstung bewacht den Saal. Schau genau hin – Kunst steckt voller Geheimnisse!",
-tuerX:220,
+intro:"Rote Wände, goldene Rahmen und helle Scheinwerfer: In der Gemäldegalerie hängen berühmte Bilder. Eine Ritterrüstung bewacht den Saal. Schaut genau hin – Kunst steckt voller Geheimnisse! Das große Porträt trägt ein Zahlenschloss.",
+introDu:"Rote Wände, goldene Rahmen und helle Scheinwerfer: In der Gemäldegalerie hängen berühmte Bilder. Eine Ritterrüstung bewacht den Saal. Schau genau hin – Kunst steckt voller Geheimnisse! Das große Porträt trägt ein Zahlenschloss.",
+tuerX:220,tuerArt:"bild",
 hintergrund:()=>`${defs('#7a5234','#2a1a10','#fff0c0')}<rect width="1600" height="470" fill="#8a2430"/>${R(0,380,1600,90,'#5a1620')}${R(0,380,1600,8,'#d8a73a')}${decke('#2a1014')}${R(0,34,1600,6,'#555')}<g transform="translate(450 210)">${bild(64,84,KOPF)}</g><g transform="translate(1040 220)">${bild(150,100,OBST)}</g><g transform="translate(1220 210)">${bild(44,60,LAND)}</g><g transform="translate(1520 220)">${bild(40,56,KOPF)}</g>${[450,680,1040,1220,1380,1520].map(x=>spot(x,330)).join('')}${boden()}`,
 objekte:[
 B("Marmorskulptur",560,580,-200,skulptur,"Am Sockel der Skulptur klebt:"),
@@ -196,8 +221,8 @@ W("Landschaftsgemälde",680,230,-90,gemaelde,"Hinter dem Gemälde steckt:")
 ],
 infoObjekte:[W("Steckbrief der Malerin",1380,250,-88,steckbrief,"Hinter dem Steckbrief steckt:"),B("Hörstation",420,740,-170,hoeren,"An den Kopfhörern hängt:"),B("Ausstellungskatalog",1000,600,-100,katalog,"Im Katalog liegt:")]},
 {titel:"Die Restaurierungswerkstatt",
-intro:"In der Restaurierungswerkstatt werden alte Kunstwerke und Fundstücke vorsichtig repariert. Auf den Arbeitstischen liegen Pinsel, Farben und Lupen. Die Lampen brennen noch – die Restauratorin ist wohl gerade erst gegangen.",
-tuerX:500,
+intro:"In der Restaurierungswerkstatt werden alte Kunstwerke und Fundstücke vorsichtig repariert. Auf den Arbeitstischen liegen Pinsel, Farben und Lupen. Die Lampen brennen noch – die Restauratorin ist wohl gerade erst gegangen. Eine schwere Eisentür führt zu einer Treppe.",
+tuerX:500,tuerArt:"eisen",
 hintergrund:()=>`${defs('#c0c0b8','#6a6a64','#ffffff')}<rect width="1600" height="470" fill="#eef0ea"/>${R(0,370,1600,100,'#d8dcd4')}${steine(370,470,25,50,'rgba(0,0,0,.08)')}${decke('#a8aca4')}${[170,1200].map(x=>`${C(x,260,220,'url(#licht)')}${R(x-80,110,160,220,'#bfe0f0','#7a8a8a',8)}${P(`M${x} 110V330M${x-80} 220H${x+80}`,0,'#7a8a8a',5)}`).join('')}${R(650,170,130,8,'#8a5a2a')}${[0,1,2,3].map(k=>R(662+k*30,136,20,34,['#c83a2a','#e8b830','#2a6aa0','#3f8a4a'][k],'#555',1,3)).join('')}${boden('rgba(0,0,0,.12)')}${lampe(820,120,'#f4f4f0')}${lampe(1300,120,'#f4f4f0')}`,
 objekte:[
 B("Staffelei mit Bild",230,620,-220,staffelei,"Hinter der Leinwand klemmt:"),
@@ -207,30 +232,30 @@ B("Farbeimer",1420,620,-130,farbeimer,"Am Boden eines Eimers klebt:"),
 W("Pinnwand mit Skizzen",900,240,-82,pinnwand,"Zwischen den Skizzen hängt:")
 ],
 infoObjekte:[W("Arbeitsanleitung",1450,240,-92,anleitung,"Unter der Anleitung klemmt:"),B("Fachbuch-Regal",1150,730,-172,regal,"Zwischen den Fachbüchern steckt:"),B("Kiste mit Fundstücken",1000,560,-115,fundkiste,"Im Stroh der Kiste liegt:")]},
-{titel:"Der Tresorraum",
-intro:"Hinter dicken Stahlwänden liegt der Tresorraum. In den Vitrinen funkeln Kronen, Münzen und Edelsteine. Hier wartet das letzte Schloss – öffnet es, und ihr seid frei!",
-introDu:"Hinter dicken Stahlwänden liegt der Tresorraum. In den Vitrinen funkeln Kronen, Münzen und Edelsteine. Hier wartet das letzte Schloss – öffne es, und du bist frei!",
-tuerX:1150,
-hintergrund:()=>`${defs('#4a5258','#16191c','#d0e8ff')}<rect width="1600" height="470" fill="#5a646c"/>${steine(40,470,108,200,'rgba(0,0,0,.28)')}${[...Array(16)].map((_,k)=>C(20+k*100,58,4,'#8a949c')).join('')}${decke('#22282e')}${gitter(70,220)}${gitter(1330,1570)}${C(560,300,360,'url(#licht)')}${boden('rgba(150,170,190,.18)')}${lampe(560,110,'#8a949c')}${lampe(900,100,'#8a949c')}`,
+{titel:"Das Dach",
+intro:"Endlich frische Luft! Auf dem Dach des Museums geht gerade die Sonne auf. Schornsteine, Tauben und eine Wetterfahne warten auf euch. Die Glaskuppel hat das letzte Schloss – öffnet es, dann führt eine Feuerleiter nach unten!",
+introDu:"Endlich frische Luft! Auf dem Dach des Museums geht gerade die Sonne auf. Schornsteine, Tauben und eine Wetterfahne warten auf dich. Die Glaskuppel hat das letzte Schloss – öffne es, dann führt eine Feuerleiter nach unten!",
+tuerX:1150,tuerArt:"kuppel",
+hintergrund:()=>`${defs('#9aa0a8','#5a626c','#ffe8b0')}<defs><linearGradient id="himmelD" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a8fe0"/><stop offset=".7" stop-color="#ffc890"/><stop offset="1" stop-color="#ffe8c0"/></linearGradient></defs><rect width="1600" height="470" fill="url(#himmelD)"/>${C(1280,350,170,'url(#licht)')}${C(1280,356,54,'#fff4c8')}<ellipse cx="1000" cy="120" rx="90" ry="22" fill="#fff" opacity=".7"/><ellipse cx="1400" cy="200" rx="110" ry="24" fill="#fff" opacity=".6"/><ellipse cx="860" cy="250" rx="70" ry="16" fill="#fff" opacity=".6"/>${[[760,300,90],[860,250,70],[930,320,110],[1060,280,80],[1150,330,90],[1330,290,100],[1450,320,90],[1540,270,60]].map(([x,y,w],k)=>`${R(x,y,w,400-y,k%2?'#8a7aa8':'#7a6a98')}${[0,1,2].map(r=>R(x+12,y+16+r*36,w-24,12,'#ffe0a0')).join('')}`).join('')}${R(0,392,1600,78,'#c0b8a6')}${R(0,384,1600,14,'#d8d0c0','#8a8270',2)}${[...Array(16)].map((_,k)=>P(`M${k*100+50} 398V470`,0,'rgba(90,70,40,.25)',2)).join('')}${R(40,110,700,360,'#c9b08a','#6a5a40',4)}${ziegel(40,740,110,470,60,120,'rgba(90,60,30,.3)')}${R(20,86,740,26,'#8a4a3a','#4a2418',4)}${R(340,180,90,120,'#bfe0f0','#6a5a40',6)}${P('M385 180V300M340 240H430',0,'#6a5a40',4)}${R(640,290,70,180,'#5a3a22','#2a1a10',4)}${C(696,380,5,'#d8a73a')}${boden('rgba(0,0,0,.16)')}`,
 objekte:[
-B("Königskrone",300,590,-165,krone,"Unter der Krone liegt:"),
-B("Schatztruhe",700,700,-130,truhe,"Die Truhe springt auf! Darin liegt:"),
-B("Goldbarren",1450,620,-80,goldbarren,"In einen Goldbarren ist eingeprägt:"),
-B("Riesiger Edelstein",880,560,-190,edelstein,"Im Edelstein funkelt ein Zeichen:"),
-W("Münzsammlung",400,240,-82,muenzen,"Zwischen den Münzen liegt:")
+B("Schornstein",400,600,-110,schornstein,"Hinter dem Schornstein klemmt:"),
+B("Wetterfahne",860,560,-140,wetterfahne,"Unter der Wetterfahne liegt:"),
+B("Regentonne",650,730,-60,regentonne,"In der Regentonne schwimmt:"),
+B("Taubenschlag",1450,620,-130,taubenschlag,"Im Taubenschlag liegt:"),
+W("Turmuhr",520,230,-60,turmuhr,"Hinter der Uhr klebt:")
 ],
-infoObjekte:[W("Bestandsliste",750,240,-92,liste,"Hinter der Bestandsliste klebt:"),B("Stahltresor",580,550,-128,tresor,"Im Stahltresor liegt:"),B("Kontrollpult",120,730,-150,kontrolle,"Neben dem Bildschirm liegt:")]}
+infoObjekte:[W("Bronzetafel",250,250,-80,bronzetafel,"Hinter der Bronzetafel klebt:"),B("Stadtfernrohr",1010,700,-90,stadtfernrohr,"Im Fernrohr steckt:"),B("Dachbeet",1480,740,-60,dachbeet,"Zwischen den Blumen steckt:")]}
 ],
 tuer,
 vignette:`<rect width="1000" height="600" fill="url(#vig)" pointer-events="none"/>`,
-ausgang:()=>`<defs><linearGradient id="himmel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8ec8f0"/><stop offset=".6" stop-color="#ffd8a8"/><stop offset="1" stop-color="#ffeccc"/></linearGradient></defs>
-   <rect width="1000" height="600" fill="url(#himmel)"/><circle cx="640" cy="300" r="110" fill="#fff2c0" opacity=".45"/><circle cx="640" cy="300" r="60" fill="#fff6d0"/>
+ausgang:()=>`<defs><linearGradient id="himmel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6aa0e0"/><stop offset=".6" stop-color="#ffc890"/><stop offset="1" stop-color="#ffe8c0"/></linearGradient></defs>
+   <rect width="1000" height="600" fill="url(#himmel)"/><circle cx="525" cy="380" r="120" fill="#fff2c0" opacity=".45"/><circle cx="525" cy="380" r="60" fill="#fff6d0"/>
    ${[[230,250,90],[330,290,70],[410,230,80],[560,270,110],[680,240,70],[760,280,90]].map(([x,y,w],k)=>`<rect x="${x}" y="${y}" width="${w}" height="${420-y}" fill="${k%2?'#b8a8c8':'#a898b8'}"/>${[0,1,2].map(r=>`<rect x="${x+12}" y="${y+16+r*40}" width="${w-24}" height="14" fill="#ffe8b0" opacity=".55"/>`).join('')}`).join('')}<path d="M400 230L450 196L500 230Z" fill="#a898b8"/>
    <rect y="400" width="1000" height="200" fill="#d8c8b0"/><path d="M0 430H1000M0 470H1000M100 400L60 600M300 400L280 600M500 400V600M700 400L720 600M900 400L940 600" stroke="#c0ae94" stroke-width="3"/>
    <ellipse cx="500" cy="440" rx="70" ry="16" fill="#9ab8c8" stroke="#8a8270" stroke-width="5"/><path d="M500 440V404" stroke="#cfe8ef" stroke-width="6"/><circle cx="500" cy="400" r="9" fill="#cfe8ef"/>
    ${[[320,430],[700,440]].map(([x,y])=>`<rect x="${x-5}" y="${y-50}" width="10" height="50" fill="#6b4a24"/><circle cx="${x}" cy="${y-70}" r="30" fill="#4f9a5a"/>`).join('')}
    <path d="M290 150l10 6 10-6M330 130l8 5 8-5M800 120l9 5 9-5" stroke="#3a2a17" stroke-width="2.5" fill="none"/>
-   <rect y="510" width="1000" height="30" fill="#e8e2d6"/><rect y="540" width="1000" height="30" fill="#d8d0c0"/><rect y="570" width="1000" height="30" fill="#c9c0ae"/>
+   <rect y="520" width="1000" height="80" fill="#c0b8a6"/><rect y="508" width="1000" height="16" fill="#d8d0c0"/><path d="M380 524V600M470 524V600M380 544H470M380 564H470M380 584H470" stroke="#6a747c" stroke-width="8" fill="none"/>
    <path d="M0 0H1000V600H0Z M200 600V130H800V600Z" fill="#2a2420" fill-rule="evenodd"/><path d="M200 600V130H800V600" stroke="#cfc6b4" stroke-width="18" fill="none"/><path d="M180 112L500 40L820 112Z" fill="#3a322c" stroke="#cfc6b4" stroke-width="8"/>`
 };
 })();
