@@ -387,6 +387,14 @@ return`<h3 class="mr">${R.name||raumDef(r).titel}</h3><div class="mappe-raster">
 const m=modal(`<div class="mkopf"><h2>🃏 ${du?'Deine':'Eure'} Wissensmappe</h2><button class="x" aria-label="Schließen">×</button></div>${teil}<div class="aktionen mitte"><button class="btn ok">Zurück zum Spiel</button></div>`);
 m.querySelector('.ok').onclick=schliesse;
 }
+function zeigeKarte(){
+TON.spiele('klick');
+const n=C.raeume.length;
+const orte=C.raeume.map((R,r)=>{const z=r<st.raum?'fertig':r===st.raum?'hier':'offen';
+return`<div class="ort ${z}"><div class="punkt">${z==='fertig'?'✓':z==='hier'?'📍':r+1}</div><div class="oname">${R.name||raumDef(r).titel}</div></div>`;}).join('')+`<div class="ort ziel"><div class="punkt">🚪</div><div class="oname">Ausgang</div></div>`;
+const m=modal(`<div class="mkopf"><h2>🗺️ Karte</h2><button class="x" aria-label="Schließen">×</button></div><p class="center">${du?'Hier bist du gerade: der Ort mit dem Stecknadel-Zeichen. So geht der Weg weiter.':'Hier seid ihr gerade: der Ort mit dem Stecknadel-Zeichen. So geht der Weg weiter.'}</p><div class="weg" style="grid-template-columns:repeat(${n+1},1fr)">${orte}</div><div class="aktionen mitte"><button class="btn ok">Zurück zum Spiel</button></div>`);
+m.querySelector('.ok').onclick=schliesse;
+}
 function infoFenster(k){
 const o=objI(k),inf=(C.raeume[st.raum].infos||[])[k]||{},kk=st.raum+'-'+k,neuKarte=!st.kartenSet.has(kk);
 if(neuKarte){st.kartenSet.add(kk);st.karten.push({raum:st.raum,titel:inf.titel||o.name,text:inf.text||''});speichere();}
@@ -474,7 +482,7 @@ const fund=rl.filter(r=>st.geloest.has(r.i)).map(r=>`<span class="f" data-i="${r
 const raumName=R.name||def.titel;
 app.innerHTML=`<div class="hud"><div class="raum">Raum ${st.raum+1} von ${C.raeume.length}: ${raumName}<span class="punkte">${C.raeume.map((_,k)=>k<st.raum?'●':k===st.raum?'◉':'○').join('')}</span></div>
      <div class="fund">${fund}</div>
-     <div class="hudrechts">${st.name?`<span class="namechip">${esc(st.name)}</span>`:''}${mitTimer?'<div class="timer"></div>':''}<button class="btn zweit mappe" title="Wissensmappe">${kartenZahl()}</button><button class="btn zweit hilfe ton" title="Ton an oder aus">${TON.an?'🔊':'🔇'}</button><button class="btn zweit hilfe hb" title="Spielanleitung">?</button></div></div>
+     <div class="hudrechts">${st.name?`<span class="namechip">${esc(st.name)}</span>`:''}${mitTimer?'<div class="timer"></div>':''}<button class="btn zweit karte" title="Karte">🗺️</button><button class="btn zweit mappe" title="Wissensmappe">${kartenZahl()}</button><button class="btn zweit hilfe ton" title="Ton an oder aus">${TON.an?'🔊':'🔇'}</button><button class="btn zweit hilfe hb" title="Spielanleitung">?</button></div></div>
     <div class="auftrag">${alle?(st.geloest.size<rl.length?W.genug:W.bereit):`${W.auftrag} &nbsp;<b>Gelöst: ${st.geloest.size} von ${rl.length}</b>`}</div>
     <div class="szene"><svg viewBox="0 0 1000 600" role="img" aria-label="${esc(ohnePunkte(raumName))}"><g class="welt" style="transform:${kamTrans(st.cam)}">${def.hintergrund()}<g class="amb">${SZ.ambiente?SZ.ambiente(nr):''}</g>${SZ.tuer(rl.length,alle,def)}${wand}<g class="tiefe">${tief.map(t=>t.html).join('')}</g>${marken}</g>${lichtHtml(def)}<g class="vorn amb" style="transform:${vornTrans(st.cam)}">${SZ.vordergrund?SZ.vordergrund(nr):''}</g>${SZ.vignette||''}</svg></div>`;
 zeichneTimer();
@@ -488,7 +496,7 @@ app.querySelectorAll('.obj').forEach(g=>{
 const f=g.dataset.info!==undefined?()=>zurInfo(+g.dataset.info):(g.dataset.leer!==undefined?()=>zurLeere(+g.dataset.leer):()=>zumGegenstand(+g.dataset.i));
 g.addEventListener('click',f);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();f();}});});
 const t=app.querySelector('.tuer');t.addEventListener('click',zurTuer);t.addEventListener('keydown',e=>{if(e.key==='Enter')zurTuer();});
-app.querySelector('.hb').onclick=anleitung;app.querySelector('.mappe').onclick=zeigeMappe;
+app.querySelector('.hb').onclick=anleitung;app.querySelector('.mappe').onclick=zeigeMappe;app.querySelector('.karte').onclick=zeigeKarte;
 app.querySelector('.ton').onclick=e=>{TON.an=!TON.an;e.currentTarget.textContent=TON.an?'🔊':'🔇';TON.spiele('klick');};
 if(frischI>=0){
 const rr=app.querySelector('.richtung');if(rr&&!ruhig){rr.classList.add('jubel');setTimeout(()=>rr.classList.remove('jubel'),2200);}

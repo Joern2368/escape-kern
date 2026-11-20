@@ -204,3 +204,12 @@ input.ein,select{font:inherit;font-size:1.05em;padding:7px 10px;border:2px solid
 .stand{display:flex;gap:8px;justify-content:center}
 .stand .weiter{flex:1;text-align:center}
 .hinweistext .vor{float:right;margin:0 0 4px 10px}
+.weg{display:grid;gap:4px;margin:16px 0 8px}
+.ort{position:relative;text-align:center;padding:0 2px;font-size:.82em;line-height:1.25}
+.ort+.ort::before{content:'';position:absolute;top:26px;right:50%;width:100%;border-top:4px dotted #a07c3c}
+.ort .punkt{position:relative;z-index:1;width:52px;height:52px;margin:0 auto 8px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;border:3px solid #a07c3c;background:#e6d3a0;color:#7a5a22}
+.ort.fertig .punkt{background:#3f8a4a;border-color:#2a6a34;color:#fff}
+.ort.hier .punkt{background:#f3d27a;border-color:#a8321f;color:#3a2812;box-shadow:0 0 0 4px rgba(168,50,31,.25)}
+.ort.hier .oname{font-weight:800}
+.ort.ziel .punkt{background:#fffbe8}
+@media (max-width:600px){.weg{grid-template-columns:repeat(3,1fr)!important;row-gap:12px}.ort::before{display:none}}
