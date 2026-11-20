@@ -59,17 +59,55 @@ const vogelhaus=()=>`${P('M0 30V80','none','#6a4a24',8)}${R(-30,-16,60,50,'#e8c8
 const weideschild=()=>`${R(-70,-40,140,80,'#c9a86a','#6a4a24',5)}${P('M-50 -16H50M-50 4H40M-50 24H30','none','#5a3a1c',3)}`;
 const heuraufe=()=>`${schatten(60,4)}${P('M-50 0V-100M50 0V-100','none','#6a4a24',8)}${P('M-54 -110Q-30 -132 0 -116Q30 -134 54 -110L46 -50H-46Z','#e0bc50','#a07a20',2)}${[0,1,2,3,4,5,6,7,8].map(k=>P(`M${-48+k*12} -110L${-40+k*10} -50`,'none','#6a4a24',3)).join('')}${P('M-56 -110H56M-46 -50H46','none','#6a4a24',6)}`;
 const hufkiste=()=>`${schatten(46,4)}${R(-44,-40,88,40,'#4a4a50','#222',3)}${P('M-30 -40V-56H30V-40','none','#222',5)}<use href="#sym-hufeisen" x="-16" y="-34" width="32" height="28" color="#c9a23a"/>`;
-function tuer(n,bereit,def){
-const dx=((def&&def.tuerX)||500)-500;
-let d='';const x0=500-(n-1)*11;for(let k=0;k<n;k++)d+=`<circle cx="${x0+k*22}" cy="330" r="8" fill="#2a1a08" stroke="#d8a73a" stroke-width="2"/>`;
-const form='M410 470V190H590V470Z';
-return`<defs><clipPath id="tuerclip"><path d="${form}"/></clipPath><linearGradient id="platteG" x1="0" x2="1"><stop offset="0" stop-color="#8a3a22"/><stop offset=".5" stop-color="#a84a2a"/><stop offset="1" stop-color="#7a301a"/></linearGradient></defs>
-  <g transform="translate(${dx} 0)"><g class="tuer${bereit?' bereit':''}" role="button" tabindex="0" aria-label="Stalltür mit Zahlenschloss">
+const sPl=(n,y)=>{let d='';const x0=500-(n-1)*11;for(let k=0;k<n;k++)d+=`<circle cx="${x0+k*22}" cy="${y}" r="8" fill="#2a1a08" stroke="#d8a73a" stroke-width="2"/>`;return`<rect x="${500-n*11-12}" y="${y-18}" width="${n*22+24}" height="36" rx="6" fill="#2a1a08" stroke="#d8a73a" stroke-width="2"/>${d}`;};
+const TSTIL=`<style>.tuer .tb{transition:transform 1.8s ease-in-out,opacity 1.8s ease-in-out}.tuer #leit{transform:scaleY(.02)}.tuer.offen #bl{transform:scaleX(.16)}.tuer.offen #lukd{transform:scaleY(.12)}.tuer.offen #leit{transform:scaleY(1)}.tuer.offen #hl{transform:scaleX(.14)}.tuer.offen #hr{transform:scaleX(.14)}.tuer.offen #hp{opacity:0}.tuer.offen #stor{transform:translateX(190px)}.tuer.offen #gat{transform:scaleX(.14)}</style>`;
+function tuerBox(n){
+return`<defs><linearGradient id="platteG" x1="0" x2="1"><stop offset="0" stop-color="#8a3a22"/><stop offset=".5" stop-color="#a84a2a"/><stop offset="1" stop-color="#7a301a"/></linearGradient></defs>
    <path d="M380 470V170H620V470Z" fill="#6a4a2a" stroke="#3a2410" stroke-width="5"/>
    <path d="M364 178L500 108L636 178Z" fill="#5a3a1c" stroke="#3a2410" stroke-width="4"/>
-   <path d="${form}" fill="#120a04"/>
-   <g clip-path="url(#tuerclip)"><g id="platte"><path d="${form}" fill="url(#platteG)"/><path d="M440 190V470M470 190V470M500 190V470M530 190V470M560 190V470" stroke="#5a2010" stroke-width="2"/><path d="M410 200H590V222H410ZM410 438H590V460H410Z" fill="#f4ecd8"/><path d="M418 222L582 438" stroke="#f4ecd8" stroke-width="20"/><use href="#sym-hufeisen" x="474" y="236" width="56" height="56" color="#d8a73a"/><rect x="${500-n*11-12}" y="312" width="${n*22+24}" height="36" rx="6" fill="#2a1a08" stroke="#d8a73a" stroke-width="2"/>${d}</g></g>
-  </g></g>`;
+   <rect x="410" y="190" width="180" height="280" fill="#120a04"/><circle cx="500" cy="330" r="90" fill="url(#licht)"/>${kopf(550,400,'#8a5a34')}
+   <g id="bl" class="tb" style="transform-origin:410px 330px"><rect x="410" y="190" width="180" height="280" fill="url(#platteG)"/><path d="M440 190V470M470 190V470M500 190V470M530 190V470M560 190V470" stroke="#5a2010" stroke-width="2"/><path d="M410 200H590V222H410ZM410 438H590V460H410Z" fill="#f4ecd8"/><path d="M418 222L582 438" stroke="#f4ecd8" stroke-width="20"/><use href="#sym-hufeisen" x="474" y="236" width="56" height="56" color="#d8a73a"/><rect x="410" y="392" width="180" height="12" fill="#3a3a40"/>${sPl(n,330)}</g>`;
+}
+function tuerLuke(n){
+const op='M400 150H600L630 215H370Z';
+let r='';for(let y=215;y<470;y+=36)r+=`M455 ${y}H545`;
+return`<path d="M350 128H650L690 238H310Z" fill="#6b4a24" stroke="#3a2410" stroke-width="4"/>
+   <path d="${op}" fill="#0c0a14"/>
+   <g id="leit" class="tb" style="transform-origin:500px 190px"><path d="M455 190V470M545 190V470" stroke="#a06a34" stroke-width="9"/><path d="${r}" stroke="#c08a50" stroke-width="7"/></g>
+   <g id="lukd" class="tb" style="transform-origin:500px 150px"><path d="${op}" fill="#8a5a2c" stroke="#3a2010" stroke-width="4"/><path d="M440 150L420 215M480 150L470 215M520 150L530 215M560 150L580 215" stroke="#4a2a12" stroke-width="3"/><circle cx="500" cy="160" r="6" fill="none" stroke="#3a3a40" stroke-width="3"/>${sPl(n,190)}</g>`;
+}
+function tuerHeu(n){
+let p='';for(let x=420;x<500;x+=20)p+=`M${x} 206V470`;
+let q='';for(let x=520;x<598;x+=20)q+=`M${x} 206V470`;
+return`<defs><linearGradient id="himmelH" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8ec8f0"/><stop offset="1" stop-color="#f8ecc0"/></linearGradient></defs>
+   <path d="M380 470V190H620V470Z" fill="#6a4a2a" stroke="#3a2410" stroke-width="5"/>
+   <rect x="402" y="206" width="196" height="264" fill="url(#himmelH)"/><circle cx="460" cy="262" r="20" fill="#ffe066"/><path d="M402 400Q450 366 500 390T598 378V470H402Z" fill="#8cc06a"/><path d="M402 440H598M402 420H598" stroke="#8a6a44" stroke-width="4" fill="none"/>
+   <rect x="370" y="150" width="260" height="20" fill="#6a4a24" stroke="#3a2410" stroke-width="3"/><path d="M500 170V198" stroke="#333" stroke-width="4"/><circle cx="500" cy="204" r="7" fill="none" stroke="#333" stroke-width="3"/>
+   <g id="hl" class="tb" style="transform-origin:402px 330px"><rect x="402" y="206" width="98" height="264" fill="#b87a40" stroke="#4a2a12" stroke-width="3"/><path d="${p}" stroke="#7a4a20" stroke-width="3"/><path d="M402 206L500 470M402 470L500 206" stroke="#7a4a20" stroke-width="8"/></g>
+   <g id="hr" class="tb" style="transform-origin:598px 330px"><rect x="500" y="206" width="98" height="264" fill="#b87a40" stroke="#4a2a12" stroke-width="3"/><path d="${q}" stroke="#7a4a20" stroke-width="3"/><path d="M500 206L598 470M500 470L598 206" stroke="#7a4a20" stroke-width="8"/></g>
+   <g id="hp" class="tb">${sPl(n,330)}</g>`;
+}
+function tuerSchieb(n){
+let p='';for(let x=430;x<590;x+=20)p+=`M${x} 190V470`;
+return`<defs><linearGradient id="himmelS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7cc0f0"/><stop offset="1" stop-color="#e8f4d8"/></linearGradient></defs>
+   <path d="M376 470V170H624V470Z" fill="#5a4a3a" stroke="#2a1a10" stroke-width="5"/>
+   <rect x="410" y="190" width="180" height="280" fill="url(#himmelS)"/><circle cx="540" cy="250" r="18" fill="#fff6c8"/><path d="M410 380Q470 340 530 372T590 360V470H410Z" fill="#8cc06a"/><path d="M410 430H590M410 408H590" stroke="#8a6a44" stroke-width="4" fill="none"/>
+   <rect x="376" y="170" width="460" height="14" fill="#555566" stroke="#2a2a32" stroke-width="2"/>
+   <g id="stor" class="tb"><circle cx="440" cy="188" r="7" fill="#333"/><circle cx="560" cy="188" r="7" fill="#333"/><rect x="410" y="190" width="180" height="280" fill="#3a7a60" stroke="#1a3a2a" stroke-width="4"/><path d="${p}" stroke="#2a5a46" stroke-width="3"/><path d="M410 190L590 470M410 470L590 190" stroke="#2a5a46" stroke-width="8"/>${sPl(n,330)}</g>`;
+}
+function tuerWeide(n){
+const h='#b07a42';
+return`<path d="M440 470L470 400H530L560 470Z" fill="#c8a870"/>
+   <path d="M326 350H396M326 410H396M604 350H674M604 410H674" stroke="#8a6a44" stroke-width="8" fill="none"/>
+   <rect x="326" y="334" width="14" height="136" fill="#7a5230" stroke="#3a2410" stroke-width="2"/><rect x="660" y="334" width="14" height="136" fill="#7a5230" stroke="#3a2410" stroke-width="2"/>
+   <rect x="396" y="290" width="22" height="180" fill="#7a5230" stroke="#3a2410" stroke-width="3"/><rect x="582" y="290" width="22" height="180" fill="#7a5230" stroke="#3a2410" stroke-width="3"/><rect x="396" y="290" width="208" height="20" fill="#7a5230" stroke="#3a2410" stroke-width="3"/><use href="#sym-hufeisen" x="474" y="236" width="52" height="52" color="#d8a73a"/>
+   <g id="gat" class="tb" style="transform-origin:418px 390px"><rect x="418" y="310" width="164" height="160" fill="none"/><path d="M418 324H582M418 364H582M418 404H582M418 444H582" stroke="${h}" stroke-width="14"/><path d="M418 450L582 322" stroke="${h}" stroke-width="12"/><rect x="418" y="310" width="14" height="160" fill="${h}"/><rect x="568" y="310" width="14" height="160" fill="${h}"/>${sPl(n,388)}</g>`;
+}
+function tuer(n,bereit,def){
+const dx=((def&&def.tuerX)||500)-500,art=(def&&def.tuerArt)||'box';
+const arten={box:[tuerBox,'Boxentür mit Zahlenschloss'],luke:[tuerLuke,'Deckenluke mit Zahlenschloss'],heu:[tuerHeu,'Heuklappe mit Zahlenschloss'],schieb:[tuerSchieb,'Schiebetor mit Zahlenschloss'],weide:[tuerWeide,'Weidetor mit Zahlenschloss']};
+const a=arten[art]||arten.box;
+return`${TSTIL}<g transform="translate(${dx} 0)"><g class="tuer${bereit?' bereit':''}" role="button" tabindex="0" aria-label="${a[1]}">${a[0](n)}</g></g>`;
 }
 SZENARIEN.pferdehof={
 name:"Der Pferdehof",
@@ -77,26 +115,26 @@ symbole:["hufeisen","moehre","sattel","pferdekopf","strohballen"],
 symbolNamen:["Hufeisen","Möhre","Sattel","Pferdekopf","Strohballen"],
 emblem:`<svg viewBox="0 0 120 90" width="120" height="90" aria-hidden="true"><circle cx="60" cy="45" r="42" fill="#3f8a4a" stroke="#1f4a2a" stroke-width="3"/><use href="#sym-pferdekopf" x="26" y="8" width="66" height="66" color="#f4ecd8"/><use href="#sym-hufeisen" x="76" y="50" width="34" height="34" color="#d8a73a"/><use href="#sym-moehre" x="10" y="50" width="30" height="30" color="#f08030"/></svg>`,
 texte:{
-einleitung:"Ihr verbringt einen Ferientag auf dem Pferdehof Sonnenwiese. Kaum seid ihr in der Stallgasse, fällt die schwere Stalltür hinter euch zu! Die Reitlehrerin hat euch ein Rätselspiel vorbereitet: Jede Tür hat ein Zahlenschloss. Untersucht die Gegenstände in Stall, Sattelkammer und Reithalle. Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Schafft ihr es bis hinaus zu den Pferden?",
+einleitung:"Ihr verbringt einen Ferientag auf dem Pferdehof Sonnenwiese. Kaum seid ihr in der Stallgasse, fällt die schwere Stalltür hinter euch zu! Die Reitlehrerin hat euch ein Rätselspiel vorbereitet: Jeder Durchgang hat ein Zahlenschloss. Untersucht die Gegenstände in Stall, Sattelkammer und Reithalle. Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Schafft ihr es bis hinaus zu den Pferden?",
 startKnopf:"Den Pferdehof betreten",
 hinweisGeber:"Pony Flocke wiehert leise:",
 richtig:"Richtig gelöst!",
 falsch:["Das stimmt leider noch nicht. Versucht es noch einmal!","Pony Flocke schüttelt die Mähne … Prüft eure Antwort!","Fast! Lest die Aufgabe noch einmal ganz genau."],
-schlossTitel:"Das Zahlenschloss der Stalltür",
+schlossTitel:"Das Zahlenschloss",
 schlossSymbol:"Über jedem Rad ist ein Zeichen eingebrannt. Stellt unter jedem Zeichen die Ziffer ein, die ihr dafür gefunden habt.",
 schlossStelle:"Stellt jede gefundene Ziffer an der richtigen Stelle ein.",
-schlossFalsch:"Das Schloss klickt – aber die Stalltür bleibt zu. Überprüft eure Ziffern!",
+schlossFalsch:"Das Schloss klickt – aber der Weg bleibt zu. Überprüft eure Ziffern!",
 zeitUmTitel:"Zeit zum Füttern!",
 zeitUm:"Eure Zeit ist abgelaufen. Aber gebt nicht auf – ihr dürft weiterspielen und den Weg nach draußen trotzdem noch finden!",
 geschafft:"Ihr habt es geschafft!",
 abschluss:"Geschafft! Ihr habt alle Rätsel zum Thema <b>{titel}</b> gelöst und den Weg über den ganzen Pferdehof gefunden. Zur Belohnung bekommt Pony Flocke eine Möhre!"
 },
 texteDu:{
-einleitung:"Du verbringst einen Ferientag auf dem Pferdehof Sonnenwiese. Kaum bist du in der Stallgasse, fällt die schwere Stalltür hinter dir zu! Die Reitlehrerin hat dir ein Rätselspiel vorbereitet: Jede Tür hat ein Zahlenschloss. Untersuche die Gegenstände in Stall, Sattelkammer und Reithalle. Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Schaffst du es bis hinaus zu den Pferden?",
+einleitung:"Du verbringst einen Ferientag auf dem Pferdehof Sonnenwiese. Kaum bist du in der Stallgasse, fällt die schwere Stalltür hinter dir zu! Die Reitlehrerin hat dir ein Rätselspiel vorbereitet: Jeder Durchgang hat ein Zahlenschloss. Untersuche die Gegenstände in Stall, Sattelkammer und Reithalle. Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Schaffst du es bis hinaus zu den Pferden?",
 falsch:["Das stimmt leider noch nicht. Versuche es noch einmal!","Pony Flocke schüttelt die Mähne … Prüfe deine Antwort!","Fast! Lies die Aufgabe noch einmal ganz genau."],
 schlossSymbol:"Über jedem Rad ist ein Zeichen eingebrannt. Stelle unter jedem Zeichen die Ziffer ein, die du dafür gefunden hast.",
 schlossStelle:"Stelle jede gefundene Ziffer an der richtigen Stelle ein.",
-schlossFalsch:"Das Schloss klickt – aber die Stalltür bleibt zu. Überprüfe deine Ziffern!",
+schlossFalsch:"Das Schloss klickt – aber der Weg bleibt zu. Überprüfe deine Ziffern!",
 zeitUm:"Deine Zeit ist abgelaufen. Aber gib nicht auf – du darfst weiterspielen und den Weg nach draußen trotzdem noch finden!",
 geschafft:"Du hast es geschafft!",
 abschluss:"Geschafft! Du hast alle Rätsel zum Thema <b>{titel}</b> gelöst und den Weg über den ganzen Pferdehof gefunden. Zur Belohnung bekommt Pony Flocke eine Möhre!"
@@ -105,22 +143,22 @@ einfach:{
 name:"Der Pferdehof",
 symbolNamen:["Hufeisen","Möhre","Sattel","Pferdekopf","Stroh"],
 texte:{
-einleitung:"Ihr seid auf einem Hof mit vielen Pferden. Plötzlich geht die Stalltür hinter euch zu! An jeder Tür hängt ein Zahlenschloss. Löst die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommt ihr eine Zahl. Findet ihr den Weg nach draußen zu den Pferden?",
+einleitung:"Ihr seid auf einem Hof mit vielen Pferden. Plötzlich geht die Stalltür hinter euch zu! An jedem Durchgang hängt ein Zahlenschloss. Löst die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommt ihr eine Zahl. Findet ihr den Weg nach draußen zu den Pferden?",
 falsch:["Das stimmt noch nicht. Versucht es noch einmal!","Leider falsch. Schaut noch einmal genau hin!","Fast! Lest die Aufgabe noch einmal."],
 schlossTitel:"Das Zahlenschloss",
 schlossSymbol:"Über jedem Rad ist ein Zeichen. Stellt unter jedem Zeichen die passende Zahl ein.",
 schlossStelle:"Stellt jede Zahl an die richtige Stelle.",
-schlossFalsch:"Die Tür bleibt zu. Prüft eure Zahlen noch einmal!",
+schlossFalsch:"Der Weg bleibt zu. Prüft eure Zahlen noch einmal!",
 zeitUmTitel:"Die Zeit ist um!",
 zeitUm:"Die Zeit ist vorbei. Aber ihr dürft weiterspielen!",
 abschluss:"Super! Ihr habt alle Aufgaben zum Thema <b>{titel}</b> gelöst. Ihr seid draußen bei den Pferden! Das Pony bekommt eine Möhre."
 },
 texteDu:{
-einleitung:"Du bist auf einem Hof mit vielen Pferden. Plötzlich geht die Stalltür hinter dir zu! An jeder Tür hängt ein Zahlenschloss. Löse die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommst du eine Zahl. Findest du den Weg nach draußen zu den Pferden?",
+einleitung:"Du bist auf einem Hof mit vielen Pferden. Plötzlich geht die Stalltür hinter dir zu! An jedem Durchgang hängt ein Zahlenschloss. Löse die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommst du eine Zahl. Findest du den Weg nach draußen zu den Pferden?",
 falsch:["Das stimmt noch nicht. Versuche es noch einmal!","Leider falsch. Schau noch einmal genau hin!","Fast! Lies die Aufgabe noch einmal."],
 schlossSymbol:"Über jedem Rad ist ein Zeichen. Stelle unter jedem Zeichen die passende Zahl ein.",
 schlossStelle:"Stelle jede Zahl an die richtige Stelle.",
-schlossFalsch:"Die Tür bleibt zu. Prüfe deine Zahlen noch einmal!",
+schlossFalsch:"Der Weg bleibt zu. Prüfe deine Zahlen noch einmal!",
 zeitUm:"Die Zeit ist vorbei. Aber du darfst weiterspielen!",
 geschafft:"Du hast es geschafft!",
 abschluss:"Super! Du hast alle Aufgaben zum Thema <b>{titel}</b> gelöst. Du bist draußen bei den Pferden! Das Pony bekommt eine Möhre."
@@ -129,7 +167,7 @@ raeume:[
 {titel:"Der Stall",intro:"Hier wohnen die Pferde. Jedes Pferd hat ein eigenes Zimmer. Hier sind die Zahlen für das erste Schloss versteckt.",
 objekte:[{name:"Futterkrippe",fund:"Im Heu liegt:"},{name:"Eimer mit Wasser",fund:"Am Eimer klebt:"},{name:"Schubkarre",fund:"Im Stroh liegt:"},{name:"Kiste mit Bürsten",fund:"Unter einer Bürste liegt:"},{name:"Halfter",fund:"Am Halfter hängt:"}],
 infoObjekte:[{name:"Tafel im Stall",fund:"An der Tafel klebt:"},{name:"Besen",fund:"Am Besen hängt:"},{name:"Tonne mit Hafer",fund:"Im Hafer liegt:"}]},
-{titel:"Der Raum für Sättel",intro:"Hier liegen die Sättel. Es riecht nach Leder. Findet die Zahlen für das nächste Schloss!",introDu:"Hier liegen die Sättel. Es riecht nach Leder. Finde die Zahlen für das nächste Schloss!",
+{titel:"Der Raum für Sättel",intro:"Hier liegen die Sättel. Es riecht nach Leder. Findet die Zahlen für das Schloss an der Deckenluke!",introDu:"Hier liegen die Sättel. Es riecht nach Leder. Finde die Zahlen für das Schloss an der Deckenluke!",
 objekte:[{name:"Sattel",fund:"Unter dem Sattel liegt:"},{name:"Zügel am Brett",fund:"Am Brett hängt:"},{name:"Schrank",fund:"Im Schrank liegt:"},{name:"Kiste mit Decken",fund:"Zwischen den Decken liegt:"},{name:"Regal mit Helmen",fund:"In einem Helm liegt:"}],
 infoObjekte:[{name:"Brett mit Schleifen",fund:"Hinter einer Schleife steckt:"},{name:"Stiefel",fund:"Im Stiefel steckt:"},{name:"Eimer mit Schwämmen",fund:"Unter einem Schwamm liegt:"}]},
 {titel:"Der Heuboden",intro:"Oben unter dem Dach liegt das Heu. Die Sonne scheint durch ein kleines Fenster. Eine Katze schläft im Korb.",
@@ -138,7 +176,7 @@ infoObjekte:[{name:"Vogelnest",fund:"Unter dem Nest klebt:"},{name:"Waage",fund:
 {titel:"Die Reithalle",intro:"Das ist eine große Halle. Hier lernen Kinder reiten. Der Boden ist aus Sand.",
 objekte:[{name:"Hindernis zum Springen",fund:"An der Stange hängt:"},{name:"Pony Flocke",fund:"Unter der Decke vom Pony steckt:"},{name:"Treppe zum Aufsteigen",fund:"Auf der Treppe liegt:"},{name:"Hütchen",fund:"Unter einem Hütchen liegt:"},{name:"Spiegel",fund:"Am Spiegel klebt:"}],
 infoObjekte:[{name:"Tafel mit Wegen",fund:"An der Tafel klebt:"},{name:"Schild mit Buchstabe",fund:"Hinter dem Schild steckt:"},{name:"Bank",fund:"Unter der Bank liegt:"}]},
-{titel:"Die Weide",intro:"Ihr seid draußen auf der Wiese. Die Pferde fressen Gras. Öffnet das letzte Schloss!",introDu:"Du bist draußen auf der Wiese. Die Pferde fressen Gras. Öffne das letzte Schloss!",
+{titel:"Die Weide",intro:"Ihr seid draußen auf der Wiese. Die Pferde fressen Gras. Öffnet das Weidetor mit dem letzten Schloss!",introDu:"Du bist draußen auf der Wiese. Die Pferde fressen Gras. Öffne das Weidetor mit dem letzten Schloss!",
 objekte:[{name:"Trog mit Wasser",fund:"Am Trog klebt:"},{name:"Korb mit Äpfeln",fund:"Unter den Äpfeln liegt:"},{name:"Stein zum Lecken",fund:"Am Stein klebt:"},{name:"Pferd mit Fohlen",fund:"Das Fohlen bringt dir etwas:"},{name:"Vogelhaus",fund:"Im Vogelhaus liegt:"}],
 infoObjekte:[{name:"Schild an der Hütte",fund:"Hinter dem Schild steckt:"},{name:"Gestell mit Heu",fund:"Im Heu steckt:"},{name:"Kiste mit Werkzeug",fund:"In der Kiste liegt:"}]}
 ]
@@ -146,8 +184,8 @@ infoObjekte:[{name:"Schild an der Hütte",fund:"Hinter dem Schild steckt:"},{nam
 welt:{w:1600,h:780},
 raeume:[
 {titel:"Die Stallgasse",
-intro:"Eine lange Stallgasse mit Pferdeboxen. Neugierige Pferde schauen über die Boxentüren. Laternen leuchten warm. Irgendwo hier sind die Ziffern für das erste Schloss versteckt …",
-tuerX:1300,
+intro:"Eine lange Stallgasse mit Pferdeboxen. Neugierige Pferde schauen über die Boxentüren. Laternen leuchten warm. Irgendwo hier sind die Ziffern für das Schloss an der Boxentür versteckt …",
+tuerX:1300,tuerArt:"box",
 hintergrund:()=>`${defs('#8a8070','#3a342c','#ffd890')}<rect width="1600" height="470" fill="#e8dcc4"/>${steine(40,190,36,100,'rgba(120,90,60,.3)')}${R(0,0,1600,40,'#4a2a14')}${P('M0 70H1600','none','#5a3a1c',14)}${box(20,0)}${box(250,'#8a5a30')}${box(480,0)}${box(710,'#2a2018')}${box(940,'#e8e0d0')}${box(1450,'#c08a50')}${boden(1)}${laterne(240)}${laterne(1080)}`,
 objekte:[
 {name:"Futterkrippe",x:300,boden:600,fuss:4,by:-115,zeichne:krippe,fund:"Unter dem Heu in der Krippe liegt:"},
@@ -158,9 +196,9 @@ objekte:[
 ],
 infoObjekte:[{name:"Stalltafel",x:850,y:230,wand:true,by:-75,zeichne:stalltafel,fund:"An der Stalltafel klebt:"},{name:"Stallbesen",x:130,boden:740,fuss:4,by:-195,zeichne:besen,fund:"Am Besenstiel hängt:"},{name:"Hafertonne",x:1150,boden:730,fuss:4,by:-120,zeichne:tonne,fund:"Im Hafer liegt:"}]},
 {titel:"Die Sattelkammer",
-intro:"In der Sattelkammer hängen Sättel, Trensen und Decken ordentlich an der Wand. Es riecht nach Leder. Findet die Ziffern für das nächste Schloss!",
-introDu:"In der Sattelkammer hängen Sättel, Trensen und Decken ordentlich an der Wand. Es riecht nach Leder. Finde die Ziffern für das nächste Schloss!",
-tuerX:400,
+intro:"In der Sattelkammer hängen Sättel, Trensen und Decken ordentlich an der Wand. Es riecht nach Leder. Findet die Ziffern für das Schloss an der Deckenluke!",
+introDu:"In der Sattelkammer hängen Sättel, Trensen und Decken ordentlich an der Wand. Es riecht nach Leder. Finde die Ziffern für das Schloss an der Deckenluke!",
+tuerX:400,tuerArt:"luke",
 hintergrund:()=>`${defs('#7a5a3a','#2e1e10','#ffe0a0')}${bretter(0,470,'#3a5a48',60)}${bretter(340,470,'#6b3f20',120)}${R(0,334,1600,10,'#2a1608')}${R(0,0,1600,36,'#2a1a10')}${fenster(845,150,110,130)}${wandsattel(170,260,'#7a3a1a')}${wandsattel(1300,280,'#4a2a14')}${wandsattel(1460,280,'#8a4a20')}${lampe(620,110,'#3f6a3a')}${lampe(1240,110,'#3f6a3a')}${boden(1)}`,
 objekte:[
 {name:"Sattel auf dem Sattelbock",x:900,boden:600,fuss:4,by:-128,zeichne:sattelbock,fund:"Unter dem Sattel liegt:"},
@@ -171,8 +209,8 @@ objekte:[
 ],
 infoObjekte:[{name:"Brett mit Siegerschleifen",x:1100,y:230,wand:true,by:-72,zeichne:schleifen,fund:"Hinter einer Schleife steckt:"},{name:"Reitstiefel",x:620,boden:720,fuss:4,by:-115,zeichne:stiefel,fund:"Im Reitstiefel steckt:"},{name:"Eimer mit Schwämmen",x:420,boden:745,fuss:4,by:-90,zeichne:schwaemme,fund:"Unter einem Schwamm liegt:"}]},
 {titel:"Der Heuboden",
-intro:"Eine Leiter führt hinauf auf den Heuboden. Durch das runde Giebelfenster fällt ein Sonnenstrahl. Es duftet nach Heu, und die Stallkatze schläft in ihrem Korb.",
-tuerX:1000,
+intro:"Eine Leiter führt hinauf auf den Heuboden. Durch das runde Giebelfenster fällt ein Sonnenstrahl. Es duftet nach Heu, und die Stallkatze schläft in ihrem Korb. Am großen Heutor hängt das nächste Schloss.",
+tuerX:1000,tuerArt:"heu",
 hintergrund:()=>`${defs('#a07040','#4a2a14','#ffe8a0')}${bretter(0,470,'#c08a4a',80)}${P('M0 0H800L0 300ZM1600 0H800L1600 300Z','#4a2e18')}${P('M0 300L800 0L1600 300M200 225V470M1400 225V470','none','#3a2010',18)}<circle cx="800" cy="140" r="54" fill="#bfe0f0" stroke="#3a2010" stroke-width="10"/>${P('M800 86V194M746 140H854','none','#3a2010',5)}${P('M760 160H840L1100 470H520Z','#fff3c0').split('/>').join(' opacity=".18"/>')}${P('M0 470Q60 380 160 400Q240 360 330 470Z','#e0bc50','#b8962a',2)}${P('M1240 470Q1320 370 1420 390Q1520 350 1600 400V470Z','#e0bc50','#b8962a',2)}${boden(1)}`,
 objekte:[
 {name:"Heuballen",x:250,boden:580,fuss:4,by:-112,zeichne:heuballen,fund:"Zwischen den Heuballen steckt:"},
@@ -183,9 +221,9 @@ objekte:[
 ],
 infoObjekte:[{name:"Schwalbennest",x:1300,y:210,wand:true,by:-62,zeichne:schwalbennest,fund:"Unter dem Schwalbennest klebt:"},{name:"Futterwaage",x:500,boden:600,fuss:4,by:-165,zeichne:waage,fund:"Auf der Futterwaage liegt:"},{name:"Leiter zum Heuboden",x:780,boden:560,fuss:4,by:-265,zeichne:heuleiter,fund:"An der obersten Sprosse hängt:"}]},
 {titel:"Die Reithalle",
-intro:"Die Reithalle ist riesig und hell. Der Boden ist aus weichem Sand. Hier üben Reiterinnen und Reiter mit ihren Pferden – heute wartet Pony Flocke auf euch.",
-introDu:"Die Reithalle ist riesig und hell. Der Boden ist aus weichem Sand. Hier üben Reiterinnen und Reiter mit ihren Pferden – heute wartet Pony Flocke auf dich.",
-tuerX:600,
+intro:"Die Reithalle ist riesig und hell. Der Boden ist aus weichem Sand. Hier üben Reiterinnen und Reiter mit ihren Pferden – heute wartet Pony Flocke auf euch. Das Schiebetor zur Weide hat ein Zahlenschloss.",
+introDu:"Die Reithalle ist riesig und hell. Der Boden ist aus weichem Sand. Hier üben Reiterinnen und Reiter mit ihren Pferden – heute wartet Pony Flocke auf dich. Das Schiebetor zur Weide hat ein Zahlenschloss.",
+tuerX:600,tuerArt:"schieb",
 hintergrund:()=>`${defs('#dcc08a','#a8884e','#fffbe8')}<rect width="1600" height="470" fill="#e8e0d0"/>${R(0,0,1600,60,'#7a5a3a')}${P('M0 60L200 0L400 60L600 0L800 60L1000 0L1200 60L1400 0L1600 60','none','#5a3a1c',8)}${[100,500,900,1300].map(x=>fenster(x,90,200,70)).join('')}${P('M0 360H1600V470H0Z','#9a6a3a')}${P([...Array(40)].map((_,k)=>`M${k*40} 360L${k*40+20} 470`).join(''),'none','rgba(0,0,0,.2)',3)}${R(0,352,1600,12,'#5a3a1c')}${boden(0)}<ellipse cx="800" cy="640" rx="700" ry="110" fill="none" stroke="rgba(120,80,40,.22)" stroke-width="34"/>${[...Array(40)].map((_,k)=>`<circle cx="${(k*397)%1600}" cy="${490+(k*131)%280}" r="3" fill="rgba(0,0,0,.12)"/>`).join('')}`,
 objekte:[
 {name:"Sprung mit Stangen",x:1000,boden:620,fuss:4,by:-125,zeichne:sprung,fund:"An der oberen Stange hängt:"},
@@ -196,9 +234,9 @@ objekte:[
 ],
 infoObjekte:[{name:"Tafel mit Hufschlagfiguren",x:250,y:220,wand:true,by:-75,zeichne:bahntafel,fund:"An der Tafel klebt:"},{name:"Bahnschild mit Buchstabe",x:1520,boden:560,fuss:4,by:-132,zeichne:bahnschild,fund:"Hinter dem Bahnschild steckt:"},{name:"Zuschauerbank",x:150,boden:560,fuss:4,by:-105,zeichne:bank,fund:"Unter der Zuschauerbank liegt:"}]},
 {titel:"Die Koppel",
-intro:"Endlich draußen! Auf der Koppel grasen die Pferde in der Sonne. Ein Fohlen springt neben seiner Mutter umher. Öffnet das letzte Schloss, dann habt ihr es geschafft!",
-introDu:"Endlich draußen! Auf der Koppel grasen die Pferde in der Sonne. Ein Fohlen springt neben seiner Mutter umher. Öffne das letzte Schloss, dann hast du es geschafft!",
-tuerX:300,
+intro:"Endlich draußen! Auf der Koppel grasen die Pferde in der Sonne. Ein Fohlen springt neben seiner Mutter umher. Öffnet das Weidetor mit dem letzten Schloss, dann habt ihr es geschafft!",
+introDu:"Endlich draußen! Auf der Koppel grasen die Pferde in der Sonne. Ein Fohlen springt neben seiner Mutter umher. Öffne das Weidetor mit dem letzten Schloss, dann hast du es geschafft!",
+tuerX:300,tuerArt:"weide",
 hintergrund:()=>`${defs('#7ab84a','#3f7a2a','#fff8c0')}<linearGradient id="himmelK" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6ab4e8"/><stop offset="1" stop-color="#dff0f8"/></linearGradient><rect width="1600" height="470" fill="url(#himmelK)"/><circle cx="1480" cy="90" r="120" fill="url(#licht)"/><circle cx="1480" cy="90" r="46" fill="#fff3a0"/>${[[420,90],[1020,70]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="70" ry="22" fill="#fff"/><ellipse cx="${x+30}" cy="${y-14}" rx="40" ry="20" fill="#fff"/>`).join('')}${P('M0 400Q300 330 640 380T1200 360T1600 370V470H0Z','#8cc06a')}${R(100,170,400,300,'#a0402a')}${P('M120 170V470M180 170V470M240 170V470M360 170V470M420 170V470','none','rgba(0,0,0,.2)',3)}${P('M80 176L300 80L520 176Z','#5a3a2a')}${R(784,140,32,330,'#6a4a24')}${[[800,90,80],[740,130,50],[860,130,50]].map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="#3f8a4a"/>`).join('')}${R(1120,200,360,270,'#7a5a3a')}${P('M1100 200L1300 130L1500 200Z','#5a3a2a')}${P('M1130 200V470M1470 200V470','none','#4a2a14',14)}${P('M500 410H1120M500 445H1120M1480 410H1600M1480 445H1600','none','#8a6a44',8)}${[540,640,740,860,960,1060,1540].map(x=>R(x-6,390,12,80,'#6a4a24')).join('')}${boden(0)}${[...Array(30)].map((_,k)=>{const x=(k*263)%1600,y=490+(k*97)%280;return P(`M${x-6} ${y}L${x-8} ${y-12}M${x} ${y}V${y-15}M${x+6} ${y}L${x+9} ${y-11}`,'none','#2f6a20',2);}).join('')}`,
 objekte:[
 {name:"Wassertrog",x:650,boden:640,fuss:4,by:-82,zeichne:trog,fund:"Am Rand des Wassertrogs klebt:"},
@@ -211,11 +249,12 @@ infoObjekte:[{name:"Weideschild",x:1250,y:280,wand:true,by:-65,zeichne:weideschi
 ],
 tuer,
 vignette:`<rect width="1000" height="600" fill="url(#vig)" pointer-events="none"/>`,
-ausgang:()=>`<defs><linearGradient id="himmel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f0a060"/><stop offset=".7" stop-color="#fbe0a0"/></linearGradient></defs>
-   <rect width="1000" height="600" fill="url(#himmel)"/><circle cx="700" cy="300" r="110" fill="#fff6c8" opacity=".4"/><circle cx="700" cy="300" r="60" fill="#fff6c8"/>
+ausgang:()=>`<defs><linearGradient id="himmel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f08a5a"/><stop offset=".6" stop-color="#fbd890"/><stop offset="1" stop-color="#fff0c0"/></linearGradient></defs>
+   <rect width="1000" height="600" fill="url(#himmel)"/><circle cx="700" cy="390" r="120" fill="#fff6c8" opacity=".35"/><circle cx="700" cy="390" r="64" fill="#ffe8a0"/>
    <path d="M0 400Q200 340 420 380T1000 360V600H0Z" fill="#8cc06a"/><path d="M0 460Q300 420 600 470T1000 450V600H0Z" fill="#6aa04a"/>
-   ${P('M200 420H800M200 445H800','none','#8a6a44',6)}${[240,360,480,600,720].map(x=>R(x-5,405,10,60,'#6a4a24')).join('')}
-   <g transform="translate(380 520) scale(.9)">${pferd('#5a3a24','#1a1a1a')}</g><g transform="translate(600 540) scale(-.8 .8)">${pferd('#e8e0d0','#999')}</g><g transform="translate(500 545) scale(.5)">${pferd('#c08a50','#6a4a24')}</g>
+   ${P('M200 420H445M200 445H445M555 420H800M555 445H800','none','#8a6a44',6)}${[240,360,640,760].map(x=>R(x-5,405,10,60,'#6a4a24')).join('')}
+   ${R(441,365,14,105,'#7a5230','#3a2410',3)}${R(545,365,14,105,'#7a5230','#3a2410',3)}${R(441,365,118,16,'#7a5230','#3a2410',3)}${P('M441 392L410 402V466L441 462Z','#b07a42','#6a4a24',3)}
+   <g transform="translate(380 520) scale(.9)">${pferd('#5a3a24','#1a1a1a')}</g><g transform="translate(640 540) scale(-.8 .8)">${pferd('#e8e0d0','#999')}</g><g transform="translate(500 545) scale(.5)">${pferd('#c08a50','#6a4a24')}</g>
    <path d="M0 0H1000V600H0Z M200 600V130H800V600Z" fill="#5a2a1a" fill-rule="evenodd"/><path d="M200 600V130H800V600" stroke="#f4ecd8" stroke-width="16" fill="none"/>`
 };
 })();
