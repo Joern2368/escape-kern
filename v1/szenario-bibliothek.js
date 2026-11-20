@@ -57,17 +57,49 @@ const stoffrollen=()=>`${schatten(44,4)}${[[-24,'#2f5f5f',-100],[0,'#8a2a2a',-12
 const mondkalender=()=>`<rect x="-80" y="-44" width="160" height="88" rx="6" fill="#1b2a48" stroke="#b8862a" stroke-width="5"/>${[[-54,8],[-18,20],[18,0],[54,-20]].map(([x,o])=>`<circle cx="${x}" r="14" fill="#fff1b8"/>${o?`<circle cx="${x+o}" r="14" fill="#1b2a48"/>`:''}`).join('')}`;
 const planeten=()=>`${schatten(36,4)}<path d="M-22 0H22M0 0V-80" stroke="#b8862a" stroke-width="5"/><ellipse cy="-100" rx="56" ry="16" fill="none" stroke="#8fa8d8" stroke-width="2"/><circle cy="-100" r="16" fill="#f0c040"/><circle cx="-52" cy="-96" r="7" fill="#3f8fbf"/><circle cx="40" cy="-110" r="9" fill="#c86a3a"/>`;
 const truhe=()=>`${schatten(56,4)}${R(-52,-54,104,54,'#3a2a5a','#1a1030',3)}<path d="M-52 -54Q0 -84 52 -54Z" fill="#4a3a6a" stroke="#1a1030" stroke-width="3"/>${R(-8,-46,16,16,'#d8a73a')}${[[-32,-30],[30,-22],[-20,-66],[24,-64]].map(([x,y])=>`<use href="#sym-stern" x="${x-7}" y="${y-7}" width="14" height="14" color="#e8c45a"/>`).join('')}`;
-function tuer(n,bereit,def){
-const dx=((def&&def.tuerX)||500)-500;
-let d='';const x0=500-(n-1)*11;for(let k=0;k<n;k++)d+=`<circle cx="${x0+k*22}" cy="330" r="8" fill="#2a1a08" stroke="#d8a73a" stroke-width="2"/>`;
+const sPl=(n,y)=>{let d='';const x0=500-(n-1)*11;for(let k=0;k<n;k++)d+=`<circle cx="${x0+k*22}" cy="${y}" r="8" fill="#2a1a08" stroke="#d8a73a" stroke-width="2"/>`;return`<rect x="${500-n*11-12}" y="${y-18}" width="${n*22+24}" height="36" rx="6" fill="#2a1a08" stroke="#d8a73a" stroke-width="2"/>${d}`;};
+const TSTIL=`<style>.tuer .tb{transition:transform 1.8s ease-in-out,opacity 1.8s ease-in-out}.tuer.offen #rs{transform:translateX(190px)}.tuer.offen .sl0{transform:translateX(-200px)}.tuer.offen .sl1{transform:translateX(200px)}.tuer.offen .pl{opacity:0}.tuer.offen #km{transform:scaleY(.1)}.tuer.offen #b1{transform:scaleX(.12)}.tuer.offen #b2{transform:scaleX(.12)}.tuer.offen #mf1{transform:scaleX(.14)}.tuer.offen #mf2{transform:scaleX(.14)}</style>`;
+const gang=`<rect x="410" y="190" width="180" height="280" fill="#1a1008"/><circle cx="500" cy="330" r="110" fill="url(#licht)"/><path d="M420 470L470 380H530L580 470M470 380V260M530 380V260" stroke="#3a2a18" stroke-width="3" fill="none"/>`;
+function tuerRegal(n){
+return`<rect x="380" y="160" width="240" height="310" fill="#9a8a72" stroke="#4a3a24" stroke-width="5"/>${gang}
+   <rect x="380" y="174" width="440" height="12" fill="#6b4a24" stroke="#3a2010" stroke-width="2"/>
+   <g id="rs" class="tb">${regal(410,190,180,280,'#5a3418')}${sPl(n,330)}</g>`;
+}
+function tuerSchub(n){
+let r='';
+for(let j=0;j<6;j++){let s='';for(let i=0;i<3;i++){const x=410+i*60,y=190+j*46.7;s+=`<rect x="${x}" y="${y}" width="60" height="46.7" fill="${(i+j)%2?'#8a969e':'#a0aab2'}" stroke="#4a5258" stroke-width="2"/><rect x="${x+18}" y="${y+10}" width="24" height="8" fill="#f4ecd8" stroke="#4a5258" stroke-width="1"/><rect x="${x+22}" y="${y+26}" width="16" height="6" rx="3" fill="#3a4046"/>`;}r+=`<g class="tb sl${j%2}" style="transition-delay:${(j*.1).toFixed(1)}s">${s}</g>`;}
+return`<defs><clipPath id="sclip"><rect x="410" y="190" width="180" height="280"/></clipPath></defs>
+   <rect x="380" y="160" width="240" height="310" fill="#5a646c" stroke="#22282e" stroke-width="5"/>${gang}
+   <g clip-path="url(#sclip)">${r}</g><g class="tb pl">${sPl(n,330)}</g>`;
+}
+function tuerKarte(n){
+return`<rect x="380" y="160" width="240" height="310" fill="#9a8a72" stroke="#4a3a24" stroke-width="5"/>${gang}
+   <g id="km" class="tb" style="transform-origin:500px 190px"><rect x="410" y="190" width="180" height="280" fill="#ecdcb0" stroke="#8a6a3a" stroke-width="3"/><path d="M430 250Q450 224 482 240Q494 270 470 292Q440 304 430 270Z" fill="#a8b878"/><path d="M512 300Q540 280 570 310Q568 350 540 360Q512 340 512 300Z" fill="#a8b878"/><path d="M440 380Q470 366 490 390Q480 420 448 414Z" fill="#c8a868"/><path d="M420 340C460 330 490 350 560 420" stroke="#a33b22" stroke-width="3" stroke-dasharray="8 6" fill="none"/><circle cx="560" cy="226" r="14" fill="none" stroke="#6a4a2a" stroke-width="3"/>${sPl(n,330)}</g>
+   <rect x="396" y="176" width="208" height="16" rx="8" fill="#6b4a24" stroke="#3a2010" stroke-width="3"/><circle cx="396" cy="184" r="8" fill="#d8a73a"/><circle cx="604" cy="184" r="8" fill="#d8a73a"/>`;
+}
+function tuerBuch(n){
+let z='';for(let k=0;k<6;k++)z+=`M430 ${230+k*30}H570`;
+return`<rect x="396" y="170" width="212" height="304" rx="6" fill="#4a1a1a" stroke="#2a0a0a" stroke-width="4"/>${gang}
+   <g id="b2" class="tb" style="transform-origin:410px 330px;transition-delay:.4s"><rect x="410" y="190" width="180" height="280" fill="#f4ecd8" stroke="#b8a888" stroke-width="2"/><path d="${z}" stroke="#a8a088" stroke-width="3"/></g>
+   <g id="b1" class="tb" style="transform-origin:410px 330px"><rect x="410" y="190" width="180" height="280" fill="#8a2a2a" stroke="#4a1010" stroke-width="4"/><rect x="420" y="200" width="160" height="260" fill="none" stroke="#d8a73a" stroke-width="3"/><use href="#sym-buch" x="472" y="212" width="56" height="56" color="#d8a73a"/>${sPl(n,330)}</g>
+   <rect x="396" y="170" width="16" height="304" rx="4" fill="#2a0a0a"/>`;
+}
+function tuerMond(n){
 const bogen='M410 470V250Q410 172 500 172Q590 172 590 250V470Z';
-return`<defs><clipPath id="tuerclip"><path d="${bogen}"/></clipPath><linearGradient id="platteG" x1="0" x2="1"><stop offset="0" stop-color="#5a3418"/><stop offset=".5" stop-color="#7a4a24"/><stop offset="1" stop-color="#4a2a12"/></linearGradient></defs>
-  <g transform="translate(${dx} 0)"><g class="tuer${bereit?' bereit':''}" role="button" tabindex="0" aria-label="Tür mit Zahlenschloss">
+const sterne=[[440,230],[470,200],[520,215],[560,250],[450,300],[540,320],[500,270]].map(([x,y])=>`<rect x="${x}" y="${y}" width="4" height="4" fill="#fff6c8"/>`).join('');
+let st='';for(let x=416;x<=584;x+=24)st+=`M${x} 420V462`;
+const gl=(x)=>`<rect x="${x}" y="172" width="90" height="298" fill="rgba(190,220,245,.25)" stroke="#5a3418" stroke-width="5"/><path d="M${x+45} 172V470M${x} 270H${x+90}M${x} 370H${x+90}" stroke="#5a3418" stroke-width="4"/>`;
+return`<defs><clipPath id="mclip"><path d="${bogen}"/></clipPath><linearGradient id="himmelM" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b2a48"/><stop offset="1" stop-color="#4a5a8a"/></linearGradient></defs>
    <path d="M380 470V244Q380 140 500 140Q620 140 620 244V470Z" fill="#9a8a72" stroke="#4a3a24" stroke-width="5"/>
-   <path d="${bogen}" fill="#120a04"/>
-   <g clip-path="url(#tuerclip)"><g id="platte"><path d="${bogen}" fill="url(#platteG)"/><path d="M455 172V470M500 172V470M545 172V470" stroke="#3a2010" stroke-width="3"/><path d="M410 240H590M410 420H590" stroke="#333" stroke-width="10"/><use href="#sym-buch" x="472" y="252" width="56" height="56" color="#d8a73a"/><rect x="${500-n*11-12}" y="312" width="${n*22+24}" height="36" rx="6" fill="#2a1a08" stroke="#d8a73a" stroke-width="2"/>${d}</g></g>
-   <path d="M486 140L500 120L514 140" fill="#d8a73a" stroke="#6b4a1c" stroke-width="2"/>
-  </g></g>`;
+   <g clip-path="url(#mclip)"><rect x="410" y="172" width="180" height="298" fill="url(#himmelM)"/><circle cx="540" cy="250" r="34" fill="#fff6c8"/><circle cx="552" cy="244" r="30" fill="#2c3d66"/>${sterne}<path d="M410 400H430V380H450V400H490V370H510V400H560V385H590V470H410Z" fill="#14203a"/><path d="M410 420H590M410 462H590" stroke="#5a3418" stroke-width="6"/><path d="${st}" stroke="#5a3418" stroke-width="5"/></g>
+   <g id="mf1" class="tb" style="transform-origin:410px 330px">${gl(410)}</g><g id="mf2" class="tb" style="transform-origin:590px 330px">${gl(500)}</g>
+   <g class="tb pl">${sPl(n,330)}</g>`;
+}
+function tuer(n,bereit,def){
+const dx=((def&&def.tuerX)||500)-500,art=(def&&def.tuerArt)||'regal';
+const arten={regal:[tuerRegal,'Schiebe-Regal mit Zahlenschloss'],schub:[tuerSchub,'Schubladenwand mit Zahlenschloss'],karte:[tuerKarte,'Weltkarte mit Zahlenschloss'],buch:[tuerBuch,'Riesenbuch mit Zahlenschloss'],mond:[tuerMond,'Mondfenster mit Zahlenschloss']};
+const a=arten[art]||arten.regal;
+return`${TSTIL}<g transform="translate(${dx} 0)"><g class="tuer${bereit?' bereit':''}" role="button" tabindex="0" aria-label="${a[1]}">${a[0](n)}</g></g>`;
 }
 const W='#e8d9b8';
 SZENARIEN.bibliothek={
@@ -76,7 +108,7 @@ symbole:["buch","schluessel","eule","tintenfeder","sanduhr"],
 symbolNamen:["Buch","Schlüssel","Eule","Schreibfeder","Sanduhr"],
 emblem:`<svg viewBox="0 0 120 90" width="120" height="90" aria-hidden="true"><path d="M8 20Q34 8 60 20Q86 8 112 20V80Q86 68 60 80Q34 68 8 80Z" fill="#f4ecd8" stroke="#8a6420" stroke-width="3"/><path d="M60 20V80" stroke="#8a6420" stroke-width="3"/><path d="M18 34Q34 28 50 34M18 46Q34 40 50 46M70 34Q86 28 102 34" stroke="#b8a888" stroke-width="2" fill="none"/><use href="#sym-schluessel" x="66" y="40" width="40" height="34" color="#a33b22"/></svg>`,
 texte:{
-einleitung:"Ihr besucht die älteste Bibliothek der Stadt. Kaum seid ihr im Lesesaal, schlägt die schwere Tür hinter euch zu! Die Bibliothekarin hat euch ein Rätselspiel hinterlassen: Jede Tür hat ein Zahlenschloss. Untersucht die Gegenstände in den Räumen. Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Findet ihr den Weg hinaus?",
+einleitung:"Ihr besucht die älteste Bibliothek der Stadt. Kaum seid ihr im Lesesaal, schlägt die schwere Tür hinter euch zu! Die Bibliothekarin hat euch ein Rätselspiel hinterlassen: Jeder Durchgang hat ein Zahlenschloss. Untersucht die Gegenstände in den Räumen. Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Findet ihr den Weg hinaus?",
 startKnopf:"Die Bibliothek betreten",
 hinweisGeber:"Die kluge Eule flüstert:",
 richtig:"Richtig gelöst!",
@@ -84,18 +116,18 @@ falsch:["Das stimmt leider noch nicht. Versucht es noch einmal!","Die Eule schü
 schlossTitel:"Das Zahlenschloss der Bibliothek",
 schlossSymbol:"Über jedem Rad ist ein Zeichen eingraviert. Stellt unter jedem Zeichen die Ziffer ein, die ihr dafür gefunden habt.",
 schlossStelle:"Stellt jede gefundene Ziffer an der richtigen Stelle ein.",
-schlossFalsch:"Das Schloss klickt – aber die Tür bleibt zu. Überprüft eure Ziffern!",
+schlossFalsch:"Das Schloss klickt – aber der Weg bleibt zu. Überprüft eure Ziffern!",
 zeitUmTitel:"Die Bibliothek schließt!",
 zeitUm:"Eure Zeit ist abgelaufen. Aber gebt nicht auf – ihr dürft weiterspielen und den Ausgang trotzdem noch finden!",
 geschafft:"Ihr seid frei!",
 abschluss:"Geschafft! Ihr habt alle Rätsel zum Thema <b>{titel}</b> gelöst und den Weg aus der alten Bibliothek gefunden. Die Bibliothekarin ist stolz auf euch!"
 },
 texteDu:{
-einleitung:"Du besuchst die älteste Bibliothek der Stadt. Kaum bist du im Lesesaal, schlägt die schwere Tür hinter dir zu! Die Bibliothekarin hat dir ein Rätselspiel hinterlassen: Jede Tür hat ein Zahlenschloss. Untersuche die Gegenstände in den Räumen. Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Findest du den Weg hinaus?",
+einleitung:"Du besuchst die älteste Bibliothek der Stadt. Kaum bist du im Lesesaal, schlägt die schwere Tür hinter dir zu! Die Bibliothekarin hat dir ein Rätselspiel hinterlassen: Jeder Durchgang hat ein Zahlenschloss. Untersuche die Gegenstände in den Räumen. Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Findest du den Weg hinaus?",
 falsch:["Das stimmt leider noch nicht. Versuche es noch einmal!","Die Eule schüttelt den Kopf … Prüfe deine Antwort!","Fast! Lies die Aufgabe noch einmal ganz genau."],
 schlossSymbol:"Über jedem Rad ist ein Zeichen eingraviert. Stelle unter jedem Zeichen die Ziffer ein, die du dafür gefunden hast.",
 schlossStelle:"Stelle jede gefundene Ziffer an der richtigen Stelle ein.",
-schlossFalsch:"Das Schloss klickt – aber die Tür bleibt zu. Überprüfe deine Ziffern!",
+schlossFalsch:"Das Schloss klickt – aber der Weg bleibt zu. Überprüfe deine Ziffern!",
 zeitUm:"Deine Zeit ist abgelaufen. Aber gib nicht auf – du darfst weiterspielen und den Ausgang trotzdem noch finden!",
 geschafft:"Du bist frei!",
 abschluss:"Geschafft! Du hast alle Rätsel zum Thema <b>{titel}</b> gelöst und den Weg aus der alten Bibliothek gefunden. Die Bibliothekarin ist stolz auf dich!"
@@ -104,31 +136,31 @@ einfach:{
 name:"Die alte Bibliothek",
 symbolNamen:["Buch","Schlüssel","Eule","Feder","Sanduhr"],
 texte:{
-einleitung:"Ihr seid in einer sehr alten Bibliothek. Dort stehen ganz viele Bücher. Plötzlich geht die Tür hinter euch zu! An jeder Tür hängt ein Zahlenschloss. Löst die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommt ihr eine Zahl. Findet ihr den Weg nach draußen?",
+einleitung:"Ihr seid in einer sehr alten Bibliothek. Dort stehen ganz viele Bücher. Plötzlich geht die Tür hinter euch zu! An jedem Durchgang hängt ein Zahlenschloss. Löst die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommt ihr eine Zahl. Findet ihr den Weg nach draußen?",
 falsch:["Das stimmt noch nicht. Versucht es noch einmal!","Leider falsch. Schaut noch einmal genau hin!","Fast! Lest die Aufgabe noch einmal."],
 schlossTitel:"Das Zahlenschloss",
 schlossSymbol:"Über jedem Rad ist ein Zeichen. Stellt unter jedem Zeichen die passende Zahl ein.",
 schlossStelle:"Stellt jede Zahl an die richtige Stelle.",
-schlossFalsch:"Die Tür bleibt zu. Prüft eure Zahlen noch einmal!",
+schlossFalsch:"Der Weg bleibt zu. Prüft eure Zahlen noch einmal!",
 zeitUmTitel:"Die Zeit ist um!",
 zeitUm:"Die Zeit ist vorbei. Aber ihr dürft weiterspielen!",
 abschluss:"Super! Ihr habt alle Aufgaben zum Thema <b>{titel}</b> gelöst und den Weg nach draußen gefunden!"
 },
 texteDu:{
-einleitung:"Du bist in einer sehr alten Bibliothek. Dort stehen ganz viele Bücher. Plötzlich geht die Tür hinter dir zu! An jeder Tür hängt ein Zahlenschloss. Löse die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommst du eine Zahl. Findest du den Weg nach draußen?",
+einleitung:"Du bist in einer sehr alten Bibliothek. Dort stehen ganz viele Bücher. Plötzlich geht die Tür hinter dir zu! An jedem Durchgang hängt ein Zahlenschloss. Löse die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommst du eine Zahl. Findest du den Weg nach draußen?",
 falsch:["Das stimmt noch nicht. Versuche es noch einmal!","Leider falsch. Schau noch einmal genau hin!","Fast! Lies die Aufgabe noch einmal."],
 schlossSymbol:"Über jedem Rad ist ein Zeichen. Stelle unter jedem Zeichen die passende Zahl ein.",
 schlossStelle:"Stelle jede Zahl an die richtige Stelle.",
-schlossFalsch:"Die Tür bleibt zu. Prüfe deine Zahlen noch einmal!",
+schlossFalsch:"Der Weg bleibt zu. Prüfe deine Zahlen noch einmal!",
 zeitUm:"Die Zeit ist vorbei. Aber du darfst weiterspielen!",
 geschafft:"Du bist frei!",
 abschluss:"Super! Du hast alle Aufgaben zum Thema <b>{titel}</b> gelöst und den Weg nach draußen gefunden!"
 },
 raeume:[
-{titel:"Der Lesesaal",intro:"Ein großer Saal voller Bücher. Grüne Lampen leuchten. Hier sind die Zahlen für das erste Schloss versteckt.",
+{titel:"Der Lesesaal",intro:"Ein großer Saal voller Bücher. Grüne Lampen leuchten. Hier sind die Zahlen für das Schloss am Regal versteckt.",
 objekte:[{name:"Pult mit Buch",fund:"Im Buch liegt:"},{name:"Globus",fund:"Im Globus klappert etwas:"},{name:"Bücherwagen",fund:"Hinter den Büchern liegt:"},{name:"Sessel",fund:"Unter dem Kissen liegt:"},{name:"Uhr",fund:"Hinter der Uhr klebt:"}],
 infoObjekte:[{name:"Bild an der Wand",fund:"Hinter dem Bild klebt:"},{name:"Kopf aus Stein",fund:"Unter dem Kopf liegt:"},{name:"Pflanze",fund:"In der Erde steckt:"}]},
-{titel:"Der Aktenraum",intro:"Ihr seid im Aktenraum. Hier liegen viele alte Papiere in Kisten und Schränken. Findet die Zahlen für das nächste Schloss!",introDu:"Du bist im Aktenraum. Hier liegen viele alte Papiere in Kisten und Schränken. Finde die Zahlen für das nächste Schloss!",
+{titel:"Der Aktenraum",intro:"Ihr seid im Aktenraum. Hier liegen viele alte Papiere in Kisten und Schränken. Findet die Zahlen für das Schloss an der Schubladenwand!",introDu:"Du bist im Aktenraum. Hier liegen viele alte Papiere in Kisten und Schränken. Finde die Zahlen für das Schloss an der Schubladenwand!",
 objekte:[{name:"Schrank mit Schubladen",fund:"In einer Schublade liegt:"},{name:"Schreibmaschine",fund:"In der Schreibmaschine steckt ein Zettel:"},{name:"Kiste mit Papieren",fund:"Zwischen den Papieren liegt:"},{name:"Leiter",fund:"Oben auf der Leiter liegt:"},{name:"Tresor",fund:"Der Tresor geht auf! Darin liegt:"}],
 infoObjekte:[{name:"Pinnwand",fund:"Unter einem Zettel steckt:"},{name:"Ordner",fund:"Im Ordner liegt:"},{name:"Ständer mit Zeitungen",fund:"In der Zeitung liegt:"}]},
 {titel:"Der Kartenraum",intro:"Hier hängen viele alte Karten an den Wänden. Mit Karten fanden Menschen früher den Weg.",
@@ -145,8 +177,8 @@ infoObjekte:[{name:"Bild vom Mond",fund:"Hinter dem Bild klebt:"},{name:"Sonne m
 welt:{w:1600,h:780},
 raeume:[
 {titel:"Der Lesesaal",
-intro:"Ein großer Lesesaal mit hohen Regalen voller Bücher. Grüne Lampen leuchten über den Tischen. Irgendwo hier sind die Ziffern für das erste Schloss versteckt …",
-tuerX:800,
+intro:"Ein großer Lesesaal mit hohen Regalen voller Bücher. Grüne Lampen leuchten über den Tischen. Irgendwo hier sind die Ziffern für das Schloss am Schiebe-Regal versteckt …",
+tuerX:800,tuerArt:"regal",
 hintergrund:()=>`${defs('#9a6a3a','#4a2e18')}<rect width="1600" height="470" fill="${W}"/>${regal(30,90,250,300)}${regal(1080,90,250,300)}${regal(1340,90,240,300)}${fenster(400,170)}${paneel(380,'#6b3f20')}<rect width="1600" height="40" fill="#4a2a14"/>${boden()}${haengelampe(300,110,'#2f6a3a')}${haengelampe(1300,110,'#2f6a3a')}`,
 objekte:[
 {name:"Lesepult mit Buch",x:430,boden:620,fuss:4,by:-110,zeichne:pult,fund:"Zwischen den Seiten des Buches liegt:"},
@@ -157,9 +189,9 @@ objekte:[
 ],
 infoObjekte:[{name:"Porträt der Gründerin",x:1000,y:250,wand:true,by:-95,zeichne:portraet,fund:"Hinter dem Bild klebt:"},{name:"Büste eines Dichters",x:1520,boden:560,fuss:4,by:-195,zeichne:bueste,fund:"Unter der Büste liegt:"},{name:"Topfpflanze",x:650,boden:745,fuss:4,by:-170,zeichne:pflanze,fund:"In der Blumenerde steckt:"}]},
 {titel:"Das Archiv",
-intro:"Ihr steht im Archiv. Hier lagern alte Akten, Karteikarten und Briefe in langen Metallregalen. Findet die Ziffern für das nächste Schloss!",
-introDu:"Du stehst im Archiv. Hier lagern alte Akten, Karteikarten und Briefe in langen Metallregalen. Finde die Ziffern für das nächste Schloss!",
-tuerX:1350,
+intro:"Ihr steht im Archiv. Hier lagern alte Akten, Karteikarten und Briefe in langen Metallregalen. Findet die Ziffern für das Schloss an der Schubladenwand!",
+introDu:"Du stehst im Archiv. Hier lagern alte Akten, Karteikarten und Briefe in langen Metallregalen. Finde die Ziffern für das Schloss an der Schubladenwand!",
+tuerX:1350,tuerArt:"schub",
 hintergrund:()=>`${defs('#4a5a62','#1c2428','#e8f0ff')}<rect width="1600" height="470" fill="#5a6a78"/>${steine(40,470,60,200,'rgba(20,30,40,.25)')}<rect width="1600" height="40" fill="#2c3438"/><path d="M0 60H1600M0 74H1600" stroke="#8a969e" stroke-width="6"/>${blechregal(60,120,320,340)}${blechregal(760,120,420,340)}${boden()}${haengelampe(500,90,'#c9ccce')}${haengelampe(1000,90,'#c9ccce')}`,
 objekte:[
 {name:"Karteischrank",x:250,boden:570,fuss:4,by:-175,zeichne:karteischrank,fund:"In einer Schublade liegt:"},
@@ -170,8 +202,8 @@ objekte:[
 ],
 infoObjekte:[{name:"Pinnwand mit Notizen",x:500,y:250,wand:true,by:-75,zeichne:pinnwand,fund:"Unter einem Notizzettel steckt:"},{name:"Aktenordner",x:140,boden:730,fuss:4,by:-105,zeichne:ordner,fund:"In einem Ordner ist abgeheftet:"},{name:"Zeitungsständer",x:1520,boden:710,fuss:4,by:-115,zeichne:zeitungen,fund:"Zwischen den Zeitungen liegt:"}]},
 {titel:"Der Kartenraum",
-intro:"Im Kartenraum hängen alte Landkarten an den Wänden. Ein Fernrohr zeigt zum Fenster, ein Kompass liegt bereit. Hier planten Forscherinnen und Forscher ihre Reisen.",
-tuerX:220,
+intro:"Im Kartenraum hängen alte Landkarten an den Wänden. Ein Fernrohr zeigt zum Fenster, ein Kompass liegt bereit. Hier planten Forscherinnen und Forscher ihre Reisen. Die große Weltkarte hat ein Zahlenschloss.",
+tuerX:220,tuerArt:"karte",
 hintergrund:()=>`${defs('#6b4024','#2a160a')}<rect width="1600" height="470" fill="#2f4a3a"/>${paneel(360,'#4a2a14')}<rect width="1600" height="40" fill="#1a2a20"/>${R(980,110,520,220,'#e8d6a8','#6b4a1c',6)}<path d="M1010 200Q1060 150 1120 180Q1160 220 1120 260Q1060 290 1020 250ZM1200 150Q1280 130 1340 170Q1360 230 1300 250Q1240 260 1220 220ZM1380 240Q1420 220 1460 250Q1450 290 1410 290Z" fill="#c9b07a" stroke="#8a6a3a" stroke-width="2"/><path d="M1000 300q20-8 40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0" stroke="#3f8fbf" stroke-width="2" fill="none"/>${boden()}${haengelampe(800,120,'#b8862a')}`,
 objekte:[
 {name:"Kompass",x:520,boden:640,fuss:4,by:-100,zeichne:kompass,fund:"Unter dem Kompass liegt:"},
@@ -182,8 +214,8 @@ objekte:[
 ],
 infoObjekte:[{name:"Windrose",x:420,y:240,wand:true,by:-80,zeichne:windrose,fund:"Hinter der Windrose steckt:"},{name:"Steuerrad",x:1020,boden:560,fuss:4,by:-165,zeichne:steuerrad,fund:"Am Steuerrad hängt:"},{name:"Korb mit Kartenrollen",x:340,boden:745,fuss:4,by:-130,zeichne:kartenkorb,fund:"In einer Kartenrolle steckt:"}]},
 {titel:"Die Buchbinderwerkstatt",
-intro:"In der Werkstatt der Buchbinder werden alte Bücher repariert. Es riecht nach Leim und Papier. Auf der Werkbank liegen Werkzeuge bereit.",
-tuerX:800,
+intro:"In der Werkstatt der Buchbinder werden alte Bücher repariert. Es riecht nach Leim und Papier. Auf der Werkbank liegen Werkzeuge bereit. Das Riesenbuch hat ein Zahlenschloss.",
+tuerX:800,tuerArt:"buch",
 hintergrund:()=>`${defs('#7a7068','#34302c','#fff3d0')}<rect width="1600" height="470" fill="#9a5a3e"/>${steine(40,470,30,90,'rgba(60,20,10,.35)')}<rect width="1600" height="40" fill="#3a2a20"/>${fenster(1450,180,false)}<circle cx="1450" cy="300" r="260" fill="url(#licht)"/>${regal(40,120,220,280,'#6b4a24')}${R(980,380,380,18,'#6b4a24')}<path d="M1000 398V470M1340 398V470" stroke="#3a2010" stroke-width="12"/>${boden()}`,
 objekte:[
 {name:"Buchpresse",x:330,boden:610,fuss:4,by:-170,zeichne:presse,fund:"Zwischen den Brettern der Presse liegt:"},
@@ -194,9 +226,9 @@ objekte:[
 ],
 infoObjekte:[{name:"Lederschürze",x:520,y:240,wand:true,by:-85,zeichne:schuerze,fund:"In der Schürzentasche steckt:"},{name:"Stoffrollen",x:1530,boden:730,fuss:4,by:-145,zeichne:stoffrollen,fund:"Zwischen den Stoffrollen liegt:"},{name:"Nähkasten",x:140,boden:745,fuss:4,by:-105,zeichne:naehkasten,fund:"Im Nähkasten liegt:"}]},
 {titel:"Das geheime Turmzimmer",
-intro:"Eine schmale Treppe führt hinauf ins geheime Turmzimmer. Durch das runde Fenster scheint der Mond. Hier liegt das letzte Geheimnis der Bibliothek – öffnet das letzte Schloss!",
-introDu:"Eine schmale Treppe führt hinauf ins geheime Turmzimmer. Durch das runde Fenster scheint der Mond. Hier liegt das letzte Geheimnis der Bibliothek – öffne das letzte Schloss!",
-tuerX:1350,
+intro:"Eine schmale Treppe führt hinauf ins geheime Turmzimmer. Durch das runde Fenster scheint der Mond. Hier liegt das letzte Geheimnis der Bibliothek – öffnet das Schloss am Mondfenster!",
+introDu:"Eine schmale Treppe führt hinauf ins geheime Turmzimmer. Durch das runde Fenster scheint der Mond. Hier liegt das letzte Geheimnis der Bibliothek – öffne das Schloss am Mondfenster!",
+tuerX:1350,tuerArt:"mond",
 hintergrund:()=>`${defs('#3a3048','#151020','#c8b8f0')}<rect width="1600" height="470" fill="#2c2648"/>${steine(40,470,44,70,'rgba(0,0,0,.3)')}<rect width="1600" height="40" fill="#1a1430"/><circle cx="1000" cy="190" r="86" fill="#1b2a48" stroke="#5a4a78" stroke-width="12"/><circle cx="1030" cy="160" r="20" fill="#fff1b8"/><use href="#sym-stern" x="960" y="200" width="16" height="16" color="#e8c45a"/><use href="#sym-stern" x="990" y="236" width="10" height="10" color="#e8c45a"/><circle cx="1000" cy="300" r="300" fill="#8fa8f0" opacity=".1"/>${boden()}${haengelampe(540,120,'#6a4a9a')}`,
 objekte:[
 {name:"Kristallkugel",x:520,boden:600,fuss:4,by:-125,zeichne:kugel,fund:"In der Kugel leuchtet ein Zeichen auf:"},
@@ -209,12 +241,12 @@ infoObjekte:[{name:"Mondkalender",x:330,y:220,wand:true,by:-65,zeichne:mondkalen
 ],
 tuer,
 vignette:`<rect width="1000" height="600" fill="url(#vig)" pointer-events="none"/>`,
-ausgang:()=>`<defs><linearGradient id="himmel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7cc0e8"/><stop offset=".8" stop-color="#e8f4d8"/></linearGradient></defs>
-   <rect width="1000" height="600" fill="url(#himmel)"/><circle cx="760" cy="150" r="90" fill="#fff6c8" opacity=".4"/><circle cx="760" cy="150" r="55" fill="#fff6c8"/>
+ausgang:()=>`<defs><linearGradient id="himmel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a3a6a"/><stop offset=".6" stop-color="#f0a878"/><stop offset="1" stop-color="#ffd8a8"/></linearGradient></defs>
+   <rect width="1000" height="600" fill="url(#himmel)"/><circle cx="500" cy="400" r="110" fill="#fff2c0" opacity=".45"/><circle cx="500" cy="400" r="58" fill="#fff6d0"/><circle cx="250" cy="140" r="26" fill="#f4f0e0" opacity=".85"/>
    <path d="M0 420Q200 360 420 400T1000 380V600H0Z" fill="#8cc06a"/><path d="M0 470Q300 430 600 480T1000 460V600H0Z" fill="#6aa04a"/>
    <path d="M420 600Q470 500 520 470Q560 500 600 600Z" fill="#d8c8a0"/>
    ${[[230,400],[330,420],[700,410],[820,430]].map(([x,y])=>`${R(x-6,y-60,12,60,'#6b4a24')}<circle cx="${x}" cy="${y-80}" r="40" fill="#3f8a4a"/><circle cx="${x-20}" cy="${y-60}" r="26" fill="#4f9a5a"/>`).join('')}
    <path d="M300 120l10 6 10-6M340 100l8 5 8-5M560 90l9 5 9-5" stroke="#3a2a17" stroke-width="2.5" fill="none"/>
-   <path d="M0 0H1000V600H0Z M180 600V230Q180 70 500 70Q820 70 820 230V600Z" fill="#3a2414" fill-rule="evenodd"/><path d="M180 600V230Q180 70 500 70Q820 70 820 230V600" stroke="#9a8a72" stroke-width="18" fill="none"/>`
+   <rect y="530" width="1000" height="14" fill="#6b4a24"/>${[...Array(20)].map((_,k)=>`<rect x="${30+k*50}" y="544" width="10" height="56" fill="#5a3a1c"/>`).join('')}<use href="#sym-eule" x="640" y="190" width="100" height="100" color="#3a2a17"/><path d="M0 0H1000V600H0Z M180 600V230Q180 70 500 70Q820 70 820 230V600Z" fill="#3a2414" fill-rule="evenodd"/><path d="M180 600V230Q180 70 500 70Q820 70 820 230V600" stroke="#9a8a72" stroke-width="18" fill="none"/>`
 };
 })();
