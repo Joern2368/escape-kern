@@ -286,7 +286,11 @@ const FIGUREN=[
 {name:'Forscherin mit Zopf',haut:'#f1c7a0',haar:'#6b3a1a',hemd:'#2f7d6b',art:'zopf'},
 {name:'Forscher mit Hut',haut:'#c98e62',haar:'#2a1a10',hemd:'#c0562b',art:'hut'},
 {name:'Kind mit Locken',haut:'#8d5a3b',haar:'#1d1410',hemd:'#3a6fb0',art:'locken'},
-{name:'Kind mit Kopftuch',haut:'#e8b48a',haar:'#a33b6b',hemd:'#7a4ab0',art:'tuch'}
+{name:'Kind mit Kopftuch',haut:'#e8b48a',haar:'#a33b6b',hemd:'#7a4ab0',art:'tuch'},
+{name:'Kind mit Mütze',haut:'#e9bf98',haar:'#5a3a1e',hemd:'#d9a82b',art:'muetze',extra:'#c0392b'},
+{name:'Kind mit Brille',haut:'#b9825a',haar:'#2a1a10',hemd:'#d0486a',art:'brille'},
+{name:'Kind mit Dutt',haut:'#f4d2b4',haar:'#3a2214',hemd:'#e08a2b',art:'dutt'},
+{name:'Kind mit Pferdeschwanz',haut:'#7a4a30',haar:'#d9a441',hemd:'#3aa17a',art:'schwanz',extra:'#e0457b'}
 ];
 function figurSvg(n){
 const f=FIGUREN[n]||FIGUREN[0];
@@ -298,6 +302,11 @@ kopf=`<circle cx="0" cy="-115" r="17" fill="${f.haut}"/>`;
 if(f.art==='zopf')kopf+=`<path d="M-15 -122Q-30 -116 -27 -98" stroke="${f.haar}" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M-17 -116Q-17 -136 0 -134Q16 -134 17 -119Q8 -127 -5 -125Q-12 -122 -17 -116Z" fill="${f.haar}"/>`;
 if(f.art==='hut')kopf+=`<path d="M-17 -112Q-18 -126 -6 -128L-2 -127Q-12 -122 -12 -110Z" fill="${f.haar}"/><ellipse cx="0" cy="-128" rx="27" ry="5" fill="#c9a26a"/><path d="M-15 -128Q-14 -147 0 -147Q14 -147 15 -128Z" fill="#c9a26a"/><rect x="-15" y="-134" width="30" height="5" fill="#7a5a32"/>`;
 if(f.art==='locken')kopf+=[[-14,-122],[-8,-131],[1,-134],[10,-131],[-17,-112],[15,-124]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="7" fill="${f.haar}"/>`).join('');
+const kurz=`<path d="M-17 -116Q-17 -136 0 -134Q16 -134 17 -119Q8 -127 -5 -125Q-12 -122 -17 -116Z" fill="${f.haar}"/>`;
+if(f.art==='muetze')kopf+=`<path d="M-17 -112Q-18 -123 -8 -125L-3 -124Q-12 -119 -12 -110Z" fill="${f.haar}"/><path d="M-17 -118Q-17 -139 0 -139Q17 -139 17 -118Z" fill="${f.extra}"/><path d="M6 -120Q24 -121 29 -115L6 -115Z" fill="${f.extra}"/><circle cx="0" cy="-139" r="3" fill="#fff"/>`;
+if(f.art==='brille')kopf+=kurz+`<circle cx="8" cy="-117" r="6.5" fill="rgba(255,255,255,.35)" stroke="#222" stroke-width="2"/><path d="M1.5 -117L-8 -119" stroke="#222" stroke-width="2" stroke-linecap="round"/>`;
+if(f.art==='dutt')kopf+=kurz+`<circle cx="-5" cy="-141" r="10" fill="${f.haar}"/><path d="M-12 -135Q-5 -131 2 -135" stroke="#e8c07a" stroke-width="3" fill="none"/>`;
+if(f.art==='schwanz')kopf+=kurz+`<path d="M-14 -127Q-40 -138 -33 -110" stroke="${f.haar}" stroke-width="9" fill="none" stroke-linecap="round"/><circle cx="-15" cy="-126" r="4" fill="${f.extra}"/>`;
 }
 return`<ellipse cx="0" cy="-1" rx="27" ry="7" fill="rgba(0,0,0,.3)"/><g class="koerper">${bein(-11,'b1')}${bein(2,'b2')}<rect x="-30" y="-95" width="15" height="36" rx="5" fill="#8a5a2a"/><g class="arm arm2"><rect x="-1" y="-93" width="9" height="40" rx="4" fill="${f.hemd}"/><rect x="-1" y="-93" width="9" height="40" rx="4" fill="#000" opacity=".28"/><circle cx="3.5" cy="-52" r="5" fill="${f.haut}"/><circle cx="3.5" cy="-52" r="5" fill="#000" opacity=".18"/></g><path d="M-18 -50L-16 -96Q0 -103 16 -96L18 -50Z" fill="${f.hemd}"/><g class="arm"><rect x="-4" y="-93" width="9" height="38" rx="4" fill="${f.hemd}"/><circle cx="0.5" cy="-54" r="5" fill="${f.haut}"/></g><rect x="-5" y="-103" width="10" height="8" fill="${f.haut}"/>${kopf}<circle class="auge" cx="8" cy="-117" r="2.2" fill="#222"/><path d="M5 -108Q9 -106 12 -109" stroke="#222" stroke-width="1.6" fill="none" stroke-linecap="round"/></g>`;
 }
