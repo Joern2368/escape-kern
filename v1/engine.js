@@ -482,7 +482,7 @@ const fund=rl.filter(r=>st.geloest.has(r.i)).map(r=>`<span class="f" data-i="${r
 const raumName=R.name||def.titel;
 app.innerHTML=`<div class="hud"><div class="raum">Raum ${st.raum+1} von ${C.raeume.length}: ${raumName}<span class="punkte">${C.raeume.map((_,k)=>k<st.raum?'●':k===st.raum?'◉':'○').join('')}</span></div>
      <div class="fund">${fund}</div>
-     <div class="hudrechts">${st.name?`<span class="namechip">${esc(st.name)}</span>`:''}${mitTimer?'<div class="timer"></div>':''}<button class="btn zweit karte" title="Karte">🗺️</button><button class="btn zweit mappe" title="Wissensmappe">${kartenZahl()}</button><button class="btn zweit hilfe ton" title="Ton an oder aus">${TON.an?'🔊':'🔇'}</button><button class="btn zweit hilfe hb" title="Spielanleitung">?</button></div></div>
+     <div class="hudrechts">${st.name?`<span class="namechip">${esc(st.name)}</span>`:''}${mitTimer?'<div class="timer"></div>':''}<button class="btn zweit wegkarte" title="Karte">🗺️</button><button class="btn zweit mappe" title="Wissensmappe">${kartenZahl()}</button><button class="btn zweit hilfe ton" title="Ton an oder aus">${TON.an?'🔊':'🔇'}</button><button class="btn zweit hilfe hb" title="Spielanleitung">?</button></div></div>
     <div class="auftrag">${alle?(st.geloest.size<rl.length?W.genug:W.bereit):`${W.auftrag} &nbsp;<b>Gelöst: ${st.geloest.size} von ${rl.length}</b>`}</div>
     <div class="szene"><svg viewBox="0 0 1000 600" role="img" aria-label="${esc(ohnePunkte(raumName))}"><g class="welt" style="transform:${kamTrans(st.cam)}">${def.hintergrund()}<g class="amb">${SZ.ambiente?SZ.ambiente(nr):''}</g>${SZ.tuer(rl.length,alle,def)}${wand}<g class="tiefe">${tief.map(t=>t.html).join('')}</g>${marken}</g>${lichtHtml(def)}<g class="vorn amb" style="transform:${vornTrans(st.cam)}">${SZ.vordergrund?SZ.vordergrund(nr):''}</g>${SZ.vignette||''}</svg></div>`;
 zeichneTimer();
@@ -496,7 +496,7 @@ app.querySelectorAll('.obj').forEach(g=>{
 const f=g.dataset.info!==undefined?()=>zurInfo(+g.dataset.info):(g.dataset.leer!==undefined?()=>zurLeere(+g.dataset.leer):()=>zumGegenstand(+g.dataset.i));
 g.addEventListener('click',f);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();f();}});});
 const t=app.querySelector('.tuer');t.addEventListener('click',zurTuer);t.addEventListener('keydown',e=>{if(e.key==='Enter')zurTuer();});
-app.querySelector('.hb').onclick=anleitung;app.querySelector('.mappe').onclick=zeigeMappe;app.querySelector('.karte').onclick=zeigeKarte;
+app.querySelector('.hb').onclick=anleitung;app.querySelector('.mappe').onclick=zeigeMappe;app.querySelector('.wegkarte').onclick=zeigeKarte;
 app.querySelector('.ton').onclick=e=>{TON.an=!TON.an;e.currentTarget.textContent=TON.an?'🔊':'🔇';TON.spiele('klick');};
 if(frischI>=0){
 const rr=app.querySelector('.richtung');if(rr&&!ruhig){rr.classList.add('jubel');setTimeout(()=>rr.classList.remove('jubel'),2200);}
