@@ -45,11 +45,6 @@ const riesenmuschel=()=>`${schatten(62,4)}<path d="M-62 -14Q0 10 62 -14Q58 -46 0
 const korallen=()=>`${schatten(44,4)}<path d="M-40 0L-32 -40H32L40 0Z" fill="#7a8ea0" stroke="#3a4a5a" stroke-width="3"/>${koralle(-12,-40,'#ff7a9a')}${koralle(14,-40,'#ffb030')}${alge(-24,-40,40,'#3a9a4a')}<path d="M-34 -40V-110Q-34 -142 0 -142Q34 -142 34 -110V-40" fill="#cfefff" fill-opacity=".25" stroke="#9fc8d8" stroke-width="3"/><path d="M-22 -112Q-20 -128 -6 -132" stroke="#fff" stroke-width="4" fill="none" opacity=".7"/>`;
 const bank=()=>`${schatten(70,4)}<path d="M-56 0V-40M56 0V-40M-60 -62V-50M60 -62V-50" stroke="#3a4a5a" stroke-width="7"/>${R(-70,-50,140,16,'#2ab0b0',' rx="6" stroke="#0f5a5a" stroke-width="3"')}${R(-70,-98,140,36,'#2ab0b0',' rx="8" stroke="#0f5a5a" stroke-width="3"')}<g transform="translate(20 -60)">${R(-17,-12,15,14,'#333',' rx="4"')}${R(2,-12,15,14,'#333',' rx="4"')}${R(-3,-8,6,6,'#666')}</g>`;
 const futter=()=>eimer('#f2c230',`<ellipse cx="0" cy="-64" rx="32" ry="8" fill="#b07a3a"/><path d="M8 -66L38 -98" stroke="#e04a3a" stroke-width="6" stroke-linecap="round"/>`,`<use href="#sym-fisch" x="-15" y="-50" width="30" height="30" color="#7a5a10"/>`);
-const tafel=()=>`${R(-80,-60,160,120,'#a8683a',' rx="6" stroke="#6a3a1e" stroke-width="4"')}${R(-68,-48,136,96,'#2f4a3a')}<path d="M-56 -30H10M-56 -12H20M-56 6H0M-56 24H16" stroke="#e8f0e8" stroke-width="4" stroke-linecap="round" opacity=".85"/>${fisch(42,-18,1.3,'#ffd23f')}${C(42,22,12,'#e04a3a')}<path d="M42 10Q46 4 50 6" stroke="#3a9a4a" stroke-width="3" fill="none"/>`;
-const kuehl=()=>`${schatten(46,4)}${R(-44,-176,88,174,'#f4f6f8',' rx="10" stroke="#9aa8ac" stroke-width="3"')}<path d="M-44 -110H44" stroke="#9aa8ac" stroke-width="3"/><path d="M30 -150V-124M30 -96V-60" stroke="#9aa8ac" stroke-width="6" stroke-linecap="round"/>${C(-20,-150,7,'#e04a3a')}${R(-4,-146,14,10,'#2ab0b0')}${stern(-16,-80,.6,'#f07a2a')}`;
-const tisch=()=>`${schatten(70,4)}<path d="M-56 0V-60M56 0V-60" stroke="#6a3a1e" stroke-width="8"/><ellipse cx="0" cy="-64" rx="74" ry="16" fill="#c88a4a" stroke="#6a3a1e" stroke-width="3"/>${R(-48,-80,96,14,'#2ab0b0',' rx="4" stroke="#0f5a5a" stroke-width="2"')}<ellipse cx="-14" cy="-80" rx="20" ry="6" fill="#fff" stroke="#bbb"/><path d="M-26 -82Q-14 -96 -2 -82Z" fill="#f2c230"/>${R(16,-98,16,20,'#e04a3a',' rx="3"')}<path d="M32 -92Q40 -88 32 -84" stroke="#e04a3a" stroke-width="3" fill="none"/>${C(-38,-86,7,'#7ac04a')}`;
-const sitzsack=()=>`${schatten(60,4)}<path d="M-58 -4Q-66 -60 -20 -76Q20 -86 50 -60Q66 -30 58 -4Z" fill="#e07a4a" stroke="#8a3a1a" stroke-width="3"/><path d="M-30 -40Q0 -30 30 -44" stroke="#8a3a1a" stroke-width="2" fill="none"/>${R(-8,-92,44,34,'#ffd0e0',' rx="12" stroke="#c87a9a" stroke-width="3" transform="rotate(14 14 -75)"')}`;
-const spielkiste=()=>`${schatten(56,4)}${R(-40,-82,60,10,'#3f7fd0')}${R(-36,-92,52,10,'#e04a3a')}${C(30,-70,14,'#f2c230',' stroke="#a07a10" stroke-width="2"')}${R(-52,-62,104,60,'#c88a4a',' stroke="#6a3a1e" stroke-width="3"')}<path d="M-52 -42H52M-52 -22H52" stroke="#6a3a1e" stroke-width="2"/>${R(56,-18,18,18,'#fff',' rx="3" stroke="#888"')}${C(65,-9,2.5,'#222')}`;
 const sonar=()=>`${R(-72,-64,144,128,'#3a4652',' rx="12" stroke="#1a222a" stroke-width="4"')}<circle cy="-4" r="48" fill="#0a2a1a" stroke="#3ae07a" stroke-width="3"/><circle cy="-4" r="32" fill="none" stroke="#3ae07a" stroke-width="1.5" opacity=".6"/><circle cy="-4" r="16" fill="none" stroke="#3ae07a" stroke-width="1.5" opacity=".6"/><path d="M0 -4L34 -38A48 48 0 0 1 48 -4Z" fill="#3ae07a" opacity=".35"/>${C(22,-24,4,'#bfffd0')}${C(-20,14,3,'#bfffd0')}${C(-54,52,5,'#e04a3a')}${C(-38,52,5,'#f2c230')}`;
 const pult=()=>`${schatten(60,4)}<path d="M24 -84L36 -128" stroke="#222" stroke-width="7" stroke-linecap="round"/>${C(37,-132,11,'#e04a3a',' stroke="#7a1a10" stroke-width="2"')}<path d="M-56 -2V-70L-40 -96H40L56 -70V-2Z" fill="#5a6670" stroke="#2c3438" stroke-width="3"/><path d="M-50 -74L-36 -92H36L50 -74Z" fill="#3a4652"/>${R(-30,-90,34,13,'#3ae07a',' rx="2"')}${[[-38,'#e04a3a'],[-22,'#f2c230'],[-6,'#2ab0b0']].map(([x,f])=>`${C(x,-58,6,f)}`).join('')}${R(20,-90,12,8,'#222')}${R(-40,-40,80,6,'#2c3438')}`;
 const anker=()=>`${schatten(56,4)}<path d="M8 -150Q44 -150 62 -4" stroke="#8a969e" stroke-width="5" stroke-dasharray="8 4" fill="none"/><path d="M0 -136V-14M-24 -112H24" stroke="#4a5660" stroke-width="12" stroke-linecap="round"/>${C(0,-148,12,'none',' stroke="#4a5660" stroke-width="8"')}<path d="M-50 -46Q-44 -6 0 -6Q44 -6 50 -46" stroke="#4a5660" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M-62 -38L-50 -60L-38 -40ZM62 -38L50 -60L38 -40Z" fill="#4a5660"/>`;
@@ -64,25 +59,53 @@ const kuehlbox=()=>`${schatten(46,4)}<path d="M-20 -66V-80H20V-66" stroke="#333"
 const karte=()=>`${R(-80,-56,160,112,'#e8d49a',' rx="4" stroke="#8a6a3a" stroke-width="4"')}<path d="M-70 -46H70V10Q30 -10 0 14T-70 4Z" fill="#5ab0d8"/><path d="M-60 36Q-20 14 20 38T64 26" stroke="#8a6a3a" stroke-width="3" fill="none" stroke-dasharray="6 4"/>${fisch(-30,-22,1.2,'#ffb030')}${C(36,-18,7,'#e04a3a')}`;
 const saeule=()=>`${schatten(36,4)}${R(-30,-12,60,12,'#3a4a5a')}${R(-14,-120,28,110,'#5a6e80',' stroke="#2c3c4a" stroke-width="3"')}${R(-40,-178,80,62,'#2c3c4a',' rx="8"')}${R(-32,-170,64,46,'#0f4a6a',' rx="3"')}<use href="#sym-krake" x="-18" y="-165" width="36" height="36" color="#ff8a6a"/>`;
 const fundkiste=()=>`${schatten(54,4)}<path d="M-46 -60L-52 -96H52L46 -60Z" fill="#8a5a30" stroke="#5a3418" stroke-width="3"/>${muschel(-18,-56,.9,'#f4c8b0')}${stern(20,-64,.6,'#ffd23f')}${R(-50,-60,100,58,'#a8683a',' rx="4" stroke="#5a3418" stroke-width="3"')}<path d="M-50 -40H50" stroke="#5a3418" stroke-width="3"/>${R(-8,-46,16,12,'#e0b020')}`;
-const buecher=()=>[-10,60].map(y=>`${R(-84,y,168,9,'#6a3a1e')}`+['#e04a3a','#3f7fd0','#f2c230','#2ab0b0','#7ac04a','#d08aff'].map((f,k)=>`${R(-78+k*19,y-44+k%2*6,16,44-k%2*6,f)}`).join('')).join('')+muschel(62,60,.8,'#f4c8b0')+fisch(60,-24,1,'#ffb030');
-const globus=()=>`${schatten(36,4)}<path d="M-26 -2H26M0 -2V-30" stroke="#6a3a1e" stroke-width="7" stroke-linecap="round"/><circle cy="-80" r="44" fill="#3f8fd0"/><path d="M-30 -100Q-10 -112 4 -96Q0 -80 -22 -78ZM10 -66Q30 -76 34 -58Q22 -44 8 -50Z" fill="#7ac04a"/><path d="M0 -28A52 52 0 0 1 0 -132" stroke="#c88a4a" stroke-width="5" fill="none"/>`;
-const korb=()=>`${schatten(46,4)}${R(-32,-84,40,52,'#fff',' stroke="#999" stroke-width="2" transform="rotate(-10)"')}${R(-4,-86,40,54,'#ffd0e0',' stroke="#c87a9a" stroke-width="2" transform="rotate(8)"')}${fisch(22,-64,1,'#3f7fd0')}<path d="M-44 -50L-36 -2H36L44 -50Z" fill="#d8a860" stroke="#8a5a20" stroke-width="3"/><path d="M-41 -34H41M-38 -18H38" stroke="#8a5a20" stroke-width="2"/>`;
 const klemmbrett=()=>`${R(-50,-66,100,132,'#a8742a',' rx="6" stroke="#5a3a10" stroke-width="3"')}${R(-40,-52,80,108,'#fff')}${R(-20,-72,40,18,'#9aa8ac',' rx="4" stroke="#555" stroke-width="2"')}${[-34,-10,14,38].map(y=>`${R(-32,y-6,12,12,'none',' stroke="#333" stroke-width="2"')}<path d="M-12 ${y}H30" stroke="#7a8a8e" stroke-width="4"/>`).join('')}<path d="M-31 -35L-26 -30L-18 -42M-31 -11L-26 -6L-18 -18" stroke="#3ab04a" stroke-width="3" fill="none"/>`;
 const regal=()=>`${schatten(50,4)}<path d="M-48 0V-150M48 0V-150" stroke="#5a6670" stroke-width="6"/>${[-10,-60,-110].map(y=>`${R(-52,y,104,7,'#9aa8ac')}`).join('')}${C(-22,-30,16,'none',' stroke="#333" stroke-width="8"')}${R(6,-48,36,38,'#f2c230',' stroke="#7a5a10" stroke-width="2"')}${R(-34,-94,40,34,'#c88a4a',' stroke="#6a3a1e" stroke-width="2"')}${C(26,-76,14,'#fff6c8',' stroke="#555" stroke-width="4"')}<path d="M-16 -130L-34 -146L-30 -124ZM-16 -130L4 -142L2 -120Z" fill="#e0b020"/>${C(-16,-130,5,'#555')}`;
 const plaene=()=>`${schatten(50,4)}${[[-24,-14,'#7fb0ff'],[0,4,'#fff'],[24,16,'#bfe8ff']].map(([x,r,f])=>`${R(x-8,-104,16,60,f,` rx="8" stroke="#2a5a9a" stroke-width="2" transform="rotate(${r} ${x} -50)"`)}`).join('')}${R(-48,-58,96,56,'#c88a4a',' stroke="#6a3a1e" stroke-width="3"')}<path d="M-48 -58L48 -2M48 -58L-48 -2" stroke="#6a3a1e" stroke-width="3"/>`;
-function tuer(n,bereit,def){
-const dx=((def&&def.tuerX)||500)-500;
-let d='';const x0=500-(n-1)*11;for(let k=0;k<n;k++)d+=`${C(x0+k*22,356,8,'#0c1820',' stroke="#ffd23f" stroke-width="2"')}`;
+const tauchrobo=()=>`${schatten(50,4)}<path d="M-36 -6H36" stroke="#2c3438" stroke-width="10" stroke-linecap="round"/>${R(-34,-76,68,60,'#f2c230',' rx="14" stroke="#8a6a10" stroke-width="3"')}${C(0,-50,18,'#2c3438')}${C(0,-50,10,'#4ae0e0')}<path d="M-34 -52Q-58 -52 -56 -28M34 -52Q58 -52 56 -28" stroke="#8a969e" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M0 -76V-96" stroke="#555" stroke-width="4"/>${C(0,-98,6,'#ff7a6a')}`;
+const faecher=()=>`${schatten(50,4)}<path d="M0 0V-30" stroke="#a02a60" stroke-width="8"/><path d="M0 -26L-52 -70Q-60 -110 -20 -122Q0 -128 20 -122Q60 -110 52 -70Z" fill="#ff7aa8" stroke="#a02a60" stroke-width="3"/><path d="M0 -26V-120M0 -40L-34 -100M0 -40L34 -100M0 -60L-48 -84M0 -60L48 -84" stroke="#c0407a" stroke-width="3" fill="none"/>`;
+const seegras=()=>`${schatten(40,4)}${[[-22,-110,'#3a9a4a'],[0,-140,'#5ab05a'],[22,-100,'#3a9a4a']].map(([x,h,f])=>`<path d="M${x} 0q-14 ${h/4} 0 ${h/2}t0 ${h/2}" stroke="${f}" stroke-width="9" fill="none" stroke-linecap="round"/>`).join('')}`;
+const wrackkiste=()=>`${schatten(60,4)}<g transform="rotate(-6)">${R(-54,-56,108,54,'#6a7a6a',' rx="4" stroke="#2c3a2c" stroke-width="3"')}<path d="M-54 -56Q0 -90 54 -56Z" fill="#7a8a7a" stroke="#2c3a2c" stroke-width="3"/><path d="M-30 -54V-2M30 -54V-2" stroke="#4a5a4a" stroke-width="6"/>${R(-9,-44,18,18,'#c0a040',' rx="3"')}<path d="M-50 -10q8 -10 16 0M30 -20q8 -10 16 0" stroke="#3a9a4a" stroke-width="4" fill="none"/></g>`;
+const rostglocke=()=>`<path d="M-40 90V-66H34" stroke="#6a5a4a" stroke-width="10" fill="none"/><path d="M26 -66V-52" stroke="#6a5a4a" stroke-width="6"/><path d="M-6 -50Q-6 -86 26 -86Q58 -86 58 -50L68 -34H-16Z" fill="#9a7a3a" stroke="#5a4a2a" stroke-width="3"/>${C(26,-30,7,'#5a4a2a')}${C(70,-70,5,'none',' stroke="#dff6ff" stroke-width="2"')}`;
+const riffinfo=()=>`<path d="M0 66V210M-24 210H24" stroke="#6a7a82" stroke-width="8" stroke-linecap="round"/>${R(-74,-64,148,130,'#2f4a5a',' rx="6" stroke="#c9d2d8" stroke-width="5"')}${koralle(-26,50,'#ff7a9a')}${koralle(26,50,'#ffb030')}${fisch(10,-24,1.6,'#ffd23f')}<path d="M-56 -50H-8" stroke="#e8f4f8" stroke-width="4" stroke-linecap="round"/>`;
+const seeigel=()=>`${schatten(56,4)}${[[-30,-18,'#6a3a8a'],[8,-22,'#8a4aa8']].map(([x,y,f])=>`<circle cx="${x}" cy="${y}" r="18" fill="${f}"/>${[0,1,2,3,4,5,6,7].map(k=>`<path d="M${x} ${y}L${(x+Math.cos(k*.785)*30).toFixed(0)} ${(y+Math.sin(k*.785)*30).toFixed(0)}" stroke="${f}" stroke-width="3"/>`).join('')}`).join('')}<g transform="translate(40 -10) scale(.9)">${stern(0,0,1,'#f07a2a')}</g>`;
+const messboje=()=>`${schatten(40,4)}<path d="M0 -4V-70" stroke="#5a646c" stroke-width="6"/>${C(0,-100,30,'#e04a3a',' stroke="#7a1a10" stroke-width="3"')}<path d="M-30 -100H30" stroke="#fff" stroke-width="8"/>${C(0,-100,8,'#fff6c8')}<path d="M0 -130V-150" stroke="#5a646c" stroke-width="4"/>${C(0,-152,5,'#ffd23f')}`;
+const schlossPl=(n,y)=>{let d='';const x0=500-(n-1)*11;for(let k=0;k<n;k++)d+=C(x0+k*22,y,8,'#0c1820',' stroke="#ffd23f" stroke-width="2"');return R(500-n*11-12,y-18,n*22+24,36,'#0c1820',' rx="6" stroke="#ffd23f" stroke-width="2"')+d;};
+const fischOben=(y,c)=>`<use href="#sym-fisch" x="476" y="${y}" width="48" height="48" color="${c||'#ffd23f'}"/>`;
+const TDEF=`<defs><linearGradient id="platteG" x1="0" x2="1"><stop offset="0" stop-color="#7a8a96"/><stop offset=".5" stop-color="#b4c2cc"/><stop offset="1" stop-color="#6a7884"/></linearGradient><radialGradient id="gangW"><stop offset="0" stop-color="#bfefff"/><stop offset="1" stop-color="#0a3a50"/></radialGradient><clipPath id="aqclip"><rect x="394" y="184" width="212" height="286"/></clipPath><clipPath id="lukclip"><path d="M412 310A88 128 0 1 0 588 310A88 128 0 1 0 412 310Z"/></clipPath><clipPath id="drkclip"><path d="M438 470V340Q438 306 472 306H528Q562 306 562 340V470Z"/></clipPath></defs>`;
+const TSTIL=`<style>.tuer .tb{transition:transform 1.8s ease-in-out}.tuer.offen #lid{transform:scaleY(.12)}.tuer.offen #aqu{transform:translateX(240px)}.tuer.offen #luk{transform:scaleX(.1)}.tuer.offen #drk{transform:translateY(190px)}.tuer.offen #lid2{transform:rotate(-78deg)}.tuer #nd{transform:rotate(-65deg);transition:transform 1.8s ease-in-out}.tuer.offen #nd{transform:rotate(62deg)}.tuer .la{transition:fill 1s}.tuer.offen .la{fill:#4ae07a}</style>`;
+function tuerBecken(n){
+return`<ellipse cx="500" cy="528" rx="138" ry="50" fill="#5a646c" stroke="#2c3438" stroke-width="5"/><ellipse cx="500" cy="528" rx="122" ry="38" fill="#1f7ab0"/><path d="M420 520q20 -8 40 0t40 0M480 540q20 -8 40 0t40 0" stroke="#bfe8ff" stroke-width="3" fill="none"/>${blasen(560,530)}
+   <g id="lid" class="tb" style="transform-origin:500px 490px"><ellipse cx="500" cy="528" rx="122" ry="38" fill="url(#platteG)" stroke="#5a6670" stroke-width="4"/><path d="M400 520Q500 500 600 520M400 540Q500 560 600 540" stroke="#8a969e" stroke-width="3" fill="none"/>${C(398,528,7,'#e04a3a')}${C(602,528,7,'#e04a3a')}${schlossPl(n,528)}</g>`;
+}
+function tuerAqua(n){
+return`${R(380,170,240,300,'#2c3438',' rx="10"')}${R(394,184,212,286,'url(#gangW)')}
+   <g clip-path="url(#aqclip)"><g id="aqu" class="tb">${R(394,184,212,286,'#4ac0d8')}${R(394,184,212,14,'#8adcea')}${alge(420,470,110,'#3a9a4a')}${alge(580,470,90,'#3a9a4a')}${fisch(440,250,1.7,'#ffd23f')}${fisch(560,300,-1.5,'#ff7a9a')}${fisch(470,420,1.3,'#b0e8a0')}${blasen(520,430)}<path d="M410 200L440 460M580 200L596 330" stroke="#fff" stroke-width="10" opacity=".18"/>${fischOben(262,'#ffd23f')}${schlossPl(n,340)}</g></g>`;
+}
+function tuerLuke(n){
 const luke='M412 310A88 128 0 1 0 588 310A88 128 0 1 0 412 310Z';
-return`<defs><clipPath id="tuerclip"><path d="${luke}"/></clipPath><linearGradient id="platteG" x1="0" x2="1"><stop offset="0" stop-color="#7a8a96"/><stop offset=".5" stop-color="#b4c2cc"/><stop offset="1" stop-color="#6a7884"/></linearGradient></defs>
-  <g transform="translate(${dx} 0)"><g class="tuer${bereit?' bereit':''}" role="button" tabindex="0" aria-label="Luke mit Zahlenschloss">
-   ${R(396,442,208,28,'#4a5660',' rx="6"')}
-   <ellipse cx="500" cy="310" rx="120" ry="158" fill="#5a6670" stroke="#2c3438" stroke-width="6"/>
-   <ellipse cx="500" cy="310" rx="104" ry="142" fill="none" stroke="#c9d2d8" stroke-width="7" stroke-dasharray="0 28" stroke-linecap="round"/>
-   <path d="${luke}" fill="#0c1820"/>
-   <g clip-path="url(#tuerclip)"><g id="platte"><path d="${luke}" fill="url(#platteG)"/><ellipse cx="500" cy="310" rx="74" ry="112" fill="none" stroke="#5a6670" stroke-width="4"/><path d="M462 262H538M500 224V300M473 235L527 289M527 235L473 289" stroke="#e04a3a" stroke-width="5"/>${C(500,262,38,'none',' stroke="#e04a3a" stroke-width="8"')}${C(500,262,10,'#8a2a20')}${R(500-n*11-12,338,n*22+24,36,'#0c1820',' rx="6" stroke="#ffd23f" stroke-width="2"')}${d}</g></g>
-   ${C(500,136,10,bereit?'#4ae07a':'#ffb030',' stroke="#2c3438" stroke-width="3"')}
-  </g></g>`;
+return`${R(396,442,208,28,'#4a5660',' rx="6"')}<ellipse cx="500" cy="310" rx="120" ry="158" fill="#5a6670" stroke="#2c3438" stroke-width="6"/><ellipse cx="500" cy="310" rx="104" ry="142" fill="none" stroke="#c9d2d8" stroke-width="7" stroke-dasharray="0 28" stroke-linecap="round"/>
+   <path d="${luke}" fill="url(#gangW)"/><g clip-path="url(#lukclip)"><g id="luk" class="tb" style="transform-origin:412px 310px"><path d="${luke}" fill="url(#platteG)"/><ellipse cx="500" cy="310" rx="74" ry="112" fill="none" stroke="#5a6670" stroke-width="4"/><path d="M462 262H538M500 224V300M473 235L527 289M527 235L473 289" stroke="#e04a3a" stroke-width="5"/>${C(500,262,38,'none',' stroke="#e04a3a" stroke-width="8"')}${C(500,262,10,'#8a2a20')}${schlossPl(n,356)}</g></g>`;
+}
+function tuerGlocke(n){
+let ni='';for(let k=-4;k<=4;k++){const a=k*.3;ni+=`M${(500+Math.sin(a)*26).toFixed(1)} ${(262-Math.cos(a)*26).toFixed(1)}L${(500+Math.sin(a)*31).toFixed(1)} ${(262-Math.cos(a)*31).toFixed(1)}`;}
+return`<path d="M366 470V350Q366 196 500 196Q634 196 634 350V470Z" fill="#7a8a96" stroke="#2c3438" stroke-width="6"/><path d="M380 340H620M380 410H620" stroke="#5a6670" stroke-width="4"/>${[392,430,570,608].map(x=>C(x,340,4,'#4a5660')).join('')}
+   ${C(500,262,36,'#e8eef2',' stroke="#2c3438" stroke-width="5"')}<path d="M480 280A26 26 0 0 1 480 244" stroke="#e04a3a" stroke-width="6" fill="none"/><path d="M520 244A26 26 0 0 1 520 280" stroke="#4ae07a" stroke-width="6" fill="none"/><path d="${ni}" stroke="#2c3438" stroke-width="2"/><g id="nd" style="transform-origin:500px 262px"><path d="M500 262V238" stroke="#2c3438" stroke-width="4" stroke-linecap="round"/></g>${C(500,262,5,'#2c3438')}${C(424,262,9,'#ff5a4a',' class="la"')}${C(576,262,9,'#ff5a4a',' class="la"')}
+   <path d="M438 470V340Q438 306 472 306H528Q562 306 562 340V470Z" fill="#d8b050"/><circle cx="500" cy="400" r="70" fill="url(#licht)"/>
+   <g clip-path="url(#drkclip)"><g id="drk" class="tb"><path d="M438 470V340Q438 306 472 306H528Q562 306 562 340V470Z" fill="url(#platteG)"/><path d="M438 440H562" stroke="#5a6670" stroke-width="4"/>${fischOben(318,'#2a4a8a')}${schlossPl(n,396)}</g></g>`;
+}
+function tuerUboot(n){
+return`<path d="M244 420Q244 372 330 372H670Q756 372 756 420Q756 468 670 468H330Q244 468 244 420Z" fill="#e8a818" stroke="#8a5a10" stroke-width="4"/><path d="M262 436H738" stroke="#fff6c8" stroke-width="6"/>${C(330,414,14,'#bfe8ff',' stroke="#8a5a10" stroke-width="4"')}${C(670,414,14,'#bfe8ff',' stroke="#8a5a10" stroke-width="4"')}<path d="M756 420L790 380V460Z" fill="#c89a20" stroke="#8a5a10" stroke-width="3"/><path d="M244 420L214 380V460Z" fill="#c89a20" stroke="#8a5a10" stroke-width="3"/>
+   ${R(420,236,160,200,'#f2c230',' rx="26" stroke="#8a5a10" stroke-width="4"')}<path d="M436 450V340M436 366H420M436 392H420M436 418H420" stroke="#8a969e" stroke-width="5" stroke-linecap="round"/>
+   <ellipse cx="500" cy="236" rx="56" ry="13" fill="#1a1208"/><ellipse cx="500" cy="236" rx="40" ry="8" fill="#ffe9a0"/>
+   <g id="lid2" class="tb" style="transform-origin:446px 236px"><ellipse cx="500" cy="236" rx="56" ry="13" fill="#c89a20" stroke="#8a5a10" stroke-width="3"/>${C(500,236,6,'#8a5a10')}</g>
+   ${fischOben(264,'#8a5a10')}${schlossPl(n,370)}`;
+}
+function tuer(n,bereit,def){
+const dx=((def&&def.tuerX)||500)-500,art=(def&&def.tuerArt)||'becken';
+const arten={becken:[tuerBecken,'Tauchbecken mit Zahlenschloss'],aqua:[tuerAqua,'Aquarium-Wand mit Zahlenschloss'],luke:[tuerLuke,'Taucher-Luke mit Zahlenschloss'],glocke:[tuerGlocke,'Druckschleuse mit Zahlenschloss'],uboot:[tuerUboot,'U-Boot-Luke mit Zahlenschloss']};
+const a=arten[art]||arten.becken;
+return`${TDEF}${TSTIL}<g transform="translate(${dx} 0)"><g class="tuer${bereit?' bereit':''}" role="button" tabindex="0" aria-label="${a[1]}">${a[0](n)}</g></g>`;
 }
 SZENARIEN.unterwasser={
 name:"Die Unterwasserstation",
@@ -90,7 +113,7 @@ symbole:["fisch","muschel","seestern","qualle","krake"],
 symbolNamen:["Fisch","Muschel","Seestern","Qualle","Krake"],
 emblem:`<svg viewBox="0 0 120 90" width="120" height="90" aria-hidden="true"><rect width="120" height="90" rx="14" fill="#1f6aa0"/><path d="M0 18q15 -8 30 0t30 0t30 0t30 0" stroke="#bfe8ff" stroke-width="3" fill="none"/>${uboot(56,58,.38)}${C(66,26,3,'none',' stroke="#bfe8ff" stroke-width="2"')}${C(72,16,4,'none',' stroke="#bfe8ff" stroke-width="2"')}</svg>`,
 texte:{
-einleitung:"Ihr besucht eine Forschungsstation tief unten auf dem Meeresgrund. Plötzlich zieht oben über dem Meer ein Sturm auf. Die Station schaltet auf Notbetrieb – alle Luken sind verriegelt! Keine Sorge, ihr seid hier unten sicher. Ein Mini-U-Boot bringt euch nach oben, aber der Weg dorthin führt durch fünf Räume. Jede Luke hat ein Zahlenschloss. Untersucht die Gegenstände: Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Schafft ihr es bis zum U-Boot?",
+einleitung:"Ihr besucht eine Forschungsstation tief unten auf dem Meeresgrund. Plötzlich zieht oben über dem Meer ein Sturm auf. Die Station schaltet auf Notbetrieb – alle Luken sind verriegelt! Keine Sorge, ihr seid hier unten sicher. Ein Mini-U-Boot bringt euch nach oben, aber der Weg dorthin führt durch fünf Räume. Jeder Durchgang hat ein Zahlenschloss. Untersucht die Gegenstände: Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Schafft ihr es bis zum U-Boot?",
 startKnopf:"In die Station tauchen",
 hinweisGeber:"Der Delfin Dori pfeift durch den Lautsprecher:",
 richtig:"Richtig gelöst!",
@@ -98,18 +121,18 @@ falsch:["Das stimmt leider noch nicht. Versucht es noch einmal!","Dori pfeift le
 schlossTitel:"Das Zahlenschloss der Luke",
 schlossSymbol:"Über jedem Rad leuchtet ein Meerestier. Stellt unter jedem Zeichen die Ziffer ein, die ihr dafür gefunden habt.",
 schlossStelle:"Stellt jede gefundene Ziffer an der richtigen Stelle ein.",
-schlossFalsch:"Das Schloss piept – aber die Luke bleibt zu. Überprüft eure Ziffern!",
+schlossFalsch:"Das Schloss piept – aber der Weg bleibt versperrt. Überprüft eure Ziffern!",
 zeitUmTitel:"Die Stationsuhr piept!",
 zeitUm:"Eure Zeit ist abgelaufen. Aber keine Sorge – ihr dürft weiterspielen und das U-Boot trotzdem noch erreichen!",
 geschafft:"Ihr seid aufgetaucht!",
 abschluss:"Geschafft! Ihr habt alle Rätsel zum Thema <b>{titel}</b> gelöst und seid mit dem Mini-U-Boot sicher an die Wasseroberfläche aufgetaucht. Dori und Kiki winken euch zum Abschied!"
 },
 texteDu:{
-einleitung:"Du besuchst eine Forschungsstation tief unten auf dem Meeresgrund. Plötzlich zieht oben über dem Meer ein Sturm auf. Die Station schaltet auf Notbetrieb – alle Luken sind verriegelt! Keine Sorge, du bist hier unten sicher. Ein Mini-U-Boot bringt dich nach oben, aber der Weg dorthin führt durch fünf Räume. Jede Luke hat ein Zahlenschloss. Untersuche die Gegenstände: Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Schaffst du es bis zum U-Boot?",
+einleitung:"Du besuchst eine Forschungsstation tief unten auf dem Meeresgrund. Plötzlich zieht oben über dem Meer ein Sturm auf. Die Station schaltet auf Notbetrieb – alle Luken sind verriegelt! Keine Sorge, du bist hier unten sicher. Ein Mini-U-Boot bringt dich nach oben, aber der Weg dorthin führt durch fünf Räume. Jeder Durchgang hat ein Zahlenschloss. Untersuche die Gegenstände: Hinter jeder gelösten Aufgabe verbirgt sich eine Ziffer. Schaffst du es bis zum U-Boot?",
 falsch:["Das stimmt leider noch nicht. Versuche es noch einmal!","Dori pfeift leise … Prüfe deine Antwort!","Fast! Lies die Aufgabe noch einmal ganz genau."],
 schlossSymbol:"Über jedem Rad leuchtet ein Meerestier. Stelle unter jedem Zeichen die Ziffer ein, die du dafür gefunden hast.",
 schlossStelle:"Stelle jede gefundene Ziffer an der richtigen Stelle ein.",
-schlossFalsch:"Das Schloss piept – aber die Luke bleibt zu. Überprüfe deine Ziffern!",
+schlossFalsch:"Das Schloss piept – aber der Weg bleibt versperrt. Überprüfe deine Ziffern!",
 zeitUm:"Deine Zeit ist abgelaufen. Aber keine Sorge – du darfst weiterspielen und das U-Boot trotzdem noch erreichen!",
 geschafft:"Du bist aufgetaucht!",
 abschluss:"Geschafft! Du hast alle Rätsel zum Thema <b>{titel}</b> gelöst und bist mit dem Mini-U-Boot sicher an die Wasseroberfläche aufgetaucht. Dori und Kiki winken dir zum Abschied!"
@@ -118,29 +141,29 @@ einfach:{
 name:"Die Station unter dem Meer",
 symbolNamen:["Fisch","Muschel","Seestern","Qualle","Krake"],
 texte:{
-einleitung:"Ihr seid in einem Haus tief unten im Meer. Dort arbeiten Forscher. Oben auf dem Meer ist ein Sturm. Darum gehen alle Türen zu. Keine Angst, ihr seid hier sicher! Ein kleines U-Boot bringt euch nach oben. An jeder Tür hängt ein Zahlenschloss. Löst die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommt ihr eine Zahl. Findet ihr den Weg zum U-Boot?",
+einleitung:"Ihr seid in einem Haus tief unten im Meer. Dort arbeiten Forscher. Oben auf dem Meer ist ein Sturm. Darum sind alle Wege zu. Keine Angst, ihr seid hier sicher! Ein kleines U-Boot bringt euch nach oben. An jedem Weg hängt ein Zahlenschloss. Löst die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommt ihr eine Zahl. Findet ihr den Weg zum U-Boot?",
 falsch:["Das stimmt noch nicht. Versucht es noch einmal!","Leider falsch. Schaut noch einmal genau hin!","Fast! Lest die Aufgabe noch einmal."],
 schlossTitel:"Das Zahlenschloss",
 schlossSymbol:"Über jedem Rad ist ein Zeichen. Stellt unter jedem Zeichen die passende Zahl ein.",
 schlossStelle:"Stellt jede Zahl an die richtige Stelle.",
-schlossFalsch:"Die Tür bleibt zu. Prüft eure Zahlen noch einmal!",
+schlossFalsch:"Der Weg bleibt zu. Prüft eure Zahlen noch einmal!",
 zeitUmTitel:"Die Zeit ist um!",
 zeitUm:"Die Zeit ist vorbei. Aber ihr dürft weiterspielen!",
 geschafft:"Ihr seid oben!",
 abschluss:"Super! Ihr habt alle Aufgaben zum Thema <b>{titel}</b> gelöst. Das U-Boot bringt euch nach oben!"
 },
 texteDu:{
-einleitung:"Du bist in einem Haus tief unten im Meer. Dort arbeiten Forscher. Oben auf dem Meer ist ein Sturm. Darum gehen alle Türen zu. Keine Angst, du bist hier sicher! Ein kleines U-Boot bringt dich nach oben. An jeder Tür hängt ein Zahlenschloss. Löse die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommst du eine Zahl. Findest du den Weg zum U-Boot?",
+einleitung:"Du bist in einem Haus tief unten im Meer. Dort arbeiten Forscher. Oben auf dem Meer ist ein Sturm. Darum sind alle Wege zu. Keine Angst, du bist hier sicher! Ein kleines U-Boot bringt dich nach oben. An jedem Weg hängt ein Zahlenschloss. Löse die Aufgaben in den Räumen. Für jede richtige Aufgabe bekommst du eine Zahl. Findest du den Weg zum U-Boot?",
 falsch:["Das stimmt noch nicht. Versuche es noch einmal!","Leider falsch. Schau noch einmal genau hin!","Fast! Lies die Aufgabe noch einmal."],
 schlossSymbol:"Über jedem Rad ist ein Zeichen. Stelle unter jedem Zeichen die passende Zahl ein.",
 schlossStelle:"Stelle jede Zahl an die richtige Stelle.",
-schlossFalsch:"Die Tür bleibt zu. Prüfe deine Zahlen noch einmal!",
+schlossFalsch:"Der Weg bleibt zu. Prüfe deine Zahlen noch einmal!",
 zeitUm:"Die Zeit ist vorbei. Aber du darfst weiterspielen!",
 geschafft:"Du bist oben!",
 abschluss:"Super! Du hast alle Aufgaben zum Thema <b>{titel}</b> gelöst. Das U-Boot bringt dich nach oben!"
 },
 raeume:[
-{titel:"Der Raum zum Tauchen",intro:"Hier ziehen die Forscher ihre Anzüge an. Dann tauchen sie ins Meer. Im Boden ist ein Becken mit Wasser. Hier sind die Zahlen für das erste Schloss versteckt.",
+{titel:"Der Raum zum Tauchen",intro:"Hier ziehen die Forscher ihre Anzüge an. Dann tauchen sie ins Meer. Im Boden ist ein Becken mit Wasser. Es hat eine Abdeckung mit Schloss. Hier sind die Zahlen dafür versteckt.",
 objekte:[{name:"Anzug zum Tauchen",fund:"In der Tasche vom Anzug steckt:"},{name:"Flaschen mit Luft",fund:"Zwischen den Flaschen steckt:"},{name:"Flossen",fund:"In einer Flosse steckt:"},{name:"Kiste mit Werkzeug",fund:"In der Kiste liegt:"},{name:"Eimer mit Brillen",fund:"Unter den Brillen liegt:"}],
 infoObjekte:[{name:"Bildschirm",fund:"Auf dem Bildschirm steht:"},{name:"Schrank mit Muscheln",fund:"Bei den Muscheln liegt:"},{name:"Alter Helm zum Tauchen",fund:"Im Helm liegt:"}]},
 {titel:"Der Raum zum Forschen",intro:"Hier schauen sich die Forscher Tiere aus dem Meer an. Im Aquarium schwimmen bunte Fische. Sucht die Zahlen für das nächste Schloss!",introDu:"Hier schauen sich die Forscher Tiere aus dem Meer an. Im Aquarium schwimmen bunte Fische. Such die Zahlen für das nächste Schloss!",
@@ -149,9 +172,9 @@ infoObjekte:[{name:"Poster mit Tieren aus dem Meer",fund:"Hinter dem Poster stec
 {titel:"Der Tunnel aus Glas",intro:"Die Wände sind aus Glas. Draußen schwimmen Fische. Von oben kommt blaues Licht. Die Krake Kiki winkt euch zu.",introDu:"Die Wände sind aus Glas. Draußen schwimmen Fische. Von oben kommt blaues Licht. Die Krake Kiki winkt dir zu.",
 objekte:[{name:"Rettungsring",fund:"Am Ring hängt:"},{name:"Große Muschel",fund:"Die Muschel geht auf. Darin liegt:"},{name:"Koralle",fund:"Unter der Koralle liegt:"},{name:"Bank",fund:"Auf der Bank liegt:"},{name:"Eimer mit Fischfutter",fund:"Im Futter steckt:"}],
 infoObjekte:[{name:"Karte vom Meer",fund:"An der Karte hängt:"},{name:"Kiste mit Sachen aus dem Meer",fund:"In der Kiste liegt:"},{name:"Säule mit Bildschirm",fund:"Auf der Säule steht:"}]},
-{titel:"Der Raum zum Wohnen",intro:"Hier essen und schlafen die Forscher. Durch das runde Fenster seht ihr einen Wal.",introDu:"Hier essen und schlafen die Forscher. Durch das runde Fenster siehst du einen Wal.",
-objekte:[{name:"Tafel mit dem Essen",fund:"Unten auf der Tafel steht:"},{name:"Kühlschrank",fund:"Im Kühlschrank liegt:"},{name:"Tisch mit Essen",fund:"Unter dem Teller liegt:"},{name:"Sitzsack",fund:"Im Kissen steckt:"},{name:"Kiste mit Spielen",fund:"Bei den Spielen liegt:"}],
-infoObjekte:[{name:"Regal mit Büchern",fund:"Bei den Büchern liegt:"},{name:"Erdkugel",fund:"An der Erdkugel klebt:"},{name:"Korb mit Heften",fund:"In einem Heft liegt:"}]},
+{titel:"Das Riff",intro:"Ihr seid draußen im Meer. Hier sind bunte Korallen und viele Fische. Ein altes Schiff liegt auf dem Boden. Dort steht eine Taucher-Glocke mit einem Schloss. Findet die Zahlen!",introDu:"Du bist draußen im Meer. Hier sind bunte Korallen und viele Fische. Ein altes Schiff liegt auf dem Boden. Dort steht eine Taucher-Glocke mit einem Schloss. Finde die Zahlen!",
+objekte:[{name:"Roboter zum Tauchen",fund:"Auf dem Bildschirm vom Roboter blinkt:"},{name:"Rosa Koralle",fund:"In der Koralle klemmt:"},{name:"Seegras",fund:"Im Seegras hängt:"},{name:"Kiste im Schiff",fund:"In der Kiste liegt:"},{name:"Alte Glocke",fund:"In der Glocke steckt:"}],
+infoObjekte:[{name:"Tafel vom Riff",fund:"Auf der Tafel steht:"},{name:"Seeigel und Seestern",fund:"Unter dem Seestern klebt:"},{name:"Rote Boje",fund:"An der Boje blinkt:"}]},
 {titel:"Die Garage für das U-Boot",intro:"Da ist das kleine gelbe U-Boot! Es bringt euch nach oben. Öffnet das letzte Schloss!",introDu:"Da ist das kleine gelbe U-Boot! Es bringt dich nach oben. Öffne das letzte Schloss!",
 objekte:[{name:"Grüner Bildschirm",fund:"Auf dem Bildschirm blinkt:"},{name:"Pult mit Hebel",fund:"Der Hebel macht klick. Dann leuchtet:"},{name:"Anker",fund:"An der Kette hängt:"},{name:"Große Lampe",fund:"Die Lampe geht an. Im Licht steht:"},{name:"Boje",fund:"In der Boje klappert etwas:"}],
 infoObjekte:[{name:"Liste für den Start",fund:"Auf der Liste steht:"},{name:"Regal mit Teilen",fund:"Im Regal liegt:"},{name:"Kiste mit Plänen",fund:"Bei den Plänen liegt:"}]}
@@ -160,10 +183,10 @@ infoObjekte:[{name:"Liste für den Start",fund:"Auf der Liste steht:"},{name:"Re
 welt:{w:1600,h:780},
 raeume:[
 {titel:"Die Taucherschleuse",
-intro:"Ihr steht in der Taucherschleuse. Hier ziehen die Forscherinnen und Forscher ihre Taucheranzüge an. Im Boden glitzert ein Wasserbecken – von dort geht es direkt hinaus ins Meer. Irgendwo hier sind die Ziffern für die erste Luke versteckt …",
-introDu:"Du stehst in der Taucherschleuse. Hier ziehen die Forscherinnen und Forscher ihre Taucheranzüge an. Im Boden glitzert ein Wasserbecken – von dort geht es direkt hinaus ins Meer. Irgendwo hier sind die Ziffern für die erste Luke versteckt …",
-tuerX:800,
-hintergrund:()=>`${defs('#7a8288','#2c3236','#fff2c0')}${wand('#8c959c','#6a737a')}${warnband(436,30)}${[1000,1062,1124,1186].map(x=>`${R(x,200,58,236,'#e0b020',' stroke="#8a6a10" stroke-width="3"')}<path d="M${x+12} 220H${x+46}M${x+12} 230H${x+46}M${x+12} 240H${x+46}" stroke="#8a6a10" stroke-width="3"/>${R(x+44,310,6,26,'#5a4a10',' rx="3"')}`).join('')}${bullauge(1420,220,66,fisch(1400,205,1.3,'#ffb030')+fisch(1445,245,-1,'#7fd0ff'))}${decke('#3a4248','#e0b020')}${lampe(400,'#3a4248')}${lampe(1200,'#3a4248')}${boden()}<ellipse cx="1250" cy="612" rx="176" ry="54" fill="#5a646c"/><ellipse cx="1250" cy="612" rx="160" ry="44" fill="#1f7ab0"/><path d="M1150 600q20 -8 40 0t40 0M1250 625q20 -8 40 0t40 0M1190 642q16 -6 32 0" stroke="#bfe8ff" stroke-width="3" fill="none"/><path d="M1360 556V600M1384 558V604M1360 570H1384M1360 586H1384" stroke="#c9ccce" stroke-width="5"/>`,
+intro:"Ihr steht in der Taucherschleuse. Hier ziehen die Forscherinnen und Forscher ihre Taucheranzüge an. Im Boden liegt ein Wasserbecken, aber seine Abdeckung ist verriegelt. Irgendwo hier sind die Ziffern für das Schloss versteckt …",
+introDu:"Du stehst in der Taucherschleuse. Hier ziehen die Forscherinnen und Forscher ihre Taucheranzüge an. Im Boden liegt ein Wasserbecken, aber seine Abdeckung ist verriegelt. Irgendwo hier sind die Ziffern für das Schloss versteckt …",
+tuerX:800,tuerArt:"becken",
+hintergrund:()=>`${defs('#7a8288','#2c3236','#fff2c0')}${wand('#8c959c','#6a737a')}${warnband(436,30)}${[1000,1062,1124,1186].map(x=>`${R(x,200,58,236,'#e0b020',' stroke="#8a6a10" stroke-width="3"')}<path d="M${x+12} 220H${x+46}M${x+12} 230H${x+46}M${x+12} 240H${x+46}" stroke="#8a6a10" stroke-width="3"/>${R(x+44,310,6,26,'#5a4a10',' rx="3"')}`).join('')}${bullauge(1420,220,66,fisch(1400,205,1.3,'#ffb030')+fisch(1445,245,-1,'#7fd0ff'))}${decke('#3a4248','#e0b020')}${lampe(400,'#3a4248')}${lampe(1200,'#3a4248')}${boden()}`,
 objekte:[
 {name:"Tauchanzug am Haken",x:480,y:250,wand:true,by:-105,zeichne:anzug,fund:"In der Brusttasche des Anzugs steckt:"},
 {name:"Taucherflaschen",x:380,boden:600,fuss:4,by:-165,zeichne:flaschen,fund:"Zwischen den Flaschen klemmt:"},
@@ -173,9 +196,9 @@ objekte:[
 ],
 infoObjekte:[{name:"Infobildschirm",x:160,y:230,wand:true,by:-75,zeichne:infoschirm,fund:"Auf dem Bildschirm blinkt:"},{name:"Muschelvitrine",x:1500,boden:540,fuss:4,by:-150,zeichne:vitrine,fund:"Zwischen den Muscheln liegt:"},{name:"Tauchhelm-Ständer",x:180,boden:700,fuss:4,by:-195,zeichne:helm,fund:"Im alten Tauchhelm steckt:"}]},
 {titel:"Das Forschungslabor",
-intro:"Im Labor untersucht das Forschungsteam Tiere und Pflanzen aus dem Meer. Im Aquarium schwimmen bunte Fische, und unter dem Mikroskop liegt eine Wasserprobe. Findet die Ziffern für die nächste Luke!",
-introDu:"Im Labor untersucht das Forschungsteam Tiere und Pflanzen aus dem Meer. Im Aquarium schwimmen bunte Fische, und unter dem Mikroskop liegt eine Wasserprobe. Finde die Ziffern für die nächste Luke!",
-tuerX:1350,
+intro:"Im Labor untersucht das Forschungsteam Tiere und Pflanzen aus dem Meer. Im Aquarium schwimmen bunte Fische, und unter dem Mikroskop liegt eine Wasserprobe. Findet die Ziffern für das Schloss der Aquarium-Wand!",
+introDu:"Im Labor untersucht das Forschungsteam Tiere und Pflanzen aus dem Meer. Im Aquarium schwimmen bunte Fische, und unter dem Mikroskop liegt eine Wasserprobe. Finde die Ziffern für das Schloss der Aquarium-Wand!",
+tuerX:1350,tuerArt:"aqua",
 hintergrund:()=>`${defs('#c8d4d8','#6a7a80','#e0ffff')}${wand('#eef5f5','#c6d8da')}<rect y="390" width="1600" height="80" fill="#2ab0b0"/><rect y="390" width="1600" height="6" fill="#1a8a8a"/><path d="M300 165H490M300 275H490" stroke="#9aa8ac" stroke-width="10"/>${[160,270].map((y,r)=>[325,370,415,460].map((x,k)=>glas(x,y,['#ff8a5a','#8adcea','#ffd23f','#b0e8a0'][(k+r)%4])).join('')).join('')}${bullauge(940,210,80,fisch(912,192,1.5,'#ffd23f')+fisch(968,236,-1.2,'#ff7a9a')+blasen(990,200))}${C(1130,160,28,'#fff',' stroke="#2a8a9a" stroke-width="6"')}<path d="M1130 160V142M1130 160L1144 166" stroke="#333" stroke-width="4" stroke-linecap="round"/>${decke('#2a7a80','#c9d6d8')}${lampe(780,'#2a7a80')}${lampe(1150,'#2a7a80')}${boden()}`,
 objekte:[
 {name:"Wandaquarium",x:640,y:240,wand:true,by:-85,zeichne:aquarium,fund:"Hinter dem Aquarium klebt:"},
@@ -186,9 +209,9 @@ objekte:[
 ],
 infoObjekte:[{name:"Meerestier-Poster",x:160,y:230,wand:true,by:-90,zeichne:poster,fund:"Unter dem Poster steckt:"},{name:"Forschungscomputer",x:1130,boden:545,fuss:4,by:-140,zeichne:rechner,fund:"Auf dem Forschungscomputer leuchtet:"},{name:"Kühlbox für Proben",x:100,boden:730,fuss:4,by:-95,zeichne:kuehlbox,fund:"In der Kühlbox liegt:"}]},
 {titel:"Der Glastunnel",
-intro:"Wow! Die Wände des Tunnels sind aus dickem Glas. Draußen schwimmen Fische zwischen den Korallen, und von oben fällt blaues Licht herein. Die Krake Kiki winkt euch durch die Scheibe zu.",
-introDu:"Wow! Die Wände des Tunnels sind aus dickem Glas. Draußen schwimmen Fische zwischen den Korallen, und von oben fällt blaues Licht herein. Die Krake Kiki winkt dir durch die Scheibe zu.",
-tuerX:220,
+intro:"Wow! Die Wände des Tunnels sind aus dickem Glas. Draußen schwimmen Fische zwischen den Korallen, und von oben fällt blaues Licht herein. Die Krake Kiki winkt euch durch die Scheibe zu. Am Ende des Tunnels ist eine runde Taucher-Luke mit Handrad.",
+introDu:"Wow! Die Wände des Tunnels sind aus dickem Glas. Draußen schwimmen Fische zwischen den Korallen, und von oben fällt blaues Licht herein. Die Krake Kiki winkt dir durch die Scheibe zu. Am Ende des Tunnels ist eine runde Taucher-Luke mit Handrad.",
+tuerX:220,tuerArt:"luke",
 hintergrund:()=>`${defs('#5a8ab0','#16304a','#bfefff')}<rect width="1600" height="470" fill="url(#meer)"/><path d="M400 40H470L640 470H420ZM800 40H870L980 470H760ZM1330 40H1400L1540 470H1330Z" fill="#fff" opacity=".1"/><path d="M380 470Q600 420 800 450T1600 440V470Z" fill="#d8c48a"/>${koralle(450,462,'#ff7a9a')}${koralle(520,466,'#ffb030')}${koralle(820,458,'#d08aff')}${koralle(1010,455,'#ff7a9a')}${koralle(1370,458,'#ffb030')}${koralle(1520,456,'#ff7a9a')}${alge(480,466,90,'#3a9a4a')}${alge(780,458,120,'#3a9a4a')}${alge(1060,452,100,'#5ab05a')}${alge(1440,456,110,'#3a9a4a')}${stern(1090,448,.8,'#f07a2a')}${fisch(480,160,1.4,'#ffb030')}${fisch(880,120,-1.6,'#ff7a9a')}${fisch(950,180,-1,'#ffd23f')}${fisch(1030,140,-1.2,'#7fe0ff')}${fisch(1420,210,1.8,'#ffb030')}${fisch(1500,310,-1.2,'#a0f0a0')}<use href="#sym-qualle" x="1430" y="70" width="60" height="60" color="#ffc0e0"/><use href="#sym-krake" x="900" y="270" width="90" height="90" color="#ff8a6a"/>${blasen(1000,330)}<path d="M0 40H400V470H0ZM560 40H740V470H560ZM1120 40H1300V470H1120Z" fill="#5a6e80"/><path d="M400 40V470M560 40V470M740 40V470M1120 40V470M1300 40V470" stroke="#2c3c4a" stroke-width="12"/><path d="M0 120H400M560 120H740M1120 120H1300M0 400H400M560 400H740M1120 400H1300" stroke="#c9d2d8" stroke-width="6" stroke-dasharray="0 30" stroke-linecap="round"/><path d="M430 80H468L420 300ZM780 70H818L768 260ZM1340 80H1378L1330 280Z" fill="#fff" opacity=".15"/><rect width="1600" height="44" fill="#2c3c4a"/>${boden()}<path d="M200 560q40 -14 80 0M600 520q50 -16 100 0M1000 600q60 -18 120 0M1300 540q40 -14 80 0M500 760q60 -18 120 0" stroke="#bfefff" stroke-width="4" fill="none" opacity=".25"/>`,
 objekte:[
 {name:"Rettungsring",x:650,y:230,wand:true,by:-105,zeichne:ring,fund:"Am Rettungsring hängt:"},
@@ -198,23 +221,24 @@ objekte:[
 {name:"Eimer mit Fischfutter",x:1420,boden:590,fuss:4,by:-125,zeichne:futter,fund:"Im Fischfutter steckt:"}
 ],
 infoObjekte:[{name:"Karte vom Meeresgrund",x:1210,y:230,wand:true,by:-70,zeichne:karte,fund:"Neben der Karte hängt:"},{name:"Kiste mit Fundstücken",x:1270,boden:730,fuss:4,by:-110,zeichne:fundkiste,fund:"Zwischen den Fundstücken liegt:"},{name:"Infosäule",x:700,boden:560,fuss:4,by:-195,zeichne:saeule,fund:"Auf der Infosäule erscheint:"}]},
-{titel:"Der Wohnbereich",
-intro:"Hier essen, spielen und schlafen die Forscherinnen und Forscher. Es riecht nach Kakao, und in den Kojen liegen weiche Decken. Durch das runde Fenster schwimmt ganz langsam ein Wal vorbei.",
-tuerX:500,
-hintergrund:()=>`${defs('#b07a4a','#4a2a14','#ffd890')}${wand('#f0c890','#d8a870')}<rect y="320" width="1600" height="150" fill="#a8683a"/><path d="M0 395H1600" stroke="#7a4420" stroke-width="150" stroke-dasharray="3 57" opacity=".5"/><path d="M0 320H1600" stroke="#7a4420" stroke-width="6"/>${bullauge(1000,200,92,'<path d="M932 200Q960 160 1020 170Q1056 176 1066 198L1084 186L1080 214L1066 206Q1040 236 980 230Q938 224 932 200Z" fill="#3a5a8a"/>'+C(952,196,4,'#fff')+'<path d="M946 214Q980 222 1030 214" stroke="#cfe0f0" stroke-width="3" fill="none"/>'+blasen(990,150))}${R(1230,150,330,320,'#8a5a30',' stroke="#5a3418" stroke-width="5"')}${[170,310].map((y,k)=>`${R(1250,y,290,125,'#5a3418')}${R(1256,y+88,278,32,k?'#e04a3a':'#3f7fd0',' rx="8"')}<ellipse cx="1490" cy="${y+84}" rx="30" ry="14" fill="#fff"/><path d="M1250 ${y}H1340Q1320 ${y+60} 1336 ${y+125}H1250Z" fill="#2ab0b0"/>`).join('')}${decke('#6a3a1e','#b08050')}${lampe(620,'#6a3a1e')}${lampe(1400,'#6a3a1e')}${boden()}`,
+{titel:"Das Riff",
+intro:"Ihr schwimmt hinaus ins Riff! Bunte Korallen, Fische und ein altes Schiffswrack: Hier draußen ist alles zu sehen. Dort steht die Tauchglocke mit einer Druckschleuse. Findet die Ziffern für ihr Schloss!",
+introDu:"Du schwimmst hinaus ins Riff! Bunte Korallen, Fische und ein altes Schiffswrack: Hier draußen ist alles zu sehen. Dort steht die Tauchglocke mit einer Druckschleuse. Finde die Ziffern für ihr Schloss!",
+tuerX:500,tuerArt:"glocke",
+hintergrund:()=>`${defs('#d8c48a','#8a7448','#bfefff')}<rect width="1600" height="470" fill="url(#meer)"/><path d="M200 0H280L440 470H160ZM800 0H860L980 470H760ZM1300 0H1380L1560 470H1300Z" fill="#fff" opacity=".1"/><path d="M700 470L716 392Q900 340 1110 396L1090 470Z" fill="#2a4a5a" stroke="#1a3040" stroke-width="4"/><path d="M880 372V230M880 250L950 280M880 250L820 290" stroke="#1a3040" stroke-width="8" fill="none"/><path d="M770 440q10 -8 20 0M900 430q10 -8 20 0M1020 436q10 -8 20 0" stroke="#7fd0e8" stroke-width="3" fill="none"/>${C(790,420,12,'#7fd0e8',' opacity=".5"')}${C(980,416,12,'#7fd0e8',' opacity=".5"')}<rect y="440" width="1600" height="30" fill="#c8b478"/>${koralle(160,462,'#ff7a9a')}${koralle(230,466,'#ffb030')}${koralle(380,460,'#d08aff')}${koralle(1180,458,'#ff7a9a')}${koralle(1300,466,'#ffb030')}${koralle(1420,458,'#d08aff')}${koralle(1540,462,'#ff7a9a')}${alge(300,466,120,'#3a9a4a')}${alge(1250,462,140,'#5ab05a')}${alge(1480,460,100,'#3a9a4a')}${fisch(300,150,1.5,'#ffb030')}${fisch(380,190,1.3,'#ffd23f')}${fisch(1000,150,-1.6,'#ff7a9a')}${fisch(1080,210,-1.2,'#7fe0ff')}${fisch(1450,250,1.8,'#a0f0a0')}${fisch(650,260,-1.4,'#ffb030')}<use href="#sym-qualle" x="1180" y="80" width="60" height="60" color="#ffc0e0"/><use href="#sym-krake" x="1380" y="340" width="70" height="70" color="#ff8a6a"/>${blasen(700,330)}<polygon points="0,470 1600,470 1600,780 0,780" fill="url(#boden)"/><path d="M0 520Q300 500 600 520T1200 520T1600 516M0 640Q300 620 600 640T1200 640T1600 636" stroke="rgba(120,90,40,.35)" stroke-width="4" fill="none"/>${[[260,560],[700,610],[1100,700],[1500,580],[420,730]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="10" ry="5" fill="#a8905a"/>`).join('')}`,
 objekte:[
-{name:"Speiseplan-Tafel",x:760,y:230,wand:true,by:-85,zeichne:tafel,fund:"Unten auf der Tafel steht:"},
-{name:"Kühlschrank",x:180,boden:600,fuss:4,by:-200,zeichne:kuehl,fund:"Im Kühlschrank liegt neben dem Pudding:"},
-{name:"Esstisch mit Tablett",x:820,boden:620,fuss:4,by:-120,zeichne:tisch,fund:"Unter dem Teller liegt:"},
-{name:"Sitzsack mit Kissen",x:1060,boden:720,fuss:4,by:-115,zeichne:sitzsack,fund:"Im Kissen steckt:"},
-{name:"Spielekiste",x:1300,boden:700,fuss:4,by:-115,zeichne:spielkiste,fund:"Zwischen den Spielen liegt:"}
+{name:"Tauchroboter",x:1000,boden:620,fuss:4,by:-110,zeichne:tauchrobo,fund:"Auf dem Display des Tauchroboters blinkt:"},
+{name:"Fächerkoralle",x:1250,boden:730,fuss:4,by:-130,zeichne:faecher,fund:"Zwischen den Ästen der Koralle klemmt:"},
+{name:"Seegras-Büschel",x:1450,boden:600,fuss:4,by:-150,zeichne:seegras,fund:"Im Seegras hängt:"},
+{name:"Truhe im Wrack",x:800,boden:700,fuss:4,by:-90,zeichne:wrackkiste,fund:"In der alten Truhe liegt:"},
+{name:"Rostige Schiffsglocke",x:900,y:250,wand:true,by:-90,zeichne:rostglocke,fund:"Im Klöppel der Glocke steckt:"}
 ],
-infoObjekte:[{name:"Bücherbord",x:160,y:230,wand:true,by:-70,zeichne:buecher,fund:"Zwischen den Büchern steckt:"},{name:"Globus",x:1480,boden:580,fuss:4,by:-145,zeichne:globus,fund:"Am Globus klebt:"},{name:"Zeitschriftenkorb",x:310,boden:740,fuss:4,by:-105,zeichne:korb,fund:"In einer Zeitschrift liegt:"}]},
+infoObjekte:[{name:"Riff-Infotafel",x:200,y:240,wand:true,by:-70,zeichne:riffinfo,fund:"Auf der Infotafel steht:"},{name:"Seeigel und Seestern",x:700,boden:540,fuss:4,by:-55,zeichne:seeigel,fund:"Unter dem Seestern klebt:"},{name:"Messboje",x:1500,boden:730,fuss:4,by:-165,zeichne:messboje,fund:"An der Messboje blinkt:"}]},
 {titel:"Die U-Boot-Garage",
-intro:"Da ist es: das gelbe Mini-U-Boot! Es hängt sicher am Kran und wartet auf euch. Nur noch eine Luke trennt euch vom Start – öffnet das letzte Schloss!",
-introDu:"Da ist es: das gelbe Mini-U-Boot! Es hängt sicher am Kran und wartet auf dich. Nur noch eine Luke trennt dich vom Start – öffne das letzte Schloss!",
-tuerX:1250,
-hintergrund:()=>`${defs('#4a5660','#161c22','#ffe9a0')}${wand('#2e3c4a','#1e2a36')}${warnband(440,26)}${[450,1500].map(x=>`<path d="M${x-14} 60L${x-140} 470H${x+140}L${x+14} 60Z" fill="#ffe9a0" opacity=".08"/>`).join('')}<path d="M580 470L612 404H788L820 470" fill="none" stroke="#e0b020" stroke-width="10"/><path d="M700 60V252" stroke="#222" stroke-width="4"/>${uboot(700,330,1.25)}${decke('#10181f','#5a6670')}<rect y="44" width="1600" height="14" fill="#e0b020"/>${R(670,40,60,26,'#5a6670',' rx="4"')}${[450,1500].map(x=>`${R(x-18,56,36,14,'#5a6670',' rx="4"')}`).join('')}${C(120,110,12,'#ff8a2a')}${C(120,110,30,'#ff8a2a',' opacity=".2"')}${boden()}`,
+intro:"Da ist es: das gelbe Mini-U-Boot! Es liegt sicher im Dock der Tauchglocke und wartet auf euch. Öffnet die Luke am Turm – das ist das letzte Schloss!",
+introDu:"Da ist es: das gelbe Mini-U-Boot! Es liegt sicher im Dock der Tauchglocke und wartet auf dich. Öffne die Luke am Turm – das ist das letzte Schloss!",
+tuerX:1250,tuerArt:"uboot",
+hintergrund:()=>`${defs('#4a5660','#161c22','#ffe9a0')}${wand('#2e3c4a','#1e2a36')}${warnband(440,26)}${[450,1500].map(x=>`<path d="M${x-14} 60L${x-140} 470H${x+140}L${x+14} 60Z" fill="#ffe9a0" opacity=".08"/>`).join('')}${decke('#10181f','#5a6670')}<rect y="44" width="1600" height="14" fill="#e0b020"/>${[450,1500].map(x=>`${R(x-18,56,36,14,'#5a6670',' rx="4"')}`).join('')}${C(120,110,12,'#ff8a2a')}${C(120,110,30,'#ff8a2a',' opacity=".2"')}${boden()}`,
 objekte:[
 {name:"Sonar-Bildschirm",x:260,y:220,wand:true,by:-90,zeichne:sonar,fund:"Auf dem Sonar blinkt:"},
 {name:"Steuerpult mit Hebel",x:360,boden:580,fuss:4,by:-165,zeichne:pult,fund:"Der Hebel klickt. Auf dem Pult leuchtet:"},
