@@ -238,7 +238,7 @@ loesung:r=>teile(r.text).filter((_,k)=>k%2).map(x=>ohnePunkte(x).split('|')[0]).
 zuordnen:{
 html:r=>{r._r=mischen(r.paare.map((_,k)=>k));return r.paare.map((p,k)=>`<div class="zeile"><span><b>${p[0]}</b></span><select data-k="${k}"><option value="">– bitte wählen –</option>${r._r.map(j=>`<option value="${j}">${esc(ohnePunkte(r.paare[j][1]))}</option>`).join('')}</select></div>`).join('');},
 binden:m=>m.querySelectorAll('select').forEach(s=>s.onchange=()=>s.classList.remove('falsch')),
-pruefe:m=>{const s=[...m.querySelectorAll('select')];if(s.some(x=>x.value===''))return null;let ok=true;s.forEach((x,k)=>{if(x.value!==x.dataset.k){ok=false;m._falsch.push(k);}});return ok;},
+pruefe:(m,r)=>{const s=[...m.querySelectorAll('select')];if(s.some(x=>x.value===''))return null;let ok=true;s.forEach((x,k)=>{if(ohnePunkte(r.paare[x.value][1])!==ohnePunkte(r.paare[k][1])){ok=false;m._falsch.push(k);}});return ok;},
 lesen:r=>'Zuordnen: '+r.paare.map(p=>p[0]).join(', ')+'. Zur Auswahl: '+r._r.map(j=>r.paare[j][1]).join(', ')+'.',
 teil:r=>r.hinweise||r.paare.map(p=>p[2]),teilName:'Zeile',
 loesung:r=>r.paare.map(p=>`${p[0]} → ${p[1]}`).join(' | ')
