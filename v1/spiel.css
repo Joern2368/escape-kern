@@ -97,8 +97,8 @@ input.ein,select{font:inherit;font-size:1.05em;padding:7px 10px;border:2px solid
 .wortspeicher{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;padding:10px;border:2px dashed #b8945a;border-radius:8px}
 .wort{font:inherit;font-size:1.05em;padding:6px 16px;border-radius:20px;border:2px solid #8a6420;background:#fff7e0;color:var(--ink);cursor:pointer}
 .wort:disabled{opacity:.3;cursor:default}
-.felder{display:flex;flex-wrap:wrap;gap:10px 1.2em;justify-content:center;margin:6px 0}.wgr{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
-.feld{width:1.9em;height:2.1em;font:inherit;font-size:1.4em;font-weight:bold;border:2px solid #b8945a;border-bottom:4px solid #8a6420;background:#fff7e0;border-radius:6px;cursor:pointer;color:var(--ink);padding:0}
+.felder{display:flex;flex-wrap:wrap;gap:10px 1.2em;justify-content:center;margin:6px 0}.wgr{display:flex;flex-wrap:nowrap;justify-content:center;gap:4px;max-width:100%}
+.feld{flex:0 1 1.9em;min-width:0;width:1.9em;height:2.1em;font:inherit;font-size:1.4em;font-weight:bold;border:2px solid #b8945a;border-bottom:4px solid #8a6420;background:#fff7e0;border-radius:6px;cursor:pointer;color:var(--ink);padding:0}
 .salat{justify-content:center}.salat .wort{min-width:2.2em;font-size:1.3em;font-weight:bold;padding:6px 10px;border-radius:8px}
 .wort.ziel{background:#d8a73a;color:#fff;border-color:#6b4a1c;box-shadow:0 0 0 3px rgba(216,167,58,.45)}
 .koerbe{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
