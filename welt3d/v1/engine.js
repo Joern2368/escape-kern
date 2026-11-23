@@ -169,6 +169,12 @@ const cone=(r,h,c,x,y,z,par,cast)=>mesh(gCone,c,x,y,z,r,h,r,par,cast);
 const cyl=(r,h,c,x,y,z,par,cast)=>mesh(gCyl,c,x,y,z,r,h,r,par,cast);
 const grp=(x,y,z,par)=>{const g=new THREE.Group();g.position.set(x,y,z);(par||scene).add(g);return g};
 const colliders=[];const kreis=(x,z,r)=>colliders.push({x,z,r});
+/* Hindernisse fuer die Spielfigur: Linien (Zaeune, Mauern), Rechtecke (Gebaeude, Staende) */
+const sperrLinien=[],sperrKaesten=[];
+function sperrLinie(x1,z1,x2,z2,r){sperrLinien.push({x1,z1,x2,z2,r:r||.15})}
+function sperrKasten(x,z,b,t,rot){sperrKaesten.push({x,z,hb:b/2,ht:t/2,c:Math.cos(rot||0),s:Math.sin(rot||0)})}
+function sperrRing(cx,cz,r,n,luecke){const m=Math.max(8,n||60),ok=a=>luecke==null||Math.abs(Math.atan2(Math.sin(a-luecke),Math.cos(a-luecke)))>=.4;for(let i=0;i<m;i++){const a0=i/m*Math.PI*2,a1=(i+1)/m*Math.PI*2;if(ok(a0)&&ok(a1))sperrLinie(cx+Math.cos(a0)*r,cz+Math.sin(a0)*r,cx+Math.cos(a1)*r,cz+Math.sin(a1)*r)}}
+
 
 /* ---------- Himmel, Licht ---------- */
 const himmel=new THREE.Group();himmel.userData.keep=1;scene.add(himmel);
@@ -192,15 +198,31 @@ const lebendig=[];
 function blick(o,dx,dz){o.rotation.y=Math.atan2(-dz,dx)}
 function tier(fn,x,z,bx,bz,sk,r){const o=fn(scene);let ersterKoerper=true;o.traverse(m=>{if(m.isMesh&&m.castShadow){if(ersterKoerper)ersterKoerper=false;else m.castShadow=false}});o.position.set(x,0,z);blick(o,bx-x,bz-z);o.scale.setScalar(sk||1);if(r)kreis(x,z,r*(sk||1));lebendig.push({o,ph:rnd()*6});return o}
 /* ---------- Bereiche aufbauen ---------- */
-function zaun(cx,cz,r,n,luecke){const g=grp(cx,0,cz);for(let i=0;i<n;i++){const a=i/n*Math.PI*2;if(luecke!=null&&Math.abs(Math.atan2(Math.sin(a-luecke),Math.cos(a-luecke)))<.4)continue;box(.18,1.2,.18,0x8b5a2b,Math.cos(a)*r,.6,Math.sin(a)*r,g)}
+function zaun(cx,cz,r,n,luecke){sperrRing(cx,cz,r,n,luecke);const g=grp(cx,0,cz);for(let i=0;i<n;i++){const a=i/n*Math.PI*2;if(luecke!=null&&Math.abs(Math.atan2(Math.sin(a-luecke),Math.cos(a-luecke)))<.4)continue;box(.18,1.2,.18,0x8b5a2b,Math.cos(a)*r,.6,Math.sin(a)*r,g)}
   [1.0,.55].forEach(h=>{const ring=new THREE.Mesh(new THREE.TorusGeometry(r,.06,5,Math.max(24,n)),mat(0xa87846));ring.rotation.x=Math.PI/2;ring.position.y=h;g.add(ring)})}
-function haus(x,z,w,d,wand,dach,par){const g=grp(x,0,z,par);box(w,2.2,d,wand,0,1.1,0,g,true);const r1=box(w+.6,.15,d/2+.5,dach,0,2.6,-d/4,g);r1.rotation.x=.5;const r2=box(w+.6,.15,d/2+.5,dach,0,2.6,d/4,g);r2.rotation.x=-.5;return g}
+function haus(x,z,w,d,wand,dach,par){if(!par)sperrKasten(x,z,w,d,0);const g=grp(x,0,z,par);box(w,2.2,d,wand,0,1.1,0,g,true);const r1=box(w+.6,.15,d/2+.5,dach,0,2.6,-d/4,g);r1.rotation.x=.5;const r2=box(w+.6,.15,d/2+.5,dach,0,2.6,d/4,g);r2.rotation.x=-.5;return g}
 function schildText(text,farbe,sx,sy,schrift){const c=document.createElement('canvas');c.width=512;c.height=128;const t=c.getContext('2d');t.fillStyle=farbe||'#fff8e6';t.fillRect(0,0,512,128);t.strokeStyle='#8b5a2b';t.lineWidth=10;t.strokeRect(5,5,502,118);t.fillStyle='#4a2f12';t.font='bold '+(schrift||64)+'px Andika,Arial,sans-serif';t.textAlign='center';t.textBaseline='middle';t.fillText(text,256,68);
   const tex=new THREE.CanvasTexture(c);return new THREE.Mesh(new THREE.PlaneGeometry(sx||5,sy||1.25),new THREE.MeshBasicMaterial({map:tex}))}
+/* ---------- Kurvige Wege (gemeinsam fuer alle Welten) ---------- */
+function wegX(z){if(typeof WEGBOGEN!=='number')return 0;const a=TORZ+20,b=START.z-16;if(z<=a||z>=b)return 0;return WEGBOGEN*Math.sin(3*Math.PI*(z-a)/(b-a))}
+function wegBand(s,w,farbe,y){const n=s.length;if(n<2)return;const P=new Float32Array(n*6),N=new Float32Array(n*6),I=[];
+  for(let i=0;i<n;i++){const a=s[Math.max(0,i-1)],b=s[Math.min(n-1,i+1)];let tx=b[0]-a[0],tz=b[1]-a[1];const l=Math.hypot(tx,tz)||1;tx/=l;tz/=l;const nx=-tz*w/2,nz=tx*w/2;
+    P.set([s[i][0]+nx,y,s[i][1]+nz,s[i][0]-nx,y,s[i][1]-nz],i*6);N.set([0,1,0,0,1,0],i*6);if(i<n-1){const k=i*2;I.push(k,k+2,k+1,k+1,k+2,k+3)}}
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(P,3));g.setAttribute('normal',new THREE.BufferAttribute(N,3));g.setIndex(I);
+  const m=new THREE.Mesh(g,mat(farbe));m.receiveShadow=true;scene.add(m)}
+const WEGE=[];function weg(pts,w,farbe,dy){dy=dy||0;const n=pts.length,s=[];
+  for(let i=0;i<n-1;i++){const p0=pts[Math.max(0,i-1)],p1=pts[i],p2=pts[i+1],p3=pts[Math.min(n-1,i+2)],st=Math.max(2,Math.ceil(Math.hypot(p2[0]-p1[0],p2[1]-p1[1])/2.5));
+    for(let k=0;k<st;k++){const t=k/st,t2=t*t,t3=t2*t,f=(a,b,c,d)=>.5*((2*b)+(-a+c)*t+(2*a-5*b+4*c-d)*t2+(-a+3*b-3*c+d)*t3);s.push([f(p0[0],p1[0],p2[0],p3[0]),f(p0[1],p1[1],p2[1],p3[1])])}}
+  s.push(pts[n-1]);WEGE.push(s);const c=new THREE.Color(farbe||FARBEN.pfad).multiplyScalar(.84).getHex();wegBand(s,w+.9,c,.05+dy);wegBand(s,w,farbe||FARBEN.pfad,.062+dy)}
+function wellen(x1,z1,x2,z2){const dx=x2-x1,dz=z2-z1,l=Math.hypot(dx,dz);if(l<14)return[[x1,z1],[x2,z2]];const k=Math.max(1,Math.round(l/60)),n=Math.max(4,k*4),am=Math.min(9,l*.07),sg=(Math.round(x1*7+z1*13)%2)?1:-1,nx=-dz/l,nz=dx/l,r=[];
+  for(let i=0;i<=n;i++){const t=i/n,o=am*sg*Math.sin(t*Math.PI*k);r.push([x1+dx*t+nx*o,z1+dz*t+nz*o])}return r}
+function hauptweg(w,farbe){const r=[];for(let z=GRENZE.z1;z>TORZ+2;z-=10)r.push([wegX(z),z]);r.push([0,TORZ+2]);weg(r,w,farbe)}
+function kreuzplatz(x,z,r){cyl(r,.07,new THREE.Color(FARBEN.pfad).multiplyScalar(.84).getHex(),x,.045,z,scene).receiveShadow=true;cyl(r-.8,.08,FARBEN.platz,x,.05,z,scene).receiveShadow=true;
+  cyl(2,.4,0x6dba52,x,.2,z,scene);for(let i=0;i<6;i++){const a=i*1.05;sph(.28,[0xe0605a,0xffd45e,0xf47ab0,0xffffff,0xb06ae0,0xf59e3f][i],x+Math.cos(a)*1.2,.55,z+Math.sin(a)*1.2,scene)}kreis(x,z,2.1)}
 function wegweiser(x,z,text,winkel){const g=grp(x,0,z);cyl(.1,2.6,0x7a5230,0,1.3,0,g,true);const s=schildText(text,'#fff8e6',3.2,.8,52);s.position.set(0,2.5,.12);g.add(s);const s2=s.clone();s2.rotation.y=Math.PI;s2.position.z=-.12;g.add(s2);g.rotation.y=winkel||0;kreis(x,z,.4)}
 function blume(x,z,farbe){cyl(.03,.5,0x3f9a46,x,.25,z,scene);sph(.13,farbe,x,.55,z,scene)}
-function tor(x,z,breite){const g=grp(x,0,z);[-1,1].forEach(s=>{box(1,5,1,0x9a7a5a,s*breite/2,2.5,0,g,true);box(1.3,.4,1.3,0xffffff,s*breite/2,5.1,0,g)});box(breite+1,.9,.5,0xb94a3a,0,4.6,0,g,true);return g}
-function felsen(x,z,r,par){const g=sph(r,0x9aa0a6,x,r*.5,z,par||scene,1.2,.75,1);g.castShadow=true;return g}
+function tor(x,z,breite){kreis(x-breite/2,z,.9);kreis(x+breite/2,z,.9);const g=grp(x,0,z);[-1,1].forEach(s=>{box(1,5,1,0x9a7a5a,s*breite/2,2.5,0,g,true);box(1.3,.4,1.3,0xffffff,s*breite/2,5.1,0,g)});box(breite+1,.9,.5,0xb94a3a,0,4.6,0,g,true);return g}
+function felsen(x,z,r,par){if(!par&&r>=.9)kreis(x,z,r*.95);const g=sph(r,0x9aa0a6,x,r*.5,z,par||scene,1.2,.75,1);g.castShadow=true;return g}
 function wasserFl(x,z,r,farbe,dy){const w=cyl(r,.18,farbe,x,.1+(dy||0),z);scene.add(w);w.receiveShadow=true;return w}
 /* ---------- Besucher (andere Kinder spazieren durch den Zoo) ---------- */
 const besucher=[];
@@ -249,7 +271,17 @@ function verschmelzen(){
   alt.forEach(m=>{if(m.parent)m.parent.remove(m)})}
 
 /* ---------- Welt bauen (Datei welt-<kennwort>.js) ---------- */
-weltBauen();
+/* Pruefhilfe (nur mit ?pruefung in der Adresse): listet Objekte, durch die man hindurchlaufen kann */
+function kollisionsPruefung(){scene.updateMatrixWorld(true);const out=[];
+  scene.children.forEach((o,idx)=>{if(o.isLight||o.isSprite||o.isPoints||o===himmel||o.userData.anim||o.userData.keep)return;let torus=false,meshes=0,anim=false;o.traverse(m=>{if(m.geometry&&m.geometry.type==='TorusGeometry')torus=true;if(m.isMesh)meshes++;if(m.userData&&(m.userData.anim||m.userData.keep))anim=true});if(torus||anim||!meshes)return;
+    const b=new THREE.Box3().setFromObject(o),sx=b.max.x-b.min.x,sy=b.max.y-b.min.y,sz=b.max.z-b.min.z;if(sy<.8||sx>45||sz>45||sx<.3&&sz<.3&&sy<2.5)return;
+    if(Math.max(sx,sz)<1)return;let blockiert=0;for(let i=0;i<3;i++)for(let j=0;j<3;j++){const x=b.min.x+sx*(.2+.3*i),z=b.min.z+sz*(.2+.3*j),p=hindernisse(x,z);if(Math.hypot(p[0]-x,p[1]-z)>.05||colliders.some(c=>Math.hypot(c.x-x,c.z-z)<c.r+.6))blockiert++}
+    if(blockiert>0)return;let frei=9,tot=9;
+    if(frei>=Math.ceil(tot/2))out.push({idx,x:+((b.min.x+b.max.x)/2).toFixed(1),z:+((b.min.z+b.max.z)/2).toFixed(1),b:+sx.toFixed(1),t:+sz.toFixed(1),h:+sy.toFixed(1),frei:frei+'/'+tot,meshes})});
+  return out}
+
+weltBauen();if(/pruefung/.test(location.search))window.__fehlend=kollisionsPruefung();
+BPTS.forEach(p=>{if(Math.abs(p[0])<3)p[0]=wegX(p[1])});
 verschmelzen();
 
 /* ---------- Stationen (Rätsel) und Wissenskarten ---------- */
@@ -257,7 +289,7 @@ function marke(txt,bg){const c=document.createElement('canvas');c.width=c.height
 const balkenMat=(c)=>new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:.22,depthWrite:false,blending:THREE.AdditiveBlending});
 const stationen=[],karten=[];
 /* gut verteilte freie Stellen im ganzen Zoo (je Rätsel eine Stelle und je Wissenskarte eine) */
-const SPOTS=(function(){const cand=[];for(let x=GRENZE.x0+10;x<=GRENZE.x1-10;x+=5)for(let z=TORZ+12;z<=GRENZE.z1-14;z+=5){let ok=true;for(const c of colliders){if(Math.hypot(x-c.x,z-c.z)<c.r+2.4){ok=false;break}}if(ok&&typeof EXTRAZONEN!=='undefined'&&EXTRAZONEN.some(e=>Math.hypot(x-e.x,z-e.z)<(e.r||0)+1.5))ok=false;if(ok)cand.push([x,z])}
+const SPOTS=(function(){const cand=[];for(let x=GRENZE.x0+10;x<=GRENZE.x1-10;x+=5)for(let z=TORZ+12;z<=GRENZE.z1-14;z+=5){let ok=true;for(const c of colliders){if(Math.hypot(x-c.x,z-c.z)<c.r+2.4){ok=false;break}}if(ok&&(sperrKaesten.some(k=>Math.hypot(x-k.x,z-k.z)<Math.hypot(k.hb,k.ht)+3)||sperrLinien.some(q=>{const vx=q.x2-q.x1,vz=q.z2-q.z1,l2=vx*vx+vz*vz||1;let t=((x-q.x1)*vx+(z-q.z1)*vz)/l2;t=t<0?0:t>1?1:t;return Math.hypot(x-q.x1-vx*t,z-q.z1-vz*t)<3})))ok=false;if(ok&&typeof EXTRAZONEN!=='undefined'&&EXTRAZONEN.some(e=>Math.hypot(x-e.x,z-e.z)<(e.r||0)+1.5))ok=false;if(ok)cand.push([x,z])}
   const need=2*N,pick=[],dm=cand.map(c=>Math.min(Math.hypot(c[0]-START.x,c[1]-START.z),Math.hypot(c[0],c[1]-TORZ)*.6));
   while(pick.length<need&&cand.length){let bj=0;for(let j=1;j<cand.length;j++)if(dm[j]>dm[bj])bj=j;const c=cand[bj];pick.push(c);for(let j=0;j<cand.length;j++){const d=Math.hypot(cand[j][0]-c[0],cand[j][1]-c[1]);if(d<dm[j])dm[j]=d}}
   return pick})();
@@ -298,7 +330,14 @@ const zielMarke=new THREE.Mesh(new THREE.RingGeometry(.4,.65,20),new THREE.MeshB
 function tippGehen(cx,cy,stumm){ray.setFromCamera({x:cx/innerWidth*2-1,y:-(cy/innerHeight)*2+1},camera);if(ray.ray.intersectPlane(ebene,pt)){ziel={x:Math.max(GRENZE.x0,Math.min(GRENZE.x1,pt.x)),z:Math.max(GRENZE.z0,Math.min(GRENZE.z1,pt.z))};zielMarke.position.set(ziel.x,.1,ziel.z);zielMarke.visible=true;if(!stumm)sKlick()}}
 
 /* ---------- Bewegung ---------- */
-const SPEED=11;let laufT=0;
+const SPEED=11;let laufT=0;let haengt=0;
+function hindernisse(x,z){const R=.55;
+  for(const c of colliders){const ex=x-c.x,ez=z-c.z,d=Math.hypot(ex,ez),m=c.r+R;if(d<m&&d>.001){x=c.x+ex/d*m;z=c.z+ez/d*m}}
+  for(const q of sperrLinien){const vx=q.x2-q.x1,vz=q.z2-q.z1,l2=vx*vx+vz*vz||1;let t=((x-q.x1)*vx+(z-q.z1)*vz)/l2;t=t<0?0:t>1?1:t;const px=q.x1+vx*t,pz=q.z1+vz*t,ex=x-px,ez=z-pz,d=Math.hypot(ex,ez),m=q.r+R;
+    if(d<m){if(d>.001){x=px+ex/d*m;z=pz+ez/d*m}else{const l=Math.sqrt(l2);x=px-vz/l*m;z=pz+vx/l*m}}}
+  for(const k of sperrKaesten){const wx=x-k.x,wz=z-k.z,lx=wx*k.c-wz*k.s,lz=wx*k.s+wz*k.c,hb=k.hb+R,ht=k.ht+R;
+    if(Math.abs(lx)<hb&&Math.abs(lz)<ht){let ax=lx,az=lz;if(hb-Math.abs(lx)<ht-Math.abs(lz))ax=(lx<0?-hb:hb);else az=(lz<0?-ht:ht);x=k.x+ax*k.c+az*k.s;z=k.z-ax*k.s+az*k.c}}
+  return[x,z]}
 function bewegen(dt){
   let ix=joy.x,iy=joy.y;if(tasten['arrowleft']||tasten['a'])ix-=1;if(tasten['arrowright']||tasten['d'])ix+=1;if(tasten['arrowup']||tasten['w'])iy+=1;if(tasten['arrowdown']||tasten['s'])iy-=1;
   let dx=0,dz=0;const sy=Math.sin(yaw),cy=Math.cos(yaw);
@@ -310,7 +349,9 @@ function bewegen(dt){
     /* Tor-Wand */
     if(oz>TORZ&&nz<=TORZ&&(ausgang.offen<.9||Math.abs(nx)>2.6))nz=oz;
     if(oz<=TORZ&&nz>TORZ&&Math.abs(nx)>2.6)nz=oz;
-    for(const c of colliders){const ex=nx-c.x,ez=nz-c.z,d=Math.hypot(ex,ez),m=c.r+.55;if(d<m&&d>.001){nx=c.x+ex/d*m;nz=c.z+ez/d*m}}
+    const gx=nx,gz=nz;nx=ox;nz=oz;const sl=Math.hypot(gx-ox,gz-oz),sn=Math.max(1,Math.ceil(sl/.25));
+    for(let k=1;k<=sn;k++){nx=ox+(gx-ox)*k/sn;nz=oz+(gz-oz)*k/sn;const p=hindernisse(nx,nz);nx=p[0];nz=p[1]}
+    const bew=Math.hypot(nx-ox,nz-oz);if(ziel&&bew<SPEED*dt*.25){haengt+=dt;if(haengt>.5){ziel=null;zielMarke.visible=false;haengt=0}}else haengt=0;
     spieler.position.x=nx;spieler.position.z=nz;
     const w=Math.atan2(dx,dz);let dw=w-blickWinkel;dw=Math.atan2(Math.sin(dw),Math.cos(dw));blickWinkel+=dw*Math.min(1,dt*12);spieler.rotation.y=blickWinkel;
     laufT+=dt*11}
@@ -348,7 +389,7 @@ function hud(){$('#mappe').textContent='\uD83D\uDCD6 '+zaehle(S.karten);$('#zk')
 const mini=$('#mini'),mx=mini.getContext('2d');let miniAn=true;mini.height=Math.round(mini.width*(GRENZE.z1-GRENZE.z0)/(GRENZE.x1-GRENZE.x0));
 $('#kartenknopf').onclick=()=>{miniAn=!miniAn;mini.style.display=miniAn?'block':'none'};
 function miniZeichnen(){const W=mini.width,H=mini.height,sx=W/(GRENZE.x1-GRENZE.x0),sz=H/(GRENZE.z1-GRENZE.z0);const X=x=>(x-GRENZE.x0)*sx,Z=z=>(z-GRENZE.z0)*sz;
-  mx.clearRect(0,0,W,H);mx.fillStyle='#eaf4fa';mx.fillRect(0,0,W,H);mx.strokeStyle='#e0cfa6';mx.lineWidth=4;mx.beginPath();mx.moveTo(X(0),Z(GRENZE.z1));mx.lineTo(X(0),Z(GRENZE.z0));SEITENWEGE.forEach(w=>{mx.moveTo(X(GRENZE.x0+25),Z(w));mx.lineTo(X(GRENZE.x1-25),Z(w))});mx.stroke();
+  mx.clearRect(0,0,W,H);mx.fillStyle='#eaf4fa';mx.fillRect(0,0,W,H);mx.strokeStyle='#e0cfa6';mx.lineWidth=4;mx.beginPath();mx.moveTo(X(0),Z(GRENZE.z1));for(let zz=GRENZE.z1;zz>TORZ;zz-=8)mx.lineTo(X(wegX(zz)),Z(zz));mx.lineTo(X(0),Z(TORZ));mx.lineTo(X(0),Z(GRENZE.z0));if(typeof WEGBOGEN!=='number')SEITENWEGE.forEach(w=>{mx.moveTo(X(GRENZE.x0+25),Z(w));mx.lineTo(X(GRENZE.x1-25),Z(w))});else WEGE.forEach(e=>{mx.moveTo(X(e[0][0]),Z(e[0][1]));e.forEach(q=>mx.lineTo(X(q[0]),Z(q[1])))});mx.stroke();
   mx.fillStyle='#8fb4cc';mx.font='9px Arial';mx.textAlign='center';for(const k in BEREICHE){const b=BEREICHE[k];mx.fillText(b.name,X(b.x),Z(b.z)-26)}if(EXTRAZONEN.length<=20)EXTRAZONEN.forEach(b=>mx.fillText(b.name,X(b.x),Z(b.z)));
   mx.fillStyle='#3e9468';mx.fillRect(X(-5),Z(TORZ)-3,X(5)-X(-5),6);mx.fillStyle='#e0605a';mx.fillText('Ausgang',X(0),Z(TORZ)-6);
   mx.textAlign='center';karten.forEach(k=>{if(!k.da)return;mx.fillStyle='#e8b930';mx.fillRect(X(k.x)-5,Z(k.z)-6,10,12);mx.fillStyle='#4a2f0a';mx.font='bold 9px Arial';mx.fillText(String(k.i+1),X(k.x),Z(k.z)+3)});

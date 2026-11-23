@@ -7,12 +7,13 @@ const BEREICHE={
 };
 const EXTRAZONEN=[{name:'Kuhweide',x:-95,z:66,r:22},{name:'Schweinestall',x:95,z:66,r:22},{name:'Hühnerhof',x:-45,z:70,r:15},{name:'Streichelzoo',x:45,z:70,r:14},{name:'Pferdekoppel',x:-95,z:0,r:26},{name:'Schafweide',x:95,z:0,r:26},{name:'Entenweiher',x:-45,z:0,r:19},{name:'Windmühle',x:45,z:0,r:19},{name:'Gemüsegarten',x:-45,z:-68,r:19},{name:'Kürbisfeld',x:-95,z:-66,r:22},{name:'Imkerei',x:95,z:-66,r:22},{name:'Scheune',x:-45,z:-135,r:20},{name:'Traktoren',x:45,z:-135,r:20},{name:'Spielplatz',x:-88,z:-104,r:13},{name:'Picknick',x:88,z:-104,r:13}];
 const SEITENWEGE=[35,-35,-100];
+const WEGBOGEN=11;
 const GRENZE={x0:-125,x1:125,z0:-215,z1:115};
 const TORZ=-160, FEST={x:0,z:-190};
 let FARBEN,WASSER,ausgang;
 const ZW=(s,w)=>WINTER?w:s;
 const ZN=n=>EXTRAZONEN.find(e=>e.name===n);
-function pfad(x1,z1,x2,z2,w,farbe){const l=Math.hypot(x2-x1,z2-z1);const b=box(w,.06,l,farbe||FARBEN.pfad,(x1+x2)/2,.03,(z1+z2)/2);b.rotation.y=Math.atan2(x2-x1,z2-z1);b.receiveShadow=true;scene.add(b)}
+function pfad(x1,z1,x2,z2,w,farbe){weg(wellen(x1,z1,x2,z2),w,farbe)}
 function scheibe(x,z,r,farbe,h){h=h||.12;const c=cyl(r,h,farbe,x,h/2,z,scene);c.receiveShadow=true;return c}
 function schild(text,x,y,z,w,h,schrift,farbe,rot,par){const s=schildText(text,farbe||'#fff8e6',w,h,schrift);s.position.set(x,y,z);if(rot)s.rotation.y=rot;(par||scene).add(s);return s}
 function bewegt(teil,fn){teil.userData.keep=1;lebendig.push({o:{userData:{anim:fn}},ph:0})}
@@ -23,7 +24,7 @@ function glas(w,h,d,x,y,z,par){GLAS=GLAS||new THREE.MeshLambertMaterial({color:0
 function giebel(g,w,d,y0,dachf,wandf,a){a=a||.62;const h=d/2*Math.tan(a),l=d/2/Math.cos(a)+.35;[-1,1].forEach(s=>{const r=box(w+.7,.22,l,dachf,0,y0+h/2,s*d/4,g,true);r.rotation.x=s*a});box(w,h*.5,d*.5,wandf,0,y0+h*.25,0,g)}
 function stall(x,z,w,d,hh,wand,dach,rot,text){const g=grp(x,0,z);box(w,hh,d,wand,0,hh/2,0,g,true);giebel(g,w,d,hh,dach,wand);
   box(w*.3,hh*.72,.14,0x7a5230,0,hh*.36,d/2+.05,g);[-1,1].forEach(s=>box(w*.34,.1,.16,0xf6f2e6,0,hh*.36,d/2+.1,g).rotation.z=s*.8);
-  if(text)schild(text,0,hh*.88,d/2+.1,Math.min(w*.8,5),.9,40,'#fff8e6',0,g);g.rotation.y=rot||0;kreis(x,z,Math.max(w,d)*.55);return g}
+  if(text)schild(text,0,hh*.88,d/2+.1,Math.min(w*.8,5),.9,40,'#fff8e6',0,g);g.rotation.y=rot||0;sperrKasten(x,z,w,d,rot||0);return g}
 function gehege(b,r,boden,luecke,n){scheibe(b.x,b.z,r,boden,.12);zaun(b.x,b.z,r,n||70,luecke)}
 function zugang(b,pz,ex){pfad(b.x,b.z,ex!=null?ex:b.x,pz,3.5)}
 function stroh(x,z,rot,par,y,hell){const o=box(1.7,1,1,hell?0xe8c850:0xd8b440,x,y||.5,z,par||scene,true);o.rotation.y=rot||0;box(1.74,1.04,.12,0x6a4a2a,x,y||.5,z,par||scene).rotation.y=rot||0;return o}
@@ -105,12 +106,12 @@ function weltBauen(){
 FARBEN=WINTER?{boden:0xdfe9f1,pfad:0xe9dcc0,platz:0xf6e4b8,gehege:0xe8e4d4}:{boden:0x93cf72,pfad:0xe8d5a0,platz:0xf0dfae,gehege:0x9ed47a};
 const boden=new THREE.Mesh(new THREE.PlaneGeometry(1200,1200),mat(FARBEN.boden));boden.rotation.x=-Math.PI/2;boden.receiveShadow=true;scene.add(boden);
 WASSER=WINTER?0xbfe6f4:0x4aa3d8;
-pfad(0,GRENZE.z1,0,TORZ+2,5);pfad(-92,35,92,35,4);pfad(-100,-35,100,-35,4);pfad(-92,-100,92,-100,4);pfad(0,TORZ+2,0,GRENZE.z0+4,5,FARBEN.platz);
+hauptweg(5);SEITENWEGE.forEach(w=>kreuzplatz(wegX(w),w,7.5));pfad(-92,35,92,35,4);pfad(-100,-35,100,-35,4);pfad(-92,-100,92,-100,4);pfad(0,TORZ+2,0,GRENZE.z0+4,5,FARBEN.platz);
 scheibe(0,92,14,FARBEN.pfad,.07);scheibe(FEST.x,FEST.z,17,FARBEN.platz,.08);
 /* ---------- Bäume (instanziert, wenige) ---------- */
 const baumListe=[];
 function frei(x,z){if(Math.hypot(x-0,z-92)<24||Math.hypot(x-45,z+68)<24)return false;
-  for(const e of EXTRAZONEN){if(Math.hypot(x-e.x,z-e.z)<e.r+9)return false}if(Math.abs(x)<6&&z>TORZ+2)return false;for(const w of SEITENWEGE){if(Math.abs(z-w)<9&&Math.abs(x)<110)return false}if(z<TORZ+2&&Math.hypot(x-FEST.x,z-FEST.z)<24)return false;if(Math.abs(x)<5&&z<TORZ)return false;return true}
+  for(const e of EXTRAZONEN){if(Math.hypot(x-e.x,z-e.z)<e.r+9)return false}if(Math.abs(x-wegX(z))<6&&z>TORZ+2)return false;for(const w of SEITENWEGE){if(Math.abs(z-w)<9&&Math.abs(x)<110)return false}if(z<TORZ+2&&Math.hypot(x-FEST.x,z-FEST.z)<24)return false;if(Math.abs(x)<5&&z<TORZ)return false;return true}
 for(let i=0;i<90;i++){const x=GRENZE.x0+6+rnd()*(GRENZE.x1-GRENZE.x0-12),z=GRENZE.z0+6+rnd()*(GRENZE.z1-GRENZE.z0-12);if(frei(x,z))baumListe.push({x,z,s:.8+rnd()*.5})}
 for(let x=GRENZE.x0;x<=GRENZE.x1;x+=11){if(Math.abs(x)>8)baumListe.push({x,z:GRENZE.z1,s:1.2});baumListe.push({x,z:GRENZE.z0,s:1.2});if(Math.abs(x)>3.5)baumListe.push({x,z:TORZ,s:1})}
 for(let z=GRENZE.z0;z<=GRENZE.z1;z+=11){baumListe.push({x:GRENZE.x0,z,s:1.2});baumListe.push({x:GRENZE.x1,z,s:1.2})}
@@ -148,7 +149,7 @@ const BLF=[0xe0605a,0xffd45e,0xf59e3f,0xffffff,0xb06ae0];
   trog(b.x+3,b.z+14,0,0x8a6a48);stroh(b.x-14,b.z-9,.5,null,.5,true);kreis(b.x-14,b.z-9,1.2);ballen(b.x-16,b.z+6,.2);
   wegweiser(b.x-25,b.z+2,'Schweine',-Math.PI/2)})();
 /* ---------- 4. Hühnerhof mit Hühnerstall und Küken ---------- */
-(function(){const b=ZN('Hühnerhof');gehege(b,15,ZW(0xe3d3a6,0xe6e2d6),0,52);pfad(b.x,b.z,0,b.z,3.5);
+(function(){const b=ZN('Hühnerhof');gehege(b,15,ZW(0xe3d3a6,0xe6e2d6),0,52);pfad(b.x,b.z,wegX(b.z),b.z,3.5);
   const hs=grp(b.x-8,0,b.z-5);[[-1.2,-.8],[1.2,-.8],[-1.2,.8],[1.2,.8]].forEach(p=>cyl(.1,1,0x6a4220,p[0],.5,p[1],hs,true));box(3,1.6,2.2,0xc8503a,0,1.8,0,hs,true);giebel(hs,3,2.2,2.6,0x6a3a2a,0xc8503a,.5);box(.6,.8,.1,0x3a2a1a,.6,1.6,1.15,hs);box(.8,.1,2.2,0x8a5a32,-.3,1,2.4,hs).rotation.x=.6;kreis(b.x-8,b.z-5,2.2);
   [[0,0,0],[4,3,1],[-3,5,0],[6,-4,0],[-2,-8,0],[3,-7,0]].forEach((p,i)=>tier(i===1?(q=>huhn(q,true)):huhn,b.x+p[0],b.z+p[1]+2,b.x,b.z,i===1?1.05:.8,.7));
   [[3,0],[4.5,.8],[1.5,1],[5,4],[-1,3],[-3,-3]].forEach((p,i)=>tier(kueken,b.x+p[0]+3,b.z+p[1]-3,b.x,b.z,1,.3));
@@ -156,7 +157,7 @@ const BLF=[0xe0605a,0xffd45e,0xf59e3f,0xffffff,0xb06ae0];
   trog(b.x+10,b.z+5,.4,0x4aa3d8);ballen(b.x+11,b.z-4,.5);
   wegweiser(b.x-17,b.z+3,'Hühner',Math.PI/2)})();
 /* ---------- 5. Streichelzoo (Ziegen, Schafe, Kaninchen) ---------- */
-(function(){const b=ZN('Streichelzoo');gehege(b,14,ZW(0xdde6a8,0xe8ecee),Math.PI,56);pfad(b.x,b.z,0,b.z,3.5);
+(function(){const b=ZN('Streichelzoo');gehege(b,14,ZW(0xdde6a8,0xe8ecee),Math.PI,56);pfad(b.x,b.z,wegX(b.z),b.z,3.5);
   [[-4,-3],[2,-6],[5,3],[-2,5]].forEach((p,i)=>tier(ziege,b.x+p[0],b.z+p[1],b.x,b.z,.95-i*.05,.6));tier(schaf,b.x+6,b.z-4,b.x,b.z,.8,.8);tier(schaf,b.x-6,b.z+3,b.x,b.z,.7,.7);
   [[-8,6],[-9.5,7.5],[-7,8]].forEach(p=>tier(hase,b.x+p[0],b.z+p[1],b.x,b.z,.8,.3));
   const hh=stall(b.x+7,b.z-8,4.6,3.2,2.2,0xc98a4b,0x4aa84e,0,'Streicheln erlaubt');
@@ -189,7 +190,7 @@ const BLF=[0xe0605a,0xffd45e,0xf59e3f,0xffffff,0xb06ae0];
   [[-3,-2],[2,3],[4,-4],[-6,3],[0,-6]].forEach((p,i)=>{const e=tier(ente,b.x+p[0],b.z+p[1],b.x,b.z,1.1-(i%2)*.15);e.position.y=.2});
   bank(b.x-8,b.z-13,0);wegweiser(b.x+15,b.z-8,'Entenweiher',-Math.PI/2)})();
 /* ---------- 9. Windmühle mit Getreidefeld ---------- */
-(function(){const b=ZN('Windmühle');scheibe(b.x,b.z,19,ZW(0xc9d88a,0xe6ecef),.1);pfad(b.x,b.z,0,b.z,3.5);
+(function(){const b=ZN('Windmühle');scheibe(b.x,b.z,19,ZW(0xc9d88a,0xe6ecef),.1);pfad(b.x,b.z,wegX(b.z),b.z,3.5);
   const m=grp(b.x+9,0,b.z-5);cyl(2.7,4,0xf4ead2,0,2,0,m,true);cyl(2.2,3,0xeadfc2,0,5.5,0,m,true);cone(2.8,2.6,0xb94a3a,0,8.2,0,m,true);box(1.2,2.2,.2,0x6a4220,-2.5,1.1,0,m).rotation.y=Math.PI/2;[-1,1].forEach(s=>box(.5,.7,.2,0x6a8ab8,-1.9,5.5,s*.7,m).rotation.y=0);
   kreis(b.x+9,b.z-5,3.2);
   const sa=grp(b.x+9-2.7,6.8,b.z-5);sph(.45,0x7a5230,0,0,0,sa);box(.2,8,.4,0x8a5a32,0,0,0,sa);box(.2,.4,8,0x8a5a32,0,0,0,sa);[[2.8,.9],[-2.8,-.9]].forEach(p=>box(.08,3.2,1.5,0xf6f2e6,-.1,p[0],p[1],sa));[[.9,-2.8],[-.9,2.8]].forEach(p=>box(.08,1.5,3.2,0xf6f2e6,-.1,p[0],p[1],sa));bewegt(sa,t=>{sa.rotation.x=t*.45});
@@ -199,7 +200,7 @@ const BLF=[0xe0605a,0xffd45e,0xf59e3f,0xffffff,0xb06ae0];
   const sk=grp(b.x+5,0,b.z+8);for(let i=0;i<3;i++)sph(.5,0xe8d9b0,-.6+i*.7,.55,0,sk,1,1.2,.9);sph(.5,0xe8d9b0,0,1.4,0,sk,1,1.1,.9);kreis(b.x+5,b.z+8,1.4);
   wegweiser(b.x-17,b.z+3,'Windmühle',Math.PI/2)})();
 /* ---------- 10. Gemüsegarten mit Gewächshaus und Vogelscheuche ---------- */
-(function(){const b=ZN('Gemüsegarten');scheibe(b.x,b.z,19,ZW(0xa9d386,0xe8f0f4),.1);zaun(b.x,b.z,19,60,0);pfad(b.x,b.z,0,b.z,3.5);
+(function(){const b=ZN('Gemüsegarten');scheibe(b.x,b.z,19,ZW(0xa9d386,0xe8f0f4),.1);zaun(b.x,b.z,19,60,0);pfad(b.x,b.z,wegX(b.z),b.z,3.5);
   const sal=[],koh=[],mohr=[],tom=[],sta=[];
   for(let r=0;r<3;r++)for(let c=0;c<2;c++){const x=b.x-12+c*8.5,z=b.z-9+r*4.2;box(7.6,.4,2.4,ZW(0x6b4a2f,0xdad4cc),x,.2,z,scene);
     if(!WINTER){for(let i=0;i<6;i++){const px=x-3+i*1.2;if((r+c)%3===0)sal.push([px,.65,z,.5,.4,.5]);else if((r+c)%3===1)koh.push([px,.7,z,.55,.5,.55]);else mohr.push([px,.55,z,.28,.3,.28])}}}
@@ -210,7 +211,7 @@ const BLF=[0xe0605a,0xffd45e,0xf59e3f,0xffffff,0xb06ae0];
   vogelscheuche(b.x-4,b.z+12);tonne(b.x+14,b.z+9);const gk=grp(b.x+13,0,b.z+7);cyl(.3,.5,0x3b8fc4,0,.25,0,gk);box(.8,.06,.06,0x3b8fc4,.5,.5,0,gk);
   wegweiser(b.x+17,b.z+12,'Gemüse',-Math.PI/2)})();
 /* ---------- 11. Obstgarten ---------- */
-(function(){const b=BEREICHE.obstgarten;scheibe(b.x,b.z,19,ZW(0xa4d880,0xe6eef4),.1);zaun(b.x,b.z,19,60,Math.PI);pfad(b.x,b.z,0,b.z,3.5);
+(function(){const b=BEREICHE.obstgarten;scheibe(b.x,b.z,19,ZW(0xa4d880,0xe6eef4),.1);zaun(b.x,b.z,19,60,Math.PI);pfad(b.x,b.z,wegX(b.z),b.z,3.5);
   const ap=[],fall=[];const T=[[-9,-9],[0,-11],[9,-8],[-12,0],[11,2],[-8,9],[2,8],[10,12]];
   T.forEach((p,i)=>{const x=b.x+p[0],z=b.z+p[1];const t=grp(x,0,z);cyl(.3,2.2,0x7a5230,0,1.1,0,t,true);
     if(WINTER){sph(1,0xdfe6ea,0,3.1,0,t,2.2,1.2,2.2);sph(1,0xcdd6dc,1,2.7,.4,t,1.2,.7,1.2)}else{sph(1,0x5cb04a,0,3.1,0,t,2.4,1.8,2.4).castShadow=true;sph(1,0x4a9a3e,1.2,2.8,.5,t,1.4,1.2,1.4);for(let k=0;k<7;k++){const a=k*.9+i;ap.push([x+Math.cos(a)*(1.5+(k%3)*.4),2.8+(k%4)*.35,z+Math.sin(a)*(1.5+(k%3)*.4),.2,.2,.2])}}
@@ -240,7 +241,7 @@ const BLF=[0xe0605a,0xffd45e,0xf59e3f,0xffffff,0xb06ae0];
   const ho=stall(b.x-13,b.z+11,5,3.4,2.4,0xf2d56a,0x8a5a32,0,'Honig');for(let i=0;i<4;i++)cyl(.22,.4,0xe8a02a,b.x-15+i*.7,.5,b.z+14.2,scene,true);
   wegweiser(b.x-25,b.z+2,'Imkerei',-Math.PI/2)})();
 /* ---------- 14. Scheune mit Heuballen und Silo ---------- */
-(function(){const b=ZN('Scheune');scheibe(b.x,b.z,20,ZW(0xd8c89a,0xe9e6de),.1);pfad(b.x,b.z,0,b.z,3.5);
+(function(){const b=ZN('Scheune');scheibe(b.x,b.z,20,ZW(0xd8c89a,0xe9e6de),.1);pfad(b.x,b.z,wegX(b.z),b.z,3.5);
   const sc=stall(b.x-3,b.z-8,12,8,5,0xb83a2e,0x6a3a2a,0,'Scheune');box(2.6,1.8,.14,0x7a5230,b.x-3,6.6,b.z-3.9,scene);wetterhahn(scene,b.x-3,9.2,b.z-8);
   const si=grp(b.x+11,0,b.z-9);cyl(2.2,9,0xc5ccd2,0,4.5,0,si,true);[2,4.5,7].forEach(y=>cyl(2.3,.2,0x8a949c,0,y,0,si));sph(2.2,0xb83a2e,0,9,0,si,1,.6,1);cyl(.1,9,0x6a4220,2.3,4.5,0,si);for(let i=0;i<10;i++)box(.1,.1,.8,0x6a4220,2.3,.6+i*.85,0,si);kreis(b.x+11,b.z-9,2.5);
   [[8,3],[10,4.5],[12,3.5]].forEach(p=>ballen(b.x+p[0],b.z+p[1],.3));ballen(b.x+10,b.z+3.8,1.6);
@@ -249,7 +250,7 @@ const BLF=[0xe0605a,0xffd45e,0xf59e3f,0xffffff,0xb06ae0];
   const k=tier(katze,b.x+9,b.z+4.2,b.x,b.z,1);k.position.y=1.1;
   wegweiser(b.x+16,b.z+5,'Scheune',-Math.PI/2)})();
 /* ---------- 15. Traktorschuppen mit Maschinen ---------- */
-(function(){const b=ZN('Traktoren');scheibe(b.x,b.z,20,ZW(0xc9c0a8,0xe6e6e6),.1);pfad(b.x,b.z,0,b.z,3.5);
+(function(){const b=ZN('Traktoren');scheibe(b.x,b.z,20,ZW(0xc9c0a8,0xe6e6e6),.1);pfad(b.x,b.z,wegX(b.z),b.z,3.5);
   const sh=grp(b.x+4,0,b.z-12);[[-4.5,-2.5],[4.5,-2.5],[-4.5,2.5],[4.5,2.5]].forEach(p=>cyl(.22,3.8,0x6a4220,p[0],1.9,p[1],sh,true));box(10.6,.25,6.4,0x5a6a7a,0,3.9,0,sh,true).rotation.x=.1;box(10,3.6,.2,0x8a5a32,0,1.8,-2.6,sh);const ps=schildText('Traktoren','#fff8e6',4,.9,44);ps.position.set(0,4.5,3.3);sh.add(ps);
   const t1=traktor(sh,true);t1.position.set(-1.5,0,0);t1.rotation.y=.3;kreis(b.x+4,b.z-12,5);
   maehdrescher(b.x-12,b.z-10,.5);const an=anhaenger(scene);an.position.set(b.x+14,0,b.z-2);an.rotation.y=.4;kreis(b.x+14,b.z-2,1.8);
@@ -259,7 +260,7 @@ const BLF=[0xe0605a,0xffd45e,0xf59e3f,0xffffff,0xb06ae0];
   lebendig.push({o:{userData:{anim:t=>{const a=t*.32;const x=cx+Math.cos(a)*11,z=cz+Math.sin(a)*6.5,vx=-Math.sin(a)*11,vz=Math.cos(a)*6.5;tr.position.set(x,0,z);tr.rotation.y=Math.atan2(-vz,vx);tr.visible=Math.hypot(x-spieler.position.x,z-spieler.position.z)<95;if(tr.visible)tr.userData.anim(t)}}},ph:0});
   wegweiser(b.x-17,b.z+3,'Traktoren',Math.PI/2)})();
 /* ---------- 16. Spielplatz mit Strohballen-Burg ---------- */
-(function(){const b=ZN('Spielplatz');scheibe(b.x,b.z,13,ZW(0xe8d8a8,0xece8e0),.12);pfad(b.x,b.z,0,b.z,3.5);
+(function(){const b=ZN('Spielplatz');scheibe(b.x,b.z,13,ZW(0xe8d8a8,0xece8e0),.12);pfad(b.x,b.z,wegX(b.z),b.z,3.5);
   const bu=grp(b.x-5,0,b.z-2);[[-2.4,-2.4],[2.4,-2.4],[2.4,2.4],[-2.4,2.4]].forEach((p,i)=>{stroh(p[0],p[1],i*.8,bu,.5,i%2);stroh(p[0],p[1],i*.8+.5,bu,1.5,!(i%2));stroh(p[0],p[1],i*.8,bu,2.5,i%2)});[[0,-2.6,0],[0,2.6,0],[-2.6,0,1.57],[2.6,0,1.57]].forEach((p,i)=>{if(i!==1){stroh(p[0],p[1],p[2],bu,.5,true);stroh(p[0],p[1],p[2],bu,1.5,false)}});
   cyl(.06,2.2,0x6a4220,-2.4,3.6,-2.4,bu);box(1,.6,.06,0xe0302a,-1.9,4.4,-2.4,bu);kreis(b.x-5,b.z-2,3.6);
   const sc=grp(b.x+5,0,b.z-6);[-1,1].forEach(x=>cyl(.1,3.4,0x3a4a56,x*2.4,1.7,0,sc,true));cyl(.08,5,0x3a4a56,0,3.4,0,sc).rotation.z=Math.PI/2;
@@ -269,8 +270,8 @@ const BLF=[0xe0605a,0xffd45e,0xf59e3f,0xffffff,0xb06ae0];
   const sk=grp(b.x-6,0,b.z+7);box(4,.4,.3,0x8b5a2b,0,.2,2,sk);box(4,.4,.3,0x8b5a2b,0,.2,-2,sk);box(.3,.4,4,0x8b5a2b,2,.2,0,sk);box(.3,.4,4,0x8b5a2b,-2,.2,0,sk);box(3.7,.3,3.7,0xf0d890,0,.15,0,sk);sph(.35,0xe0605a,.6,.45,.4,sk,1,.8,1);kreis(b.x-6,b.z+7,2.8);
   wegweiser(6,b.z+4,'← Spielplatz',0)})();
 /* ---------- 17. Picknickplatz ---------- */
-(function(){const b=ZN('Picknick');scheibe(b.x,b.z,13,ZW(0xdcecc0,0xe8eef0),.12);pfad(b.x,b.z,0,b.z,3.5);
-  const bl=grp(b.x-5,0,b.z+3);box(4,.06,4,0xe0605a,0,.1,0);[-1.3,0,1.3].forEach(x=>{box(.5,.07,4,0xffffff,x,.1,0,bl);box(4,.07,.5,0xffffff,0,.11,x,bl)});box(4,.06,4,0xe0605a,0,.1,0,bl);
+(function(){const b=ZN('Picknick');scheibe(b.x,b.z,13,ZW(0xdcecc0,0xe8eef0),.12);pfad(b.x,b.z,wegX(b.z),b.z,3.5);
+  const bl=grp(b.x-5,0,b.z+3);[-1.3,0,1.3].forEach(x=>{box(.5,.07,4,0xffffff,x,.1,0,bl);box(4,.07,.5,0xffffff,0,.11,x,bl)});box(4,.06,4,0xe0605a,0,.1,0,bl);
   const ko=grp(b.x-5,0,b.z+3);cyl(.5,.5,0xc9a46a,0,.4,0,ko,true);sph(.2,0xe0302a,.2,.75,0,ko);box(.8,.1,.5,0xf6f2ea,0,.12,1.2,ko);kreis(b.x-5,b.z+3,1.2);
   [[3,6],[7,-3]].forEach((p,i)=>{const g=grp(b.x+p[0],0,b.z+p[1]);box(2.4,.12,1.2,0xa8743f,0,.9,0,g,true);[-1,1].forEach(s=>box(.12,.9,.9,0x6a4220,s*1,.45,0,g));box(2.4,.1,.5,0x9a5a30,0,.5,.95,g);box(2.4,.1,.5,0x9a5a30,0,.5,-.95,g);cyl(.06,2.8,0x6a4220,0,1.4,0,g);cone(1.6,.6,i%2?0xe0605a:0x3b8fc4,0,2.9,0,g,true);kreis(b.x+p[0],b.z+p[1],1.8)});
   const ca=stall(b.x-4,b.z-8,5.4,3.6,2.4,0xf5d442,0xe0605a,0,'Hofcafé');rauch(scene,b.x-2,4,b.z-8.5);box(.6,1.4,.6,0x8a5a4a,b.x-2,3.1,b.z-8.5,scene);
@@ -295,7 +296,7 @@ ausgang=(function(){const g=grp(0,0,TORZ);g.userData.keep=1;[-1,1].forEach(s=>{b
   const ku=grp(-14,0,z0+6);[[0,0],[.9,0],[.45,.7]].forEach(p=>sph(.5,0xf2882a,p[0],.5,p[1]-0,ku,1,.75,1));sph(.7,0xf2882a,2,.5,.3,ku,1,.75,1);kreis(-14,z0+6,2)})();
 /* ---------- Schmuck am Hauptweg ---------- */
 (function(){let n=0;for(let z=GRENZE.z1-12;z>TORZ+4;z-=16){let nah=false;if(Math.abs(z-92)<17)nah=true;for(const e of EXTRAZONEN){if(Math.abs(e.x)<50&&Math.abs(z-e.z)<e.r+3)nah=true}for(const w of SEITENWEGE){if(Math.abs(z-w)<9)nah=true}if(nah)continue;
-  const side=(n%2?1:-1),f=SCHMUCK[n%SCHMUCK.length];f===bank?bank(side*5.2,z,side>0?-Math.PI/2:Math.PI/2):f(side*5.2,z);n++}})();
+  const side=(n%2?1:-1),f=SCHMUCK[n%SCHMUCK.length];f===bank?bank(wegX(z)+side*5.2,z,side>0?-Math.PI/2:Math.PI/2):f(wegX(z)+side*5.2,z);n++}})();
 /* ---------- Besucher ---------- */
 (function(){const jc=[0xe0605a,0x4caf6a,0xb06ae0,0xf59e3f,0x2fb5a8,0xffd45e,0x3b8fc4,0xe0605a,0x9b6fd0,0x4caf6a],hc=[0x6b4626,0xe8c24a,0x2a1d14,0xb5651d,0x1b1410,0x8a6a4a,0xe8c24a,0x2a1d14,0xb5651d,0x6b4626],st=['kurz','zoepfe','cap','pferd','kurz','zoepfe','cap','pferd','kurz','zoepfe'];
   for(let i=0;i<16;i++){const f=besucherFigur(Object.assign({},AVATARE[(i+1)%AVATARE.length],{jacke:jc[i%10],haar:hc[(i*3)%10],stil:st[i%10]}));const p=BPTS[(i*2)%BPTS.length];f.g.position.set(p[0]+(rnd()-.5)*2,0,p[1]);f.ziel=BPTS[(i*3+1)%BPTS.length];f.v=1.8+rnd()*.8;besucher.push(f)}})();
