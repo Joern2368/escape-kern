@@ -1,4 +1,8 @@
 /* Welt: Zoo (Kennwort zoo). Fest, gehostet. Enthält nur Daten und Bauanleitungen; die Engine (engine.js) ruft weltBauen() auf. */
+/* Schilder: ausgeschaltet (Wunsch der Lehrkraft, 24.11.2026). Frühere Liste zum Wiedereinschalten: SCHILDER_ALT einfach als SCHILDER eintragen und WEGMAX auf 14 setzen. */
+const SCHILDER_ALT=['Ausgang', 'Geschafft!', 'Savanne', 'Pinguine', 'Affen', 'Elefantenpark', 'Giraffenwiese', 'Löwen', 'Tiger', 'Eisbären', 'Streichelzoo', 'Seehunde', 'Papageien', 'Reptilienhaus', 'Spielplatz', 'Picknick'];
+const SCHILDER=['Ausgang','Geschafft!'];
+const WEGMAX=0;
 const MASKOTTCHEN='Wilma Waschbär';
 const START={x:0,z:94};
 const BEREICHE={

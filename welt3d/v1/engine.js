@@ -201,7 +201,12 @@ function tier(fn,x,z,bx,bz,sk,r){const o=fn(scene);let ersterKoerper=true;o.trav
 function zaun(cx,cz,r,n,luecke){sperrRing(cx,cz,r,n,luecke);const g=grp(cx,0,cz);for(let i=0;i<n;i++){const a=i/n*Math.PI*2;if(luecke!=null&&Math.abs(Math.atan2(Math.sin(a-luecke),Math.cos(a-luecke)))<.4)continue;box(.18,1.2,.18,0x8b5a2b,Math.cos(a)*r,.6,Math.sin(a)*r,g)}
   [1.0,.55].forEach(h=>{const ring=new THREE.Mesh(luecke!=null?new THREE.TorusGeometry(r,.06,5,Math.max(24,n),Math.PI*2-.8):new THREE.TorusGeometry(r,.06,5,Math.max(24,n)),mat(0xa87846));if(luecke!=null)ring.rotation.z=luecke+.4;ring.rotation.x=Math.PI/2;ring.position.y=h;g.add(ring)})}
 function haus(x,z,w,d,wand,dach,par){if(!par)sperrKasten(x,z,w,d,0);const g=grp(x,0,z,par);box(w,2.2,d,wand,0,1.1,0,g,true);const r1=box(w+.6,.15,d/2+.5,dach,0,2.6,-d/4,g);r1.rotation.x=-.5;const r2=box(w+.6,.15,d/2+.5,dach,0,2.6,d/4,g);r2.rotation.x=.5;return g}
-function schildText(text,farbe,sx,sy,schrift){const c=document.createElement('canvas');c.width=512;c.height=128;const t=c.getContext('2d');t.fillStyle=farbe||'#fff8e6';t.fillRect(0,0,512,128);t.strokeStyle='#8b5a2b';t.lineWidth=10;t.strokeRect(5,5,502,118);t.fillStyle='#4a2f12';t.font='bold '+(schrift||64)+'px Andika,Arial,sans-serif';t.textAlign='center';t.textBaseline='middle';t.fillText(text,256,68);
+/* Schilder-Regel (Wunsch der Lehrkraft): pro Welt nur etwa 15 Schilder. Jede Welt nennt in SCHILDER die erlaubten Texte (ohne Pfeile); jeder Text hoechstens einmal als Gebaeude-/Ortsschild und hoechstens fuenf Wegweiser pro Welt. */
+const _SZ={};let _inWeg=false,_wegZ=0;const _schildBasis=t=>String(t).split('→').join('').split('←').join('').split('↑').join('').split('↓').join('').trim();
+function schildErlaubt(t){if(typeof SCHILDER==='undefined')return true;if(/^[0-9]+$/.test(t)||t===CONFIG.spielname)return true;return SCHILDER.indexOf(_schildBasis(t))>=0}
+function wegOk(t){if(typeof SCHILDER==='undefined')return true;return SCHILDER.indexOf(_schildBasis(t))>=0&&!_SZ['W|'+_schildBasis(t)]&&_wegZ<(typeof WEGMAX==='number'?WEGMAX:5)}
+const _gLeer=new THREE.BufferGeometry(),_mLeer=new THREE.MeshBasicMaterial();
+function schildText(text,farbe,sx,sy,schrift){if(typeof SCHILDER!=='undefined'&&!/^[0-9]+$/.test(text)&&text!==CONFIG.spielname){const k=_schildBasis(text);let schlecht=SCHILDER.indexOf(k)<0;if(!schlecht){if(_inWeg){schlecht=!!_SZ['W|'+k]||_wegZ>=(typeof WEGMAX==='number'?WEGMAX:5);if(!schlecht){_SZ['W|'+k]=1;_wegZ++}}else{schlecht=!!_SZ[k];if(!schlecht)_SZ[k]=1}}if(schlecht){const m=new THREE.Mesh(_gLeer,_mLeer);m.visible=false;return m}}const c=document.createElement('canvas');c.width=512;c.height=128;const t=c.getContext('2d');t.fillStyle=farbe||'#fff8e6';t.fillRect(0,0,512,128);t.strokeStyle='#8b5a2b';t.lineWidth=10;t.strokeRect(5,5,502,118);t.fillStyle='#4a2f12';t.font='bold '+(schrift||64)+'px Andika,Arial,sans-serif';t.textAlign='center';t.textBaseline='middle';t.fillText(text,256,68);
   const tex=new THREE.CanvasTexture(c);return new THREE.Mesh(new THREE.PlaneGeometry(sx||5,sy||1.25),new THREE.MeshBasicMaterial({map:tex}))}
 /* ---------- Kurvige Wege (gemeinsam fuer alle Welten) ---------- */
 function wegX(z){if(typeof WEGBOGEN!=='number')return 0;const a=TORZ+20,b=START.z-16;if(z<=a||z>=b)return 0;return WEGBOGEN*Math.sin(3*Math.PI*(z-a)/(b-a))}
@@ -219,7 +224,7 @@ function wellen(x1,z1,x2,z2){const dx=x2-x1,dz=z2-z1,l=Math.hypot(dx,dz);if(l<14
 function hauptweg(w,farbe){const r=[];for(let z=GRENZE.z1;z>TORZ+2;z-=10)r.push([wegX(z),z]);r.push([0,TORZ+2]);weg(r,w,farbe)}
 function kreuzplatz(x,z,r){cyl(r,.07,new THREE.Color(FARBEN.pfad).multiplyScalar(.84).getHex(),x,.045,z,scene).receiveShadow=true;cyl(r-.8,.08,FARBEN.platz,x,.05,z,scene).receiveShadow=true;
   cyl(2,.4,0x6dba52,x,.2,z,scene);for(let i=0;i<6;i++){const a=i*1.05;sph(.28,[0xe0605a,0xffd45e,0xf47ab0,0xffffff,0xb06ae0,0xf59e3f][i],x+Math.cos(a)*1.2,.55,z+Math.sin(a)*1.2,scene)}kreis(x,z,2.1)}
-function wegweiser(x,z,text,winkel){const g=grp(x,0,z);cyl(.1,2.6,0x7a5230,0,1.3,0,g,true);const s=schildText(text,'#fff8e6',3.2,.8,52);s.position.set(0,2.5,.12);g.add(s);const s2=s.clone();s2.rotation.y=Math.PI;s2.position.z=-.12;g.add(s2);g.rotation.y=winkel||0;kreis(x,z,.4)}
+function wegweiser(x,z,text,winkel){if(!wegOk(text))return;_inWeg=true;const g=grp(x,0,z);cyl(.1,2.6,0x7a5230,0,1.3,0,g,true);const s=schildText(text,'#fff8e6',3.2,.8,52);s.position.set(0,2.5,.12);g.add(s);const s2=s.clone();s2.rotation.y=Math.PI;s2.position.z=-.12;g.add(s2);g.rotation.y=winkel||0;kreis(x,z,.4);_inWeg=false}
 function blume(x,z,farbe){cyl(.03,.5,0x3f9a46,x,.25,z,scene);sph(.13,farbe,x,.55,z,scene)}
 function tor(x,z,breite){kreis(x-breite/2,z,.9);kreis(x+breite/2,z,.9);const g=grp(x,0,z);[-1,1].forEach(s=>{box(1,5,1,0x9a7a5a,s*breite/2,2.5,0,g,true);box(1.3,.4,1.3,0xffffff,s*breite/2,5.1,0,g)});box(breite+1,.9,.5,0xb94a3a,0,4.6,0,g,true);return g}
 function felsen(x,z,r,par){if(!par&&r>=.9)kreis(x,z,r*.95);const g=sph(r,0x9aa0a6,x,r*.5,z,par||scene,1.2,.75,1);g.castShadow=true;return g}
@@ -246,7 +251,7 @@ function kindModell(av,par){const g=grp(0,0,0,par);
   if(av.stil==='brille'){[-1,1].forEach(x=>{const r=new THREE.Mesh(new THREE.TorusGeometry(.15,.028,6,14),mat(0x2a2a2a));r.position.set(x*.2,.06,.5);kopf.add(r)});box(.12,.03,.03,0x2a2a2a,0,.08,.52,kopf)}
   return {g,bl,br,al,ar,kopf}}
 function besucherFigur(av){const m=kindModell(av);m.g.userData.keep=1;m.t=rnd()*9;return m}
-function besucherUpdate(dt){besucher.forEach(f=>{const g=f.g;let dx=f.ziel[0]-g.position.x,dz=f.ziel[1]-g.position.z;const l=Math.hypot(dx,dz);
+function besucherUpdate(dt){const px=spieler.position.x,pz=spieler.position.z;besucher.forEach(f=>{const g=f.g;const sicht=Math.hypot(g.position.x-px,g.position.z-pz)<58;if(g.visible!==sicht)g.visible=sicht;let dx=f.ziel[0]-g.position.x,dz=f.ziel[1]-g.position.z;const l=Math.hypot(dx,dz);
   if(l<1.2){f.ziel=BPTS[Math.floor(rnd()*BPTS.length)];f.pause=1+rnd()*3}
   if(f.pause>0){f.pause-=dt;f.bl.rotation.x=f.br.rotation.x=f.al.rotation.x=f.ar.rotation.x=0;return}
   dx/=l;dz/=l;g.position.x+=dx*f.v*dt;g.position.z+=dz*f.v*dt;g.rotation.y=Math.atan2(dx,dz);f.t+=dt*7;const s=Math.sin(f.t)*.7;f.bl.rotation.x=s;f.br.rotation.x=-s;f.al.rotation.x=-s*.7;f.ar.rotation.x=s*.7})}
@@ -380,7 +385,7 @@ const parade=[];let finale=null;
 function paradeUpdate(t,dt){parade.forEach(p=>{p.o.position.x+=dt*3;if(p.o.position.x>12)p.o.position.x-=parade.length*3.8;if(p.o.userData.anim)p.o.userData.anim(t+p.i);p.o.position.y=Math.abs(Math.sin(t*6+p.i))*.3;p.o.position.z=FEST.z+2+Math.sin(p.o.position.x*.15+p.i)*2})}
 
 /* ---------- Tiere bewegen sich leicht ---------- */
-function lebenUpdate(t){const px=spieler.position.x,pz=spieler.position.z;lebendig.forEach(l=>{const o=l.o;if(o.isObject3D){const s=Math.hypot(o.position.x-px,o.position.z-pz)<85;if(o.visible!==s)o.visible=s;if(!s)return}if(o.userData.anim)o.userData.anim(t+l.ph)})}
+const _lw=new THREE.Vector3();function lebenUpdate(t){const px=spieler.position.x,pz=spieler.position.z;lebendig.forEach(l=>{const o=l.o;if(o.isObject3D){if(o.parent&&o.parent!==scene)o.getWorldPosition(_lw);else _lw.copy(o.position);const s=Math.hypot(_lw.x-px,_lw.z-pz)<85;if(o.visible!==s)o.visible=s;if(!s)return}if(o.userData.anim)o.userData.anim(t+l.ph)})}
 
 /* ---------- Oberfläche (HUD) ---------- */
 let sprechT=null;
@@ -486,7 +491,7 @@ function schleife(){requestAnimationFrame(schleife);const dt=Math.min(.05,clock.
   if(gestartet&&!modal){bewegen(dt);const ids=Object.keys(zeiger);if(ids.length===1){const q=zeiger[ids[0]];if(q.bew<10&&performance.now()-q.t>300&&tges-halteT>.12){halteT=tges;tippGehen(q.x,q.y,true)}}}else{teile.beinL.rotation.x=teile.beinR.rotation.x=teile.armL.rotation.x=teile.armR.rotation.x=0}
   /* Kamera */
   const tx=spieler.position.x,ty=1.8,tz=spieler.position.z;himmel.position.set(tx,0,tz);const cp=Math.cos(pitch),sp=Math.sin(pitch);
-  const wx=tx+Math.sin(yaw)*dist*cp,wy=ty+dist*sp,wz=tz+Math.cos(yaw)*dist*cp;const wzk=Math.min(wz,GRENZE.z1-5);camera.position.x+=(wx-camera.position.x)*Math.min(1,dt*8);camera.position.y+=(wy-camera.position.y)*Math.min(1,dt*8);camera.position.z+=(wzk-camera.position.z)*Math.min(1,dt*8);camera.lookAt(tx,ty+(finale?Math.min(1,finale.t/3)*6:0),tz-(finale?Math.min(1,finale.t/3)*3:0));
+  const wx=tx+Math.sin(yaw)*dist*cp,wy=ty+dist*sp,wz=tz+Math.cos(yaw)*dist*cp;let wzk=Math.min(wz,GRENZE.z1-5),wxk=wx,wyk=wy;{const imK=(x,z)=>sperrKaesten.some(k=>{const ax=x-k.x,az=z-k.z,lx=ax*k.c-az*k.s,lz=ax*k.s+az*k.c;return Math.abs(lx)<k.hb+.7&&Math.abs(lz)<k.ht+.7});if(imK(wxk,wzk)){let f=1;for(let i=0;i<8&&imK(tx+(wx-tx)*f,tz+(wzk-tz)*f);i++)f-=.12;f=Math.max(.2,f);wxk=tx+(wx-tx)*f;wzk=tz+(wzk-tz)*f;wyk=ty+(wy-ty)*Math.max(.5,f)}}camera.position.x+=(wxk-camera.position.x)*Math.min(1,dt*8);camera.position.y+=(wyk-camera.position.y)*Math.min(1,dt*8);camera.position.z+=(wzk-camera.position.z)*Math.min(1,dt*8);camera.lookAt(tx,ty+(finale?Math.min(1,finale.t/3)*6:0),tz-(finale?Math.min(1,finale.t/3)*3:0));
   dir.position.set(tx+14,tz*0+20,tz+9);dir.target.position.set(tx,0,tz);
   /* Karten, Stationen */
   karten.forEach(k=>{if(!k.da)return;k.kar.rotation.y=tges*1.6;k.kar.position.y=1.9+Math.sin(tges*2+k.i)*.25;if(gestartet&&!modal&&Math.hypot(k.x-spieler.position.x,k.z-spieler.position.z)<2.4)kartenFund(k)});

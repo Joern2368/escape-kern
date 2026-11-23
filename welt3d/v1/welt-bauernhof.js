@@ -1,4 +1,8 @@
 /* Welt: Bauernhof (Kennwort bauernhof). Fest, gehostet. Enthält nur Daten und Bauanleitungen; die Engine (engine.js) ruft weltBauen() auf. */
+/* Schilder: ausgeschaltet (Wunsch der Lehrkraft, 24.11.2026). Frühere Liste zum Wiedereinschalten: SCHILDER_ALT einfach als SCHILDER eintragen und WEGMAX auf 9 setzen. */
+const SCHILDER_ALT=['Ausgang', 'Geschafft!', 'Kühe, Hühner', 'Schweine', 'Mühle', 'Spielplatz', 'Picknick', 'Bauernhaus', 'Maislabyrinth', 'Gänse', 'Molkerei', 'Ponys und Kutsche', 'Windmühle', 'Scheune', 'Kürbisfeld', 'Hofladen'];
+const SCHILDER=['Ausgang','Geschafft!'];
+const WEGMAX=0;
 const MASKOTTCHEN='Hanna Huhn';
 const START={x:0,z:94};
 const BEREICHE={
