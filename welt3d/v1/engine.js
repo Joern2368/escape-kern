@@ -315,7 +315,7 @@ function feuerwerkUpdate(dt){for(let i=0;i<NF;i++){if(fLeb[i]<=0)continue;fLeb[i
 /* ---------- Tierparade ---------- */
 const parade=[];let finale=null;
 function paradeBauen(){const liste=[[elefant,.65],[giraffe,.6],[zebra,.8],[pinguin,1.3],[affe,1.2],[flamingo,1],[schaf,1],[pinguin,1.3]];liste.forEach((f,i)=>{const o=f[0](scene);o.position.set(-20-i*3.8,0,FEST.z+2);o.scale.setScalar(f[1]);parade.push({o,i})})}
-function paradeUpdate(t,dt){parade.forEach(p=>{p.o.position.x+=dt*3;if(p.o.position.x>12)p.o.position.x-=34;if(p.o.userData.anim)p.o.userData.anim(t+p.i);p.o.position.y=Math.abs(Math.sin(t*6+p.i))*.3;p.o.position.z=FEST.z+2+Math.sin(p.o.position.x*.15+p.i)*2})}
+function paradeUpdate(t,dt){parade.forEach(p=>{p.o.position.x+=dt*3;if(p.o.position.x>12)p.o.position.x-=parade.length*3.8;if(p.o.userData.anim)p.o.userData.anim(t+p.i);p.o.position.y=Math.abs(Math.sin(t*6+p.i))*.3;p.o.position.z=FEST.z+2+Math.sin(p.o.position.x*.15+p.i)*2})}
 
 /* ---------- Tiere bewegen sich leicht ---------- */
 function lebenUpdate(t){lebendig.forEach(l=>{if(l.o.userData.anim)l.o.userData.anim(t+l.ph)})}
