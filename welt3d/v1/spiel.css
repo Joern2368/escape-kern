@@ -115,7 +115,7 @@ html,body{touch-action:none}
 #aktion{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);z-index:7;display:none;font-size:24px;padding:16px 28px}
 #stick{position:fixed;left:max(24px,env(safe-area-inset-left));bottom:max(24px,env(safe-area-inset-bottom));width:150px;height:150px;border-radius:50%;background:#ffffff66;border:4px solid #ffffffbb;z-index:7;touch-action:none}
 #knob{position:absolute;left:50%;top:50%;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;background:#fffe;box-shadow:0 3px 8px #0004;pointer-events:none}
-#mini{position:fixed;right:max(12px,env(safe-area-inset-right));top:max(62px,calc(env(safe-area-inset-top) + 52px));z-index:6;border-radius:14px;box-shadow:0 2px 8px #1f3a4d44;width:170px;height:225px}
+#mini{position:fixed;right:max(12px,env(safe-area-inset-right));top:max(62px,calc(env(safe-area-inset-top) + 52px));z-index:6;border-radius:14px;box-shadow:0 2px 8px #1f3a4d44;width:170px;height:auto}
 .urkunde{background:#fffdf0;padding:10px}
 .ur-rahmen{border:10px double #e8b930;border-radius:10px;padding:26px 24px;text-align:center}
 .ur-stern{color:#e8b930;font-size:30px;letter-spacing:6px}
@@ -125,7 +125,7 @@ html,body{touch-action:none}
 .ur-text{font-size:22px;line-height:1.45;margin:10px auto 18px;max-width:520px}
 .ur-fuss{display:flex;justify-content:space-between;font-size:18px;color:#56707f;margin-top:14px}
 @media print{body>*:not(#maske){display:none!important}#maske{position:static;background:#fff;display:block}.karte{box-shadow:none;max-width:none}.noprint{display:none!important}}
-@media (max-width:700px){#stick{width:120px;height:120px}#spruch{font-size:16px;max-width:90vw}#mini{width:120px;height:160px}}
+@media (max-width:700px){#stick{width:120px;height:120px}#spruch{font-size:16px;max-width:90vw}#mini{width:120px;height:auto}}
 
 #mappe{width:auto;border-radius:23px;padding:0 14px;font-size:20px;font-weight:700}
 .karte.papyrus{background:#f4e6c2;color:#3a2812;border:4px solid #a07c3c;border-radius:10px;box-shadow:0 10px 40px #000,inset 0 0 40px rgba(150,110,50,.3)}

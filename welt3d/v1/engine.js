@@ -143,7 +143,7 @@ function letzter(){try{return JSON.parse(localStorage.getItem(LETZT))||null}catc
 function laden(n){try{const t=localStorage.getItem(KEY(n));return t?JSON.parse(t):null}catch(e){return null}}
 const N=CONFIG.auftraege.length;
 const zaehle=o=>Object.keys(o).filter(k=>o[k]).length;
-const WINTER=CONFIG.kulisse==='winter'; /* sommer (Standard) oder winter */
+const WINTER=false; /* Winter gibt es nicht mehr (23.11.2026); CONFIG.kulisse wird ignoriert */
 
 /* ---------- WebGL starten ---------- */
 let renderer;
@@ -345,11 +345,11 @@ function lebenUpdate(t){const px=spieler.position.x,pz=spieler.position.z;lebend
 let sprechT=null;
 function sag(text,ms){const s=$('#spruch');s.textContent=text;s.style.opacity=1;clearTimeout(sprechT);sprechT=setTimeout(()=>s.style.opacity=0,ms||6000)}
 function hud(){$('#mappe').textContent='\uD83D\uDCD6 '+zaehle(S.karten);$('#zk').textContent=zaehle(S.karten);$('#zr').textContent=zaehle(S.geloest);$('#zn').textContent=N;$('#zn2').textContent=N}
-const mini=$('#mini'),mx=mini.getContext('2d');let miniAn=true;
+const mini=$('#mini'),mx=mini.getContext('2d');let miniAn=true;mini.height=Math.round(mini.width*(GRENZE.z1-GRENZE.z0)/(GRENZE.x1-GRENZE.x0));
 $('#kartenknopf').onclick=()=>{miniAn=!miniAn;mini.style.display=miniAn?'block':'none'};
 function miniZeichnen(){const W=mini.width,H=mini.height,sx=W/(GRENZE.x1-GRENZE.x0),sz=H/(GRENZE.z1-GRENZE.z0);const X=x=>(x-GRENZE.x0)*sx,Z=z=>(z-GRENZE.z0)*sz;
-  mx.clearRect(0,0,W,H);mx.fillStyle='#eaf4fa';mx.fillRect(0,0,W,H);mx.strokeStyle='#e0cfa6';mx.lineWidth=4;mx.beginPath();mx.moveTo(X(0),Z(GRENZE.z1));mx.lineTo(X(0),Z(GRENZE.z0));SEITENWEGE.forEach(w=>{mx.moveTo(X(-100),Z(w));mx.lineTo(X(100),Z(w))});mx.stroke();
-  mx.fillStyle='#8fb4cc';mx.font='9px Arial';mx.textAlign='center';for(const k in BEREICHE){const b=BEREICHE[k];mx.fillText(b.name,X(b.x),Z(b.z)-26)}EXTRAZONEN.forEach(b=>mx.fillText(b.name,X(b.x),Z(b.z)));
+  mx.clearRect(0,0,W,H);mx.fillStyle='#eaf4fa';mx.fillRect(0,0,W,H);mx.strokeStyle='#e0cfa6';mx.lineWidth=4;mx.beginPath();mx.moveTo(X(0),Z(GRENZE.z1));mx.lineTo(X(0),Z(GRENZE.z0));SEITENWEGE.forEach(w=>{mx.moveTo(X(GRENZE.x0+25),Z(w));mx.lineTo(X(GRENZE.x1-25),Z(w))});mx.stroke();
+  mx.fillStyle='#8fb4cc';mx.font='9px Arial';mx.textAlign='center';for(const k in BEREICHE){const b=BEREICHE[k];mx.fillText(b.name,X(b.x),Z(b.z)-26)}if(EXTRAZONEN.length<=20)EXTRAZONEN.forEach(b=>mx.fillText(b.name,X(b.x),Z(b.z)));
   mx.fillStyle='#3e9468';mx.fillRect(X(-5),Z(TORZ)-3,X(5)-X(-5),6);mx.fillStyle='#e0605a';mx.fillText('Ausgang',X(0),Z(TORZ)-6);
   mx.textAlign='center';karten.forEach(k=>{if(!k.da)return;mx.fillStyle='#e8b930';mx.fillRect(X(k.x)-5,Z(k.z)-6,10,12);mx.fillStyle='#4a2f0a';mx.font='bold 9px Arial';mx.fillText(String(k.i+1),X(k.x),Z(k.z)+3)});
   stationen.forEach(s=>{mx.fillStyle=S.geloest[s.i]?'#4caf6a':'#f59e3f';mx.beginPath();mx.arc(X(s.x),Z(s.z),7,0,6.3);mx.fill();mx.fillStyle='#fff';mx.font='bold 9px Arial';mx.fillText(S.geloest[s.i]?'\u2713':String(s.i+1),X(s.x),Z(s.z)+3)})
@@ -435,7 +435,7 @@ function urkunde(){const k=karteOeffnen();k.className='karte';
   k.innerHTML='<div class="urkunde"><div class="ur-rahmen"><div class="ur-stern">★ ★ ★</div><div class="ur-titel">URKUNDE</div><div class="ur-klein">'+CONFIG.spielname+'</div><div class="ur-name"></div><div class="ur-text"></div><div class="ur-fuss"><span>'+d+'</span><span>'+MASKOTTCHEN+'</span></div></div></div>';
   k.querySelector('.ur-name').textContent=S.name;k.querySelector('.ur-text').textContent=CONFIG.urkundeText;
   const l=el('div','leiste noprint');l.appendChild(el('div','platz'));const z=el('button','knopf','Weiter feiern');z.onclick=karteSchliessen;l.appendChild(z);k.appendChild(l)}
-function finaleStart(){if(finale)return;finale={t:0,burstT:0,urk:false};sag('Überraschung! Die Tiere feiern mit dir!',9000);paradeBauen();konfetti(120);sRichtig()}
+function finaleStart(){if(finale)return;finale={t:0,burstT:0,urk:false};sag('Überraschung! Alle feiern mit dir!',9000);paradeBauen();konfetti(120);sRichtig()}
 
 /* ---------- Hauptschleife ---------- */
 const clock=new THREE.Clock();let saveT=0,tges=0,fpsN=0,fpsT=0;
