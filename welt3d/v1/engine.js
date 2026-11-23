@@ -169,7 +169,7 @@ const grp=(x,y,z,par)=>{const g=new THREE.Group();g.position.set(x,y,z);(par||sc
 const colliders=[];const kreis=(x,z,r)=>colliders.push({x,z,r});
 
 /* ---------- Himmel, Licht ---------- */
-const himmel=new THREE.Group();scene.add(himmel);
+const himmel=new THREE.Group();himmel.userData.keep=1;scene.add(himmel);
 const skyMat=new THREE.ShaderMaterial({uniforms:{top:{value:new THREE.Color(0x5fa8e8)},bottom:{value:new THREE.Color(0xdcecf7)}},
   vertexShader:'varying float h;void main(){h=normalize(position).y;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
   fragmentShader:'uniform vec3 top;uniform vec3 bottom;varying float h;void main(){gl_FragColor=vec4(mix(bottom,top,smoothstep(-0.05,0.65,h)),1.0);}',side:THREE.BackSide,depthWrite:false,fog:false});
@@ -188,7 +188,7 @@ function setzeAbend(a){abend=a;skyMat.uniforms.top.value.copy(TOP_TAG).lerp(TOP_
 /* ---------- Tiere (aus einfachen Formen, schauen nach +x) ---------- */
 const lebendig=[];
 function blick(o,dx,dz){o.rotation.y=Math.atan2(-dz,dx)}
-function tier(fn,x,z,bx,bz,sk,r){const o=fn(scene);o.position.set(x,0,z);blick(o,bx-x,bz-z);o.scale.setScalar(sk||1);if(r)kreis(x,z,r*(sk||1));lebendig.push({o,ph:rnd()*6});return o}
+function tier(fn,x,z,bx,bz,sk,r){const o=fn(scene);let ersterKoerper=true;o.traverse(m=>{if(m.isMesh&&m.castShadow){if(ersterKoerper)ersterKoerper=false;else m.castShadow=false}});o.position.set(x,0,z);blick(o,bx-x,bz-z);o.scale.setScalar(sk||1);if(r)kreis(x,z,r*(sk||1));lebendig.push({o,ph:rnd()*6});return o}
 /* ---------- Bereiche aufbauen ---------- */
 function zaun(cx,cz,r,n,luecke){const g=grp(cx,0,cz);for(let i=0;i<n;i++){const a=i/n*Math.PI*2;if(luecke!=null&&Math.abs(Math.atan2(Math.sin(a-luecke),Math.cos(a-luecke)))<.4)continue;box(.18,1.2,.18,0x8b5a2b,Math.cos(a)*r,.6,Math.sin(a)*r,g)}
   [1.0,.55].forEach(h=>{const ring=new THREE.Mesh(new THREE.TorusGeometry(r,.06,5,Math.max(24,n)),mat(0xa87846));ring.rotation.x=Math.PI/2;ring.position.y=h;g.add(ring)})}
@@ -199,7 +199,7 @@ function wegweiser(x,z,text,winkel){const g=grp(x,0,z);cyl(.1,2.6,0x7a5230,0,1.3
 function blume(x,z,farbe){cyl(.03,.5,0x3f9a46,x,.25,z,scene);sph(.13,farbe,x,.55,z,scene)}
 function tor(x,z,breite){const g=grp(x,0,z);[-1,1].forEach(s=>{box(1,5,1,0x9a7a5a,s*breite/2,2.5,0,g,true);box(1.3,.4,1.3,0xffffff,s*breite/2,5.1,0,g)});box(breite+1,.9,.5,0xb94a3a,0,4.6,0,g,true);return g}
 function felsen(x,z,r,par){const g=sph(r,0x9aa0a6,x,r*.5,z,par||scene,1.2,.75,1);g.castShadow=true;return g}
-function wasserFl(x,z,r,farbe){const w=cyl(r,.18,farbe,x,.1,z);scene.add(w);w.receiveShadow=true;return w}
+function wasserFl(x,z,r,farbe,dy){const w=cyl(r,.18,farbe,x,.1+(dy||0),z);scene.add(w);w.receiveShadow=true;return w}
 /* ---------- Besucher (andere Kinder spazieren durch den Zoo) ---------- */
 const besucher=[];
 const gHalb=new THREE.SphereGeometry(1,14,8,0,Math.PI*2,0,Math.PI/2);
@@ -221,21 +221,41 @@ function kindModell(av,par){const g=grp(0,0,0,par);
   if(av.stil==='muetze'){const k=mesh(gHalb,0xe0302a,0,.1,0,.57,.57,.57,kopf);k.scale.set(.57,.55,.6);box(.62,.12,.5,0xffffff,0,.08,.02,kopf);sph(.14,0xffffff,0,.64,0,kopf)}
   if(av.stil==='brille'){[-1,1].forEach(x=>{const r=new THREE.Mesh(new THREE.TorusGeometry(.15,.028,6,14),mat(0x2a2a2a));r.position.set(x*.2,.06,.5);kopf.add(r)});box(.12,.03,.03,0x2a2a2a,0,.08,.52,kopf)}
   return {g,bl,br,al,ar,kopf}}
-function besucherFigur(av){const m=kindModell(av);m.t=rnd()*9;return m}
+function besucherFigur(av){const m=kindModell(av);m.g.userData.keep=1;m.t=rnd()*9;return m}
 function besucherUpdate(dt){besucher.forEach(f=>{const g=f.g;let dx=f.ziel[0]-g.position.x,dz=f.ziel[1]-g.position.z;const l=Math.hypot(dx,dz);
   if(l<1.2){f.ziel=BPTS[Math.floor(rnd()*BPTS.length)];f.pause=1+rnd()*3}
   if(f.pause>0){f.pause-=dt;f.bl.rotation.x=f.br.rotation.x=f.al.rotation.x=f.ar.rotation.x=0;return}
   dx/=l;dz/=l;g.position.x+=dx*f.v*dt;g.position.z+=dz*f.v*dt;g.rotation.y=Math.atan2(dx,dz);f.t+=dt*7;const s=Math.sin(f.t)*.7;f.bl.rotation.x=s;f.br.rotation.x=-s;f.al.rotation.x=-s*.7;f.ar.rotation.x=s*.7})}
 
+/* ---------- Unbewegliche Teile zu Blöcken zusammenfassen (weniger Zeichenaufrufe, wichtig fürs iPad) ---------- */
+function verschmelzen(){
+  const gr={},alt=[];scene.updateMatrixWorld(true);
+  scene.traverse(m=>{
+    if(!m.isMesh||m.isInstancedMesh||!m.visible)return;
+    const mt=m.material;if(Array.isArray(mt)||mt.transparent||mt.map||mt.wireframe||mt.isShaderMaterial)return;
+    for(let o=m;o;o=o.parent){if(o.userData&&(o.userData.anim||o.userData.keep))return}
+    const g=m.geometry.clone();g.applyMatrix4(m.matrixWorld);g.computeBoundingSphere();
+    if(g.boundingSphere.radius>40){g.dispose();return}
+    const c=g.boundingSphere.center,key=mt.uuid+'|'+Math.floor(c.x/45)+'|'+Math.floor(c.z/45)+'|'+(m.castShadow?1:0)+(m.receiveShadow?1:0);
+    (gr[key]=gr[key]||{mt,cast:m.castShadow,recv:m.receiveShadow,liste:[]}).liste.push(g);alt.push(m)});
+  for(const k in gr){const q=gr[k];let nv=0,ni=0;q.liste.forEach(g=>{nv+=g.attributes.position.count;ni+=g.index?g.index.count:g.attributes.position.count});
+    const P=new Float32Array(nv*3),N=new Float32Array(nv*3),I=new Uint32Array(ni);let vo=0,io=0;
+    q.liste.forEach(g=>{const c=g.attributes.position.count;P.set(g.attributes.position.array,vo*3);N.set(g.attributes.normal.array,vo*3);
+      if(g.index){const ix=g.index.array;for(let j=0;j<ix.length;j++)I[io+j]=ix[j]+vo;io+=ix.length}else{for(let j=0;j<c;j++)I[io+j]=vo+j;io+=c}vo+=c;g.dispose()});
+    const G=new THREE.BufferGeometry();G.setAttribute('position',new THREE.BufferAttribute(P,3));G.setAttribute('normal',new THREE.BufferAttribute(N,3));G.setIndex(new THREE.BufferAttribute(I,1));
+    const mm=new THREE.Mesh(G,q.mt);mm.castShadow=q.cast;mm.receiveShadow=q.recv;scene.add(mm)}
+  alt.forEach(m=>{if(m.parent)m.parent.remove(m)})}
+
 /* ---------- Welt bauen (Datei welt-<kennwort>.js) ---------- */
 weltBauen();
+verschmelzen();
 
 /* ---------- Stationen (Rätsel) und Wissenskarten ---------- */
 function marke(txt,bg){const c=document.createElement('canvas');c.width=c.height=128;const t=c.getContext('2d');t.fillStyle=bg;t.beginPath();t.arc(64,64,58,0,6.3);t.fill();t.strokeStyle='#fff';t.lineWidth=8;t.stroke();t.fillStyle='#fff';t.font='bold 80px Andika,Arial,sans-serif';t.textAlign='center';t.textBaseline='middle';t.fillText(txt,64,70);const tx=new THREE.CanvasTexture(c);return tx}
 const balkenMat=(c)=>new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:.22,depthWrite:false,blending:THREE.AdditiveBlending});
 const stationen=[],karten=[];
 /* gut verteilte freie Stellen im ganzen Zoo (je Rätsel eine Stelle und je Wissenskarte eine) */
-const SPOTS=(function(){const cand=[];for(let x=GRENZE.x0+10;x<=GRENZE.x1-10;x+=5)for(let z=TORZ+12;z<=GRENZE.z1-14;z+=5){let ok=true;for(const c of colliders){if(Math.hypot(x-c.x,z-c.z)<c.r+2.4){ok=false;break}}if(ok)cand.push([x,z])}
+const SPOTS=(function(){const cand=[];for(let x=GRENZE.x0+10;x<=GRENZE.x1-10;x+=5)for(let z=TORZ+12;z<=GRENZE.z1-14;z+=5){let ok=true;for(const c of colliders){if(Math.hypot(x-c.x,z-c.z)<c.r+2.4){ok=false;break}}if(ok&&typeof EXTRAZONEN!=='undefined'&&EXTRAZONEN.some(e=>Math.hypot(x-e.x,z-e.z)<(e.r||0)+1.5))ok=false;if(ok)cand.push([x,z])}
   const need=2*N,pick=[],dm=cand.map(c=>Math.min(Math.hypot(c[0]-START.x,c[1]-START.z),Math.hypot(c[0],c[1]-TORZ)*.6));
   while(pick.length<need&&cand.length){let bj=0;for(let j=1;j<cand.length;j++)if(dm[j]>dm[bj])bj=j;const c=cand[bj];pick.push(c);for(let j=0;j<cand.length;j++){const d=Math.hypot(cand[j][0]-c[0],cand[j][1]-c[1]);if(d<dm[j])dm[j]=d}}
   return pick})();
@@ -318,7 +338,7 @@ function paradeBauen(){const liste=[[elefant,.65],[giraffe,.6],[zebra,.8],[pingu
 function paradeUpdate(t,dt){parade.forEach(p=>{p.o.position.x+=dt*3;if(p.o.position.x>12)p.o.position.x-=parade.length*3.8;if(p.o.userData.anim)p.o.userData.anim(t+p.i);p.o.position.y=Math.abs(Math.sin(t*6+p.i))*.3;p.o.position.z=FEST.z+2+Math.sin(p.o.position.x*.15+p.i)*2})}
 
 /* ---------- Tiere bewegen sich leicht ---------- */
-function lebenUpdate(t){lebendig.forEach(l=>{if(l.o.userData.anim)l.o.userData.anim(t+l.ph)})}
+function lebenUpdate(t){const px=spieler.position.x,pz=spieler.position.z;lebendig.forEach(l=>{const o=l.o;if(o.isObject3D){const s=Math.hypot(o.position.x-px,o.position.z-pz)<85;if(o.visible!==s)o.visible=s;if(!s)return}if(o.userData.anim)o.userData.anim(t+l.ph)})}
 
 /* ---------- Oberfläche (HUD) ---------- */
 let sprechT=null;
