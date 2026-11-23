@@ -158,7 +158,7 @@ const baumListe=[];
 function frei(x,z){for(const k in BEREICHE){const b=BEREICHE[k];if(Math.hypot(x-b.x,z-b.z)<24)return false}
   for(const e of EXTRAZONEN){if(Math.hypot(x-e.x,z-e.z)<30)return false}if(Math.abs(x-wegX(z))<6&&z>TORZ+2)return false;for(const w of SEITENWEGE){if(Math.abs(z-w)<9&&Math.abs(x)<110)return false}if(z<TORZ+2&&Math.hypot(x-FEST.x,z-FEST.z)<24)return false;if(Math.abs(x)<5&&z<TORZ)return false;return true}
 for(let i=0;i<110;i++){const x=GRENZE.x0+6+rnd()*(GRENZE.x1-GRENZE.x0-12),z=GRENZE.z0+6+rnd()*(GRENZE.z1-GRENZE.z0-12);if(frei(x,z))baumListe.push({x,z,s:.8+rnd()*.5})}
-for(let x=GRENZE.x0;x<=GRENZE.x1;x+=11){if(Math.abs(x)>8)baumListe.push({x,z:GRENZE.z1,s:1.2});baumListe.push({x,z:GRENZE.z0,s:1.2});if(Math.abs(x)>3.5)baumListe.push({x,z:TORZ,s:1})}
+for(let x=GRENZE.x0;x<=GRENZE.x1;x+=11){if(Math.abs(x)>8)baumListe.push({x,z:GRENZE.z1,s:1.2});baumListe.push({x,z:GRENZE.z0,s:1.2});if(Math.abs(x)>8)baumListe.push({x,z:TORZ,s:1})}
 for(let z=GRENZE.z0;z<=GRENZE.z1;z+=11){baumListe.push({x:GRENZE.x0,z,s:1.2});baumListe.push({x:GRENZE.x1,z,s:1.2})}
 const BAUMTEIL=WINTER?
   [[gCyl,0x7a5230,0,.9,0,.28,1.8,.28],[gCone,0x2f6b4a,0,2.6,0,1.7,2.7,1.7],[gCone,0x37805a,0,4.1,0,1.35,2.4,1.35],[gCone,0xffffff,0,3.15,0,1.25,1.6,1.25],[gCone,0xffffff,0,4.7,0,.95,1.4,.95],[gCone,0x3e9468,0,5.5,0,.8,1.6,.8]]:
@@ -216,7 +216,7 @@ ausgang=(function(){const g=grp(0,0,TORZ);g.userData.keep=1;[-1,1].forEach(s=>{b
   const ru=grp(b.x+5,0,b.z-4);[[-1,-1],[1,-1],[-1,1],[1,1]].forEach(p=>cyl(.12,3,0xd8433a,p[0]*1.2,1.5,p[1]*1.2,ru,true));box(3,.2,3,0xf59e3f,0,3,0,ru,true);const ra=box(1.7,.15,5.4,0x3b8fc4,0,1.5,4.2,ru,true);ra.rotation.x=.57;box(.12,.4,5.4,0x2a6f9e,-.85,1.7,4.2,ru).rotation.x=.57;box(.12,.4,5.4,0x2a6f9e,.85,1.7,4.2,ru).rotation.x=.57;
   for(let i=0;i<5;i++)box(1.2,.1,.1,0xd8433a,0,.5+i*.5,-1.5,ru);kreis(b.x+5,b.z-4,2.4);
   const sc=grp(b.x-5,0,b.z-8);[-1,1].forEach(x=>{const a=cyl(.1,3.4,0x3a4a56,x*2.4,1.7,0,sc,true);});cyl(.08,5,0x3a4a56,0,3.4,0,sc).rotation.z=Math.PI/2;
-  const sitze=[-1,1].map(x=>{const p=grp(x*1,3.4,0,sc);cyl(.03,2,0x666,-.5,-1,0,p);cyl(.03,2,0x666,.5,-1,0,p);box(1.2,.12,.5,x>0?0xe0605a:0x4caf6a,0,-2,0,p,true);return p});
+  const sitze=[-1,1].map(x=>{const p=grp(x*1,3.4,0,sc);cyl(.03,2,0x666666,-.5,-1,0,p);cyl(.03,2,0x666666,.5,-1,0,p);box(1.2,.12,.5,x>0?0xe0605a:0x4caf6a,0,-2,0,p,true);return p});
   sitze.forEach(s=>{s.userData.keep=1});lebendig.push({o:{userData:{anim:t=>{sitze[0].rotation.z=Math.sin(t*1.6)*.35;sitze[1].rotation.z=Math.sin(t*1.6+1.5)*.35}}},ph:0});kreis(b.x-5-2.4,b.z-8,.4);kreis(b.x-5+2.4,b.z-8,.4);
   const wi=grp(b.x+7,0,b.z+7);box(.7,.8,1,0x8a8a8a,0,.4,0,wi,true);const pl=grp(0,.9,0,wi);box(4.6,.15,.5,0xf5d442,0,0,0,pl,true);[-1,1].forEach(q=>{box(.1,.5,.1,0x333333,q*1.7,.3,0,pl);box(.5,.12,.45,0xe0605a,q*2,.14,0,pl)});pl.userData.keep=1;lebendig.push({o:{userData:{anim:t=>{pl.rotation.z=Math.sin(t*1.3)*.18}}},ph:0});kreis(b.x+7,b.z+7,.6);
   wegweiser(6,b.z+3.5,'← Spielplatz',Math.PI/2*0)})();

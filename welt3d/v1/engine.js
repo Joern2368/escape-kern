@@ -260,7 +260,7 @@ function verschmelzen(){
     for(let o=m;o;o=o.parent){if(o.userData&&(o.userData.anim||o.userData.keep))return}
     const g=m.geometry.clone();g.applyMatrix4(m.matrixWorld);g.computeBoundingSphere();
     if(g.boundingSphere.radius>40){g.dispose();return}
-    const c=g.boundingSphere.center,key=mt.uuid+'|'+Math.floor(c.x/45)+'|'+Math.floor(c.z/45)+'|'+(m.castShadow?1:0)+(m.receiveShadow?1:0);
+    const c=g.boundingSphere.center,key=mt.uuid+'|'+Math.floor(c.x/90)+'|'+Math.floor(c.z/90)+'|'+(m.castShadow?1:0)+(m.receiveShadow?1:0);
     (gr[key]=gr[key]||{mt,cast:m.castShadow,recv:m.receiveShadow,liste:[]}).liste.push(g);alt.push(m)});
   for(const k in gr){const q=gr[k];let nv=0,ni=0;q.liste.forEach(g=>{nv+=g.attributes.position.count;ni+=g.index?g.index.count:g.attributes.position.count});
     const P=new Float32Array(nv*3),N=new Float32Array(nv*3),I=new Uint32Array(ni);let vo=0,io=0;
@@ -390,9 +390,9 @@ const mini=$('#mini'),mx=mini.getContext('2d');let miniAn=true;mini.height=Math.
 $('#kartenknopf').onclick=()=>{miniAn=!miniAn;mini.style.display=miniAn?'block':'none';if(!miniAn)miniGross(false)};
 function miniGross(an){mini.classList.toggle('gross',an);mini.width=an?640:170;mini.height=Math.round(mini.width*(GRENZE.z1-GRENZE.z0)/(GRENZE.x1-GRENZE.x0))}
 mini.onclick=()=>{if(modal)return;miniGross(!mini.classList.contains('gross'));sKlick()};
-function miniZeichnen(){const W=mini.width,H=mini.height,ms=W/170,sx=W/(GRENZE.x1-GRENZE.x0),sz=H/(GRENZE.z1-GRENZE.z0);const X=x=>(x-GRENZE.x0)*sx,Z=z=>(z-GRENZE.z0)*sz;
+function miniZeichnen(){const W=mini.width,H=mini.height,ms=W/170,sx=W/(GRENZE.x1-GRENZE.x0),sz=H/(GRENZE.z1-GRENZE.z0);const PD=10*ms,X=x=>PD+(x-GRENZE.x0)*(W-2*PD)/(GRENZE.x1-GRENZE.x0),Z=z=>PD+(z-GRENZE.z0)*(H-2*PD)/(GRENZE.z1-GRENZE.z0);
   mx.clearRect(0,0,W,H);mx.fillStyle='#eaf4fa';mx.fillRect(0,0,W,H);mx.strokeStyle='#e0cfa6';mx.lineWidth=4*ms;mx.beginPath();mx.moveTo(X(0),Z(GRENZE.z1));for(let zz=GRENZE.z1;zz>TORZ;zz-=8)mx.lineTo(X(wegX(zz)),Z(zz));mx.lineTo(X(0),Z(TORZ));mx.lineTo(X(0),Z(GRENZE.z0));if(typeof WEGBOGEN!=='number')SEITENWEGE.forEach(w=>{mx.moveTo(X(GRENZE.x0+25),Z(w));mx.lineTo(X(GRENZE.x1-25),Z(w))});else WEGE.forEach(e=>{mx.moveTo(X(e[0][0]),Z(e[0][1]));e.forEach(q=>mx.lineTo(X(q[0]),Z(q[1])))});mx.stroke();
-  mx.fillStyle='#8fb4cc';mx.font=(9*ms)+'px Arial';mx.textAlign='center';for(const k in BEREICHE){const b=BEREICHE[k];mx.fillText(b.name,X(b.x),Z(b.z)-26)}if(EXTRAZONEN.length<=20||ms>1.5)EXTRAZONEN.forEach(b=>mx.fillText(b.name,X(b.x),Z(b.z)));
+  mx.fillStyle='#6f98b4';mx.font=(6*ms)+'px Arial';mx.textAlign='center';const belegt=[],label=(txt,x,y)=>{const w=mx.measureText(txt).width,h=6*ms;x=Math.max(w/2+3,Math.min(W-w/2-3,x));for(const dy of[0,1.15*h,-1.15*h,2.3*h,-2.3*h,3.4*h]){const yy=y+dy,r=[x-w/2-2,yy-h,x+w/2+2,yy+3];let ok=true;for(const q of belegt)if(r[0]<q[2]&&r[2]>q[0]&&r[1]<q[3]&&r[3]>q[1]){ok=false;break}if(!ok)continue;belegt.push(r);mx.lineWidth=3*ms;mx.strokeStyle='rgba(234,244,250,.95)';mx.strokeText(txt,x,yy);mx.fillText(txt,x,yy);return}};for(const k in BEREICHE){const b=BEREICHE[k];label(b.name,X(b.x),Z(b.z)-26*ms*.3)}if(EXTRAZONEN.length<=20||ms>1.5)EXTRAZONEN.forEach(b=>label(b.name,X(b.x),Z(b.z)));
   mx.fillStyle='#3e9468';mx.fillRect(X(-5),Z(TORZ)-3*ms,X(5)-X(-5),6*ms);mx.fillStyle='#e0605a';mx.fillText('Ausgang',X(0),Z(TORZ)-6*ms);
   mx.textAlign='center';karten.forEach(k=>{if(!k.da)return;mx.fillStyle='#e8b930';mx.fillRect(X(k.x)-5*ms,Z(k.z)-6*ms,10*ms,12*ms);mx.fillStyle='#4a2f0a';mx.font='bold '+(9*ms)+'px Arial';mx.fillText(String(k.i+1),X(k.x),Z(k.z)+3*ms)});
   stationen.forEach(s=>{mx.fillStyle=S.geloest[s.i]?'#4caf6a':'#f59e3f';mx.beginPath();mx.arc(X(s.x),Z(s.z),7*ms,0,6.3);mx.fill();mx.fillStyle='#fff';mx.font='bold '+(9*ms)+'px Arial';mx.fillText(S.geloest[s.i]?'\u2713':String(s.i+1),X(s.x),Z(s.z)+3*ms)})
