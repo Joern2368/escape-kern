@@ -463,12 +463,26 @@ function schleife(){requestAnimationFrame(schleife);const dt=Math.min(.05,clock.
 
 /* ---------- Start ---------- */
 function weltWiederherstellen(){karten.forEach(k=>{if(S.karten[k.i])kartePicken(k)});stationen.forEach(s=>{if(S.geloest[s.i])stationFertig(s)});if(zaehle(S.geloest)>=N){ausgang.ziel=1;ausgang.offen=1;ausgang.fl[0].rotation.y=-1.5;ausgang.fl[1].rotation.y=1.5}hud()}
+function gespeicherte(){const out=[],pre='welt3d|'+CONFIG.spielname+'|';try{for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key.indexOf(pre)===0){const s=JSON.parse(localStorage.getItem(key));if(s&&s.name&&(zaehle(s.karten||{})+zaehle(s.geloest||{}))>0)out.push(s)}}}catch(e){}return out.slice(0,8)}
+function losGehts(n,jacke,alt){S=alt||{name:n,jacke:0,karten:{},geloest:{}};S.name=n;S.jacke=jacke;try{localStorage.setItem(LETZT,JSON.stringify({name:n,jacke:jacke}))}catch(e){}figurBauen(AVATARE[jacke]);const weiter=!!alt;
+  if(alt&&S.x!=null)spieler.position.set(S.x,0,S.z);else spieler.position.set(START.x,0,START.z);
+  if(!alt){karten.forEach(k=>{k.da=true;k.g.visible=true});stationen.forEach(s=>{s.ring.material.color.set(0xf59e3f);s.spr.material.map=marke('?','#f59e3f');s.spr.material.needsUpdate=true});ausgang.ziel=0;ausgang.offen=0;ausgang.fl[0].rotation.y=0;ausgang.fl[1].rotation.y=0}
+  gestartet=true;speichern();karteSchliessen();weltWiederherstellen();sKlick();
+  sag(weiter?'Willkommen zurück, '+n+'! Du hast '+zaehle(S.karten)+' Karten und '+zaehle(S.geloest)+' Rätsel. Es geht dort weiter, wo du aufgehört hast.':'Hallo '+n+'! Tippe auf den Boden, um zu laufen. Suche die goldenen Wissenskarten und die orangen Rätsel-Schilder. Die kleine Karte oben rechts hilft dir.',9000)}
 function start(){document.title=CONFIG.spielname;$('#titel').textContent=CONFIG.spielname;
   const k=karteOeffnen();k.innerHTML='';k.appendChild(el('h2',null,CONFIG.spielname));k.appendChild(el('div','tafeltext',CONFIG.einleitung));
   k.appendChild(el('div','frage','So geht es: Tippe auf den Boden (oder halte den Finger gedrückt), dann läuft deine Figur dorthin. Ziehe mit dem Finger, um dich umzuschauen. Suche goldene Wissenskarten 📖 und Rätsel-Schilder ❓.'));
   const let0=letzter();let jacke=let0&&AVATARE[let0.jacke]?let0.jacke:0;const fz=el('div','figuren');AVATARE.forEach((av,i)=>{const b=el('button','fig'+(i===jacke?' gewaehlt':''),avSvg(av));b.setAttribute('aria-label','Figur '+(i+1));b.onclick=()=>{jacke=i;sKlick();[...fz.children].forEach((x,j)=>x.classList.toggle('gewaehlt',j===i));figurBauen(AVATARE[i])};fz.appendChild(b)});k.appendChild(el('div','frage','Wähle deine Figur:'));k.appendChild(fz);
   k.appendChild(el('div','keinraetsel','\uD83D\uDCBE Das Spiel speichert alles. Wenn du später weiterspielen willst, gib genau denselben Namen ein.'));const l=el('div','leiste');const inp=el('input','eing');inp.placeholder='Dein Name';if(let0&&let0.name)inp.value=let0.name;figurBauen(AVATARE[jacke]);inp.maxLength=20;inp.style.maxWidth='260px';l.appendChild(inp);l.appendChild(el('div','platz'));
-  const b=el('button','knopf','Los geht’s!');b.onclick=()=>{const n=inp.value.trim()||'Gast';const alt=laden(n);S=alt||{name:n,jacke:0,karten:{},geloest:{}};S.name=n;S.jacke=jacke;try{localStorage.setItem(LETZT,JSON.stringify({name:n,jacke:jacke}))}catch(e){}figurBauen(AVATARE[jacke]);const weiter=!!alt;if(alt&&S.x!=null)spieler.position.set(S.x,0,S.z);gestartet=true;speichern();karteSchliessen();gestartet=true;weltWiederherstellen();sKlick();sag(weiter?'Willkommen zurück, '+n+'! Du hast '+zaehle(S.karten)+' Karten und '+zaehle(S.geloest)+' Rätsel. Es geht dort weiter, wo du aufgehört hast.':'Hallo '+n+'! Tippe auf den Boden, um zu laufen. Suche die goldenen Wissenskarten und die orangen Rätsel-Schilder. Die kleine Karte oben rechts hilft dir.',9000)};
+  const b=el('button','knopf','Los geht’s!');b.onclick=()=>{const n=inp.value.trim()||'Gast';const alt=laden(n);
+    if(alt&&(zaehle(alt.karten||{})+zaehle(alt.geloest||{}))>0){const k2=karteOeffnen();k2.appendChild(el('h2',null,'Spielstand gefunden'));
+      k2.appendChild(el('div','tafeltext',n+', du hast schon '+zaehle(alt.karten||{})+' Wissenskarten gefunden und '+zaehle(alt.geloest||{})+' von '+N+' Rätseln gelöst. Möchtest du dort weiterspielen oder noch einmal von vorn anfangen?'));
+      const l2=el('div','leiste');const nb=el('button','knopf grau','Neu starten');nb.onclick=()=>{sKlick();losGehts(n,jacke,null)};l2.appendChild(nb);l2.appendChild(el('div','platz'));
+      const wb=el('button','knopf','▶ Weiterspielen');wb.onclick=()=>losGehts(n,jacke,alt);l2.appendChild(wb);k2.appendChild(l2);
+      const zb=el('button','knopf blau','← Zurück');zb.style.marginTop='10px';zb.onclick=start;k2.appendChild(zb);return}
+    losGehts(n,jacke,alt)};
+  const alle=gespeicherte();if(alle.length){k.appendChild(el('div','frage','Gespeicherte Spiele:'));const ls=el('div','pool');
+    alle.forEach(s=>{const bt=el('button','chip','▶ '+s.name+' ('+zaehle(s.karten||{})+' Karten, '+zaehle(s.geloest||{})+' von '+N+' Rätseln)');bt.onclick=()=>losGehts(s.name,AVATARE[s.jacke]?s.jacke:0,s);ls.appendChild(bt)});k.appendChild(ls)}
   l.appendChild(b);k.appendChild(l);$('#maske').onclick=null}
 addEventListener('resize',()=>{renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();kgroesse()});
 kgroesse();hud();camera.position.set(START.x,9,START.z+14);start();schleife();
