@@ -200,7 +200,7 @@ function tier(fn,x,z,bx,bz,sk,r){const o=fn(scene);let ersterKoerper=true;o.trav
 /* ---------- Bereiche aufbauen ---------- */
 function zaun(cx,cz,r,n,luecke){sperrRing(cx,cz,r,n,luecke);const g=grp(cx,0,cz);for(let i=0;i<n;i++){const a=i/n*Math.PI*2;if(luecke!=null&&Math.abs(Math.atan2(Math.sin(a-luecke),Math.cos(a-luecke)))<.4)continue;box(.18,1.2,.18,0x8b5a2b,Math.cos(a)*r,.6,Math.sin(a)*r,g)}
   [1.0,.55].forEach(h=>{const ring=new THREE.Mesh(new THREE.TorusGeometry(r,.06,5,Math.max(24,n)),mat(0xa87846));ring.rotation.x=Math.PI/2;ring.position.y=h;g.add(ring)})}
-function haus(x,z,w,d,wand,dach,par){if(!par)sperrKasten(x,z,w,d,0);const g=grp(x,0,z,par);box(w,2.2,d,wand,0,1.1,0,g,true);const r1=box(w+.6,.15,d/2+.5,dach,0,2.6,-d/4,g);r1.rotation.x=.5;const r2=box(w+.6,.15,d/2+.5,dach,0,2.6,d/4,g);r2.rotation.x=-.5;return g}
+function haus(x,z,w,d,wand,dach,par){if(!par)sperrKasten(x,z,w,d,0);const g=grp(x,0,z,par);box(w,2.2,d,wand,0,1.1,0,g,true);const r1=box(w+.6,.15,d/2+.5,dach,0,2.6,-d/4,g);r1.rotation.x=-.5;const r2=box(w+.6,.15,d/2+.5,dach,0,2.6,d/4,g);r2.rotation.x=.5;return g}
 function schildText(text,farbe,sx,sy,schrift){const c=document.createElement('canvas');c.width=512;c.height=128;const t=c.getContext('2d');t.fillStyle=farbe||'#fff8e6';t.fillRect(0,0,512,128);t.strokeStyle='#8b5a2b';t.lineWidth=10;t.strokeRect(5,5,502,118);t.fillStyle='#4a2f12';t.font='bold '+(schrift||64)+'px Andika,Arial,sans-serif';t.textAlign='center';t.textBaseline='middle';t.fillText(text,256,68);
   const tex=new THREE.CanvasTexture(c);return new THREE.Mesh(new THREE.PlaneGeometry(sx||5,sy||1.25),new THREE.MeshBasicMaterial({map:tex}))}
 /* ---------- Kurvige Wege (gemeinsam fuer alle Welten) ---------- */
@@ -387,14 +387,16 @@ let sprechT=null;
 function sag(text,ms){const s=$('#spruch');s.textContent=text;s.style.opacity=1;clearTimeout(sprechT);sprechT=setTimeout(()=>s.style.opacity=0,ms||6000)}
 function hud(){$('#mappe').textContent='\uD83D\uDCD6 '+zaehle(S.karten);$('#zk').textContent=zaehle(S.karten);$('#zr').textContent=zaehle(S.geloest);$('#zn').textContent=N;$('#zn2').textContent=N}
 const mini=$('#mini'),mx=mini.getContext('2d');let miniAn=true;mini.height=Math.round(mini.width*(GRENZE.z1-GRENZE.z0)/(GRENZE.x1-GRENZE.x0));
-$('#kartenknopf').onclick=()=>{miniAn=!miniAn;mini.style.display=miniAn?'block':'none'};
-function miniZeichnen(){const W=mini.width,H=mini.height,sx=W/(GRENZE.x1-GRENZE.x0),sz=H/(GRENZE.z1-GRENZE.z0);const X=x=>(x-GRENZE.x0)*sx,Z=z=>(z-GRENZE.z0)*sz;
-  mx.clearRect(0,0,W,H);mx.fillStyle='#eaf4fa';mx.fillRect(0,0,W,H);mx.strokeStyle='#e0cfa6';mx.lineWidth=4;mx.beginPath();mx.moveTo(X(0),Z(GRENZE.z1));for(let zz=GRENZE.z1;zz>TORZ;zz-=8)mx.lineTo(X(wegX(zz)),Z(zz));mx.lineTo(X(0),Z(TORZ));mx.lineTo(X(0),Z(GRENZE.z0));if(typeof WEGBOGEN!=='number')SEITENWEGE.forEach(w=>{mx.moveTo(X(GRENZE.x0+25),Z(w));mx.lineTo(X(GRENZE.x1-25),Z(w))});else WEGE.forEach(e=>{mx.moveTo(X(e[0][0]),Z(e[0][1]));e.forEach(q=>mx.lineTo(X(q[0]),Z(q[1])))});mx.stroke();
-  mx.fillStyle='#8fb4cc';mx.font='9px Arial';mx.textAlign='center';for(const k in BEREICHE){const b=BEREICHE[k];mx.fillText(b.name,X(b.x),Z(b.z)-26)}if(EXTRAZONEN.length<=20)EXTRAZONEN.forEach(b=>mx.fillText(b.name,X(b.x),Z(b.z)));
-  mx.fillStyle='#3e9468';mx.fillRect(X(-5),Z(TORZ)-3,X(5)-X(-5),6);mx.fillStyle='#e0605a';mx.fillText('Ausgang',X(0),Z(TORZ)-6);
-  mx.textAlign='center';karten.forEach(k=>{if(!k.da)return;mx.fillStyle='#e8b930';mx.fillRect(X(k.x)-5,Z(k.z)-6,10,12);mx.fillStyle='#4a2f0a';mx.font='bold 9px Arial';mx.fillText(String(k.i+1),X(k.x),Z(k.z)+3)});
-  stationen.forEach(s=>{mx.fillStyle=S.geloest[s.i]?'#4caf6a':'#f59e3f';mx.beginPath();mx.arc(X(s.x),Z(s.z),7,0,6.3);mx.fill();mx.fillStyle='#fff';mx.font='bold 9px Arial';mx.fillText(S.geloest[s.i]?'\u2713':String(s.i+1),X(s.x),Z(s.z)+3)})
-  mx.save();mx.translate(X(spieler.position.x),Z(spieler.position.z));mx.rotate(-blickWinkel+Math.PI);mx.fillStyle='#e0302a';mx.beginPath();mx.moveTo(0,-8);mx.lineTo(6,6);mx.lineTo(-6,6);mx.closePath();mx.fill();mx.restore()}
+$('#kartenknopf').onclick=()=>{miniAn=!miniAn;mini.style.display=miniAn?'block':'none';if(!miniAn)miniGross(false)};
+function miniGross(an){mini.classList.toggle('gross',an);mini.width=an?640:170;mini.height=Math.round(mini.width*(GRENZE.z1-GRENZE.z0)/(GRENZE.x1-GRENZE.x0))}
+mini.onclick=()=>{if(modal)return;miniGross(!mini.classList.contains('gross'));sKlick()};
+function miniZeichnen(){const W=mini.width,H=mini.height,ms=W/170,sx=W/(GRENZE.x1-GRENZE.x0),sz=H/(GRENZE.z1-GRENZE.z0);const X=x=>(x-GRENZE.x0)*sx,Z=z=>(z-GRENZE.z0)*sz;
+  mx.clearRect(0,0,W,H);mx.fillStyle='#eaf4fa';mx.fillRect(0,0,W,H);mx.strokeStyle='#e0cfa6';mx.lineWidth=4*ms;mx.beginPath();mx.moveTo(X(0),Z(GRENZE.z1));for(let zz=GRENZE.z1;zz>TORZ;zz-=8)mx.lineTo(X(wegX(zz)),Z(zz));mx.lineTo(X(0),Z(TORZ));mx.lineTo(X(0),Z(GRENZE.z0));if(typeof WEGBOGEN!=='number')SEITENWEGE.forEach(w=>{mx.moveTo(X(GRENZE.x0+25),Z(w));mx.lineTo(X(GRENZE.x1-25),Z(w))});else WEGE.forEach(e=>{mx.moveTo(X(e[0][0]),Z(e[0][1]));e.forEach(q=>mx.lineTo(X(q[0]),Z(q[1])))});mx.stroke();
+  mx.fillStyle='#8fb4cc';mx.font=(9*ms)+'px Arial';mx.textAlign='center';for(const k in BEREICHE){const b=BEREICHE[k];mx.fillText(b.name,X(b.x),Z(b.z)-26)}if(EXTRAZONEN.length<=20||ms>1.5)EXTRAZONEN.forEach(b=>mx.fillText(b.name,X(b.x),Z(b.z)));
+  mx.fillStyle='#3e9468';mx.fillRect(X(-5),Z(TORZ)-3*ms,X(5)-X(-5),6*ms);mx.fillStyle='#e0605a';mx.fillText('Ausgang',X(0),Z(TORZ)-6*ms);
+  mx.textAlign='center';karten.forEach(k=>{if(!k.da)return;mx.fillStyle='#e8b930';mx.fillRect(X(k.x)-5*ms,Z(k.z)-6*ms,10*ms,12*ms);mx.fillStyle='#4a2f0a';mx.font='bold '+(9*ms)+'px Arial';mx.fillText(String(k.i+1),X(k.x),Z(k.z)+3*ms)});
+  stationen.forEach(s=>{mx.fillStyle=S.geloest[s.i]?'#4caf6a':'#f59e3f';mx.beginPath();mx.arc(X(s.x),Z(s.z),7*ms,0,6.3);mx.fill();mx.fillStyle='#fff';mx.font='bold '+(9*ms)+'px Arial';mx.fillText(S.geloest[s.i]?'\u2713':String(s.i+1),X(s.x),Z(s.z)+3*ms)})
+  mx.save();mx.translate(X(spieler.position.x),Z(spieler.position.z));mx.rotate(-blickWinkel+Math.PI);mx.scale(ms,ms);mx.fillStyle='#e0302a';mx.beginPath();mx.moveTo(0,-8);mx.lineTo(6,6);mx.lineTo(-6,6);mx.closePath();mx.fill();mx.restore()}
 
 /* ---------- Ton / Konfetti ---------- */
 const kcv=$('#konf'),kx=kcv.getContext('2d');let bunt=[];

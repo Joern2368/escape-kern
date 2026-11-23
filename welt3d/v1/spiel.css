@@ -115,7 +115,7 @@ html,body{touch-action:none}
 #aktion{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);z-index:7;display:none;font-size:24px;padding:16px 28px}
 #stick{position:fixed;left:max(24px,env(safe-area-inset-left));bottom:max(24px,env(safe-area-inset-bottom));width:150px;height:150px;border-radius:50%;background:#ffffff66;border:4px solid #ffffffbb;z-index:7;touch-action:none}
 #knob{position:absolute;left:50%;top:50%;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;background:#fffe;box-shadow:0 3px 8px #0004;pointer-events:none}
-#mini{position:fixed;right:max(12px,env(safe-area-inset-right));top:max(62px,calc(env(safe-area-inset-top) + 52px));z-index:6;border-radius:14px;box-shadow:0 2px 8px #1f3a4d44;width:170px;height:auto}
+#mini{cursor:pointer;position:fixed;right:max(12px,env(safe-area-inset-right));top:max(62px,calc(env(safe-area-inset-top) + 52px));z-index:6;border-radius:14px;box-shadow:0 2px 8px #1f3a4d44;width:170px;height:auto}
 .urkunde{background:#fffdf0;padding:10px}
 .ur-rahmen{border:10px double #e8b930;border-radius:10px;padding:26px 24px;text-align:center}
 .ur-stern{color:#e8b930;font-size:30px;letter-spacing:6px}
@@ -142,3 +142,6 @@ html,body{touch-action:none}
 .bump{animation:bump .55s}@keyframes bump{40%{transform:scale(1.3)}}
 .sb{color:#1748c9}.sr{color:#d0161b}
 .figuren{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:420px;margin:6px 0 10px}.fig{background:#fff;border:4px solid var(--rand);border-radius:18px;padding:4px;line-height:0}.fig.gewaehlt{border-color:var(--orange);background:#fff8ec}.fig svg{width:100%;height:auto}
+
+#mini.gross{top:50%;left:50%;right:auto;transform:translate(-50%,-50%);width:auto;height:auto;max-width:94vw;max-height:86vh;z-index:9;border-radius:18px;box-shadow:0 6px 30px #1f3a4d88,0 0 0 100vmax #1f3a4d55}
+@media (max-width:700px){#mini.gross{width:auto}}
