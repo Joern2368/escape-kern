@@ -4,7 +4,7 @@ Spieldateien für begehbare 3D-Welten (Lern-Rätselspiele), die in einer kleinen
 
 - `v1/engine.js`: Spiel-Engine (Figur, Kamera, Rätseltypen, Wissensmappe, Finale, Urkunde)
 - `v1/spiel.css`: Design
-- `v1/welt-<kennwort>.js`: je eine Welt (Landschaft, Tiere, Gebäude): zoo
+- `v1/welt-<kennwort>.js`: je eine Welt (Landschaft, Tiere, Gebäude): bauernhof, zoo
 - Die 3D-Bibliothek three.js (MIT-Lizenz) lädt die HTML-Datei von cdnjs.
 
 Die Dateien enthalten keine Schülerdaten und sprechen keine anderen Server an.
