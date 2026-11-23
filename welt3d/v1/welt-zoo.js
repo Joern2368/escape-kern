@@ -155,5 +155,5 @@ ausgang=(function(){const g=grp(0,0,TORZ);[-1,1].forEach(s=>{box(1.4,6,1.4,0x9a7
   akazie(b.x-3,b.z-3);akazie(b.x+9,b.z-8);akazie(b.x-9,b.z+3);akazie(b.x+4,b.z+6);felsen(b.x+17,b.z+10,1.8);
   wegweiser(b.x+29,b.z+3,'Giraffenwiese',-Math.PI/2)})();
 (function(){const jc=[0xe0605a,0x4caf6a,0xb06ae0,0xf59e3f,0x2fb5a8,0xffd45e,0x3b8fc4,0xe0605a,0x9b6fd0,0x4caf6a],hc=[0x6b4626,0xe8c24a,0x2a1d14,0xb5651d,0x1b1410,0x8a6a4a,0xe8c24a,0x2a1d14,0xb5651d,0x6b4626],st=['kurz','zoepfe','cap','pferd','kurz','zoepfe','cap','pferd','kurz','zoepfe'];
-  for(let i=0;i<16;i++){const f=besucherFigur(Object.assign({},AVATARE[(i+1)%4],{jacke:jc[i%10],haar:hc[(i*3)%10],stil:st[i%10]}));const p=BPTS[(i*2)%BPTS.length];f.g.position.set(p[0]+(rnd()-.5)*2,0,p[1]);f.ziel=BPTS[(i*3+1)%BPTS.length];f.v=1.8+rnd()*.8;besucher.push(f)}})();
+  for(let i=0;i<16;i++){const f=besucherFigur(Object.assign({},AVATARE[(i+1)%AVATARE.length],{jacke:jc[i%10],haar:hc[(i*3)%10],stil:st[i%10]}));const p=BPTS[(i*2)%BPTS.length];f.g.position.set(p[0]+(rnd()-.5)*2,0,p[1]);f.ziel=BPTS[(i*3+1)%BPTS.length];f.v=1.8+rnd()*.8;besucher.push(f)}})();
 }

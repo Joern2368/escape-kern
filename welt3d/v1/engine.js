@@ -109,11 +109,31 @@ PUZZLE.bauen=r=>{
    =================================================================== */
 const FARBE=['#e0605a','#3b8fc4','#4caf6a','#f59e3f','#9b6fd0','#2fb5a8'];
 const AVATARE=[
-  {name:'Ben',sym:'\uD83D\uDC66',jacke:0xe0605a,hose:0x3a5a8a,haut:0xf1c9a0,haar:0x6b4626,stil:'kurz',rucksack:0x3b8fc4},
-  {name:'Lina',sym:'\uD83D\uDC67',jacke:0x9b6fd0,hose:0x3a4a6a,haut:0xf1c9a0,haar:0xe8c24a,stil:'zoepfe',rucksack:null},
-  {name:'Emil',sym:'\uD83E\uDDD2',jacke:0x4caf6a,hose:0x5a5a64,haut:0xd9a77a,haar:0x2a1d14,stil:'cap',rucksack:0xf59e3f},
-  {name:'Mia',sym:'\uD83D\uDC67',jacke:0xf59e3f,hose:0x3a5a8a,haut:0x8a5a3a,haar:0x1b1410,stil:'pferd',rucksack:null}
+  {jacke:0xe0605a,hose:0x3a5a8a,haut:0xf1c9a0,haar:0x6b4626,stil:'kurz',rucksack:0x3b8fc4},
+  {jacke:0x9b6fd0,hose:0x3a4a6a,haut:0xf1c9a0,haar:0xe8c24a,stil:'zoepfe',rucksack:null},
+  {jacke:0x4caf6a,hose:0x5a5a64,haut:0xd9a77a,haar:0x2a1d14,stil:'cap',rucksack:0xf59e3f},
+  {jacke:0xf59e3f,hose:0x3a5a8a,haut:0x8a5a3a,haar:0x1b1410,stil:'pferd',rucksack:null},
+  {jacke:0x2fb5a8,hose:0x4a4a5a,haut:0xe8b98f,haar:0xb5651d,stil:'brille',rucksack:0xe0605a},
+  {jacke:0xe8588a,hose:0x3a4a6a,haut:0xf1c9a0,haar:0x2a1d14,stil:'dutt',rucksack:null},
+  {jacke:0x3b8fc4,hose:0x5a4a3a,haut:0x6b4226,haar:0x120d09,stil:'locken',rucksack:0xffd45e},
+  {jacke:0xffd45e,hose:0x3a5a8a,haut:0xd9a77a,haar:0x8a5a32,stil:'muetze',rucksack:null}
 ];
+/* ---------- Vorschaubild einer Figur (für die Auswahl) ---------- */
+const hx=c=>'#'+('000000'+c.toString(16)).slice(-6);
+function avSvg(av){const H=hx(av.haar),h=av.haut,F=hx(h),J=hx(av.jacke);let s='<svg viewBox="0 0 60 60" width="64" height="64">';
+  s+='<rect width="60" height="60" rx="14" fill="#e6f3fa"/><ellipse cx="30" cy="60" rx="21" ry="15" fill="'+J+'"/>';
+  const st=av.stil;
+  if(st==='zoepfe')s+='<ellipse cx="13" cy="38" rx="4" ry="9" fill="'+H+'"/><ellipse cx="47" cy="38" rx="4" ry="9" fill="'+H+'"/>';
+  if(st==='pferd')s+='<ellipse cx="46" cy="36" rx="4" ry="10" fill="'+H+'"/>';
+  if(st==='locken')[[13,24],[47,24],[16,14],[44,14],[30,8],[12,36],[48,36]].forEach(p=>{s+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="8" fill="'+H+'"/>'});
+  if(st==='dutt')s+='<circle cx="30" cy="9" r="7" fill="'+H+'"/>';
+  s+='<circle cx="30" cy="31" r="16" fill="'+F+'"/>';
+  if(st==='cap')s+='<path d="M14 28A16 16 0 0 1 46 28Z" fill="#e0302a"/><rect x="28" y="25" width="22" height="5" rx="2" fill="#e0302a"/>';
+  else if(st==='muetze')s+='<path d="M14 29A16 16 0 0 1 46 29Z" fill="#e0302a"/><rect x="13" y="26" width="34" height="6" rx="3" fill="#fff"/><circle cx="30" cy="12" r="4" fill="#fff"/>';
+  else s+='<path d="M14 30A16 16 0 0 1 46 30Q40 22 30 24Q20 22 14 30Z" fill="'+H+'"/>';
+  s+='<circle cx="24" cy="33" r="2" fill="#222"/><circle cx="36" cy="33" r="2" fill="#222"/><path d="M25 39Q30 43 35 39" stroke="#a84040" stroke-width="1.6" fill="none" stroke-linecap="round"/>';
+  if(st==='brille')s+='<circle cx="24" cy="33" r="5" fill="none" stroke="#2a2a2a" stroke-width="1.5"/><circle cx="36" cy="33" r="5" fill="none" stroke="#2a2a2a" stroke-width="1.5"/><path d="M29 33H31" stroke="#2a2a2a" stroke-width="1.5"/>';
+  return s+'</svg>'}
 let S={name:'',jacke:0,karten:{},geloest:{}};
 let modal=false,gestartet=false;
 const KEY=n=>'welt3d|'+CONFIG.spielname+'|'+n;
@@ -196,6 +216,10 @@ function kindModell(av,par){const g=grp(0,0,0,par);
   else{sph(.54,h,0,.1,-.07,kopf,1,.85,1.02);sph(.3,h,0,.36,.34,kopf,1.4,.4,.7)}
   if(av.stil==='zoepfe')[-1,1].forEach(x=>{sph(.18,h,x*.55,-.18,-.05,kopf,.8,1.6,.8);sph(.08,0xe0605a,x*.52,.04,-.03,kopf)});
   if(av.stil==='pferd'){sph(.2,h,0,.12,-.58,kopf,.8,1.8,.8);sph(.08,0xe0605a,0,.2,-.5,kopf)}
+  if(av.stil==='dutt'){sph(.24,h,0,.66,-.12,kopf);sph(.07,0xe0605a,0,.5,-.12,kopf)}
+  if(av.stil==='locken')[[-.52,.12,.1],[.52,.12,.1],[-.46,.34,-.2],[.46,.34,-.2],[0,.52,-.12],[-.28,.5,.1],[.28,.5,.1],[-.3,-.1,-.46],[.3,-.1,-.46]].forEach(p=>sph(.22,h,p[0],p[1],p[2],kopf));
+  if(av.stil==='muetze'){const k=mesh(gHalb,0xe0302a,0,.1,0,.57,.57,.57,kopf);k.scale.set(.57,.55,.6);box(.62,.12,.5,0xffffff,0,.08,.02,kopf);sph(.14,0xffffff,0,.64,0,kopf)}
+  if(av.stil==='brille'){[-1,1].forEach(x=>{const r=new THREE.Mesh(new THREE.TorusGeometry(.15,.028,6,14),mat(0x2a2a2a));r.position.set(x*.2,.06,.5);kopf.add(r)});box(.12,.03,.03,0x2a2a2a,0,.08,.52,kopf)}
   return {g,bl,br,al,ar,kopf}}
 function besucherFigur(av){const m=kindModell(av);m.t=rnd()*9;return m}
 function besucherUpdate(dt){besucher.forEach(f=>{const g=f.g;let dx=f.ziel[0]-g.position.x,dz=f.ziel[1]-g.position.z;const l=Math.hypot(dx,dz);
@@ -420,7 +444,7 @@ function weltWiederherstellen(){karten.forEach(k=>{if(S.karten[k.i])kartePicken(
 function start(){document.title=CONFIG.spielname;$('#titel').textContent=CONFIG.spielname;
   const k=karteOeffnen();k.innerHTML='';k.appendChild(el('h2',null,CONFIG.spielname));k.appendChild(el('div','tafeltext',CONFIG.einleitung));
   k.appendChild(el('div','frage','So geht es: Tippe auf den Boden (oder halte den Finger gedrückt), dann läuft deine Figur dorthin. Ziehe mit dem Finger, um dich umzuschauen. Suche goldene Wissenskarten 📖 und Rätsel-Schilder ❓.'));
-  let jacke=0;const fz=el('div','pool');AVATARE.forEach((av,i)=>{const b=el('button','chip'+(i===0?' gewaehlt':''));b.textContent=av.sym+' '+av.name;b.style.fontSize='22px';b.onclick=()=>{jacke=i;[...fz.children].forEach((x,j)=>x.classList.toggle('gewaehlt',j===i));figurBauen(AVATARE[i])};fz.appendChild(b)});k.appendChild(fz);
+  let jacke=0;const fz=el('div','figuren');AVATARE.forEach((av,i)=>{const b=el('button','fig'+(i===0?' gewaehlt':''),avSvg(av));b.setAttribute('aria-label','Figur '+(i+1));b.onclick=()=>{jacke=i;sKlick();[...fz.children].forEach((x,j)=>x.classList.toggle('gewaehlt',j===i));figurBauen(AVATARE[i])};fz.appendChild(b)});k.appendChild(el('div','frage','Wähle deine Figur:'));k.appendChild(fz);
   k.appendChild(el('div','keinraetsel','\uD83D\uDCBE Das Spiel speichert alles. Wenn du später weiterspielen willst, gib genau denselben Namen ein.'));const l=el('div','leiste');const inp=el('input','eing');inp.placeholder='Dein Name';inp.maxLength=20;inp.style.maxWidth='260px';l.appendChild(inp);l.appendChild(el('div','platz'));
   const b=el('button','knopf','Los geht’s!');b.onclick=()=>{const n=inp.value.trim()||'Gast';const alt=laden(n);S=alt||{name:n,jacke:0,karten:{},geloest:{}};S.name=n;S.jacke=jacke;figurBauen(AVATARE[jacke]);const weiter=!!alt;if(alt&&S.x!=null)spieler.position.set(S.x,0,S.z);gestartet=true;speichern();karteSchliessen();gestartet=true;weltWiederherstellen();sKlick();sag(weiter?'Willkommen zurück, '+n+'! Du hast '+zaehle(S.karten)+' Karten und '+zaehle(S.geloest)+' Rätsel. Es geht dort weiter, wo du aufgehört hast.':'Hallo '+n+'! Tippe auf den Boden, um zu laufen. Suche die goldenen Wissenskarten und die orangen Rätsel-Schilder. Die kleine Karte oben rechts hilft dir.',9000)};
   l.appendChild(b);k.appendChild(l);$('#maske').onclick=null}
