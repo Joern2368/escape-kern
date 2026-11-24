@@ -47,7 +47,7 @@ button{font:inherit;color:inherit;cursor:pointer;border:0}
 @keyframes wackeln{20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
 .kopf{display:flex;align-items:center;gap:12px;margin-bottom:10px}
 .kopf h2{margin:0;font-size:24px;flex:1}
-.kopf .nr{width:42px;height:42px;font-size:18px;cursor:default}
+.kopf .nr{width:42px;height:42px;font-size:18px;cursor:default;display:flex;align-items:center;justify-content:center}
 .x{background:#e8f0f5;border-radius:50%;width:40px;height:40px;font-size:18px}
 .tafeltext{font-size:22px;line-height:1.55;background:#eaf6fb;border-radius:14px;padding:14px 16px;margin:8px 0 14px}
 .frage{font-size:22px;line-height:1.45;margin:6px 0 12px;font-weight:600}

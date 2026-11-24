@@ -94,14 +94,14 @@ PUZZLE.gruppen=r=>{
 
 PUZZLE.bauen=r=>{
   const zeilen=r.zeilen.map(z=>z.split('|'));
-  const chips=mischen(zeilen.flat().concat(r.extra||[])).map(t=>({t,used:false}));
+  const chips=mischen(zeilen.flat().concat([].concat(...(r.extra||[]).map(x=>String(x).split('|')))).filter(x=>x!=='')).map(t=>({t,used:false}));
   const rows=zeilen.map(z=>z.map(()=>-1));let aktiv=0;const node=el('div');
   const draw=()=>{node.innerHTML='';const zs=el('div','zeilen');
     rows.forEach((row,ri)=>{const z=el('div','zeile'+(ri===aktiv?' aktiv':''));z.onclick=()=>{aktiv=ri;draw()};
       row.forEach((c,si)=>{const s=el('button','bslot'+(c>=0?' voll':''));s.textContent=c>=0?chips[c].t:'';s.onclick=e=>{e.stopPropagation();if(c>=0){chips[c].used=false;row[si]=-1}aktiv=ri;sKlick();draw()};z.appendChild(s)});zs.appendChild(z)});
     node.appendChild(zs);const pool=el('div','pool');
     chips.forEach((c,ci)=>{if(c.used)return;const b=el('button','chip');b.textContent=c.t;b.onclick=()=>{let ri=aktiv;if(rows[ri].every(x=>x>=0))ri=rows.findIndex(rw=>rw.some(x=>x<0));if(ri<0)return;const si=rows[ri].findIndex(x=>x<0);rows[ri][si]=ci;c.used=true;aktiv=ri;if(rows[ri].every(x=>x>=0)){const n=rows.findIndex(rw=>rw.some(x=>x<0));if(n>=0)aktiv=n}sKlick();draw()};pool.appendChild(b)});node.appendChild(pool)};draw();
-  return {node,pruefe:()=>{if(rows.some(rw=>rw.some(x=>x<0)))return {leer:true};const falsch=[];rows.forEach((rw,ri)=>{if(rw.map(c=>chips[c].t).join('|')!==zeilen[ri].join('|'))falsch.push(ri)});return {ok:!falsch.length,falsch}}};
+  return {node,pruefe:()=>{if(rows.some(rw=>rw.some(x=>x<0)))return {leer:true};const soll=zeilen.map(z=>z.join('|')),da=soll.map(()=>false);rows.forEach(rw=>{const g=rw.map(c=>chips[c].t).join('|');const j=soll.findIndex((s,k)=>!da[k]&&s===g);if(j>=0)da[j]=true});const falsch=[];da.forEach((d,k)=>{if(!d)falsch.push(k)});return {ok:!falsch.length,falsch}}};
 };
 
 
