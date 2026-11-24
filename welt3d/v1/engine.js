@@ -329,7 +329,7 @@ CONFIG.auftraege.forEach((a,i)=>{
   const nr=schildText(String(i+1),'#fff8e6',1.3,1.3);nr.position.set(0,2.3,.25);g.add(nr);kreis(x,z,.5);
   stationen.push({i,x,z,g,ring,spr});
   /* Wissenskarte in der Nähe */
-  const kx=SPOTS[(2*i+1)%SPOTS.length][0],kz=SPOTS[(2*i+1)%SPOTS.length][1];const kg=grp(kx,0,kz);const kar=grp(0,1.9,0,kg);const km=new THREE.Mesh(KARTENGEO,KARTENMAT);km.castShadow=true;kar.add(km);
+  const kM=Math.max(1,SPOTS.length>>1),kS=SPOTS[(2*((i+1)%kM)+1)%SPOTS.length];const kx=kS[0],kz=kS[1];/* Karte i liegt im Gebiet des naechsten Raetsels (i+1, die letzte im Gebiet von Raetsel 1): man muss ein Stueck suchen */const kg=grp(kx,0,kz);const kar=grp(0,1.9,0,kg);const km=new THREE.Mesh(KARTENGEO,KARTENMAT);km.castShadow=true;kar.add(km);
   const ks2=new THREE.Sprite(new THREE.SpriteMaterial({map:marke(String(i+1),'#e8b930')}));ks2.scale.set(1.3,1.3,1);ks2.position.y=3.5;kg.add(ks2);
   const ks=new THREE.Mesh(new THREE.RingGeometry(.9,1.3,24),new THREE.MeshBasicMaterial({color:0xffd45e,side:THREE.DoubleSide,transparent:true,opacity:.8}));ks.rotation.x=-Math.PI/2;ks.position.y=.08;kg.add(ks);
   karten.push({i,x:kx,z:kz,g:kg,kar,da:true});
@@ -424,7 +424,9 @@ const ORTE=(function(){const l=[],roh=[];for(const k in BEREICHE){const b=BEREIC
 const mini=$('#mini'),mx=mini.getContext('2d');let miniAn=true;mini.width=VIEL?210:170;mini.height=Math.round(mini.width*ASP);if(VIEL)mini.classList.add('viel');
 let gkAuf=false,gkWahl=null,gkLay=null,gkGebaut=false;const gkAus={o:false,r:false,k:false};
 $('#kartenknopf').onclick=()=>{if(gkAuf){miniGross(false);return}miniAn=!miniAn;mini.style.display=miniAn?'block':'none'};
-function miniGross(an){if(an===gkAuf)return;gkAuf=an;$('#gk').classList.toggle('auf',an);modal=an;if(an){gkBauen();gkWahl=null;gkLayout();gkBlase()}}
+function miniGross(an){if(an===gkAuf)return;gkAuf=an;$('#gk').classList.toggle('auf',an);modal=an;if(an){gkBauen();gkWahl=null;gkLayout();gkBlase();gkPassen()}}
+/* Legende: lange Ortsnamen nie mitten im Wort umbrechen, sondern die Schrift verkleinern, bis das Wort passt */
+function gkPassen(){document.querySelectorAll('#gkliste .gkt').forEach(s=>{s.style.fontSize='';let f=16;while(f>10&&s.scrollWidth>s.clientWidth+1){f--;s.style.fontSize=f+'px'}})}
 mini.onclick=()=>{if(modal)return;miniGross(true);sKlick()};
 $('#gkx').onclick=()=>miniGross(false);
 $('#gk').onclick=e=>{if(e.target===$('#gk'))miniGross(false)};
@@ -576,7 +578,7 @@ function schleife(){requestAnimationFrame(schleife);const dt=Math.min(.05,clock.
   /* Karten, Stationen */
   karten.forEach(k=>{if(!k.da)return;k.kar.rotation.y=tges*1.6;k.kar.position.y=1.9+Math.sin(tges*2+k.i)*.25;if(gestartet&&!modal&&Math.hypot(k.x-spieler.position.x,k.z-spieler.position.z)<2.4)kartenFund(k)});
   aktiv=null;let nah=1e9;stationen.forEach(s=>{if(S.geloest[s.i]){s.spr.position.y=3.6;return}s.spr.position.y=3.6+Math.sin(tges*3+s.i)*.2;s.ring.rotation.z=tges;const d=Math.hypot(s.x-spieler.position.x,s.z-spieler.position.z);if(d<3.6&&d<nah){nah=d;aktiv=s}});
-  const ab=$('#aktion');ab.style.display=(aktiv&&!modal&&gestartet)?'block':'none';if(aktiv)ab.textContent='❓ Rätsel '+(aktiv.i+1)+' lösen';
+  const ab=$('#aktion');ab.style.display=(aktiv&&!modal&&gestartet)?'block':'none';if(aktiv){const abT='❓ Rätsel '+(aktiv.i+1)+' lösen';if(ab.textContent!==abT)ab.textContent=abT}
   /* Tor */
   if(ausgang.ziel!=null){ausgang.offen+=(ausgang.ziel-ausgang.offen)*Math.min(1,dt*1.5);ausgang.fl[0].rotation.y=-ausgang.offen*1.5;ausgang.fl[1].rotation.y=ausgang.offen*1.5}
   if(gestartet&&!modal&&ausgang.offen<.9&&Math.abs(spieler.position.x)<6&&Math.abs(spieler.position.z-TORZ)<4&&tges-warnT>8){warnT=tges;sag('Das Tor ist noch zu. Löse erst alle Rätsel ('+zaehle(S.geloest)+' von '+N+').',5000)}
@@ -611,5 +613,5 @@ function start(){document.title=CONFIG.spielname;$('#titel').textContent=CONFIG.
   const alle=gespeicherte();if(alle.length){k.appendChild(el('div','frage','Gespeicherte Spiele:'));const ls=el('div','pool');
     alle.forEach(s=>{const bt=el('button','chip','▶ '+s.name+' ('+zaehle(s.karten||{})+' Karten, '+zaehle(s.geloest||{})+' von '+N+' Rätseln)');bt.onclick=()=>losGehts(s.name,AVATARE[s.jacke]?s.jacke:0,s);ls.appendChild(bt)});k.appendChild(ls)}
   l.appendChild(b);k.appendChild(l);$('#maske').onclick=null}
-addEventListener('resize',()=>{gkLayout();renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();kgroesse()});
+addEventListener('resize',()=>{gkLayout();if(gkAuf)gkPassen();renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();kgroesse()});
 kgroesse();hud();camera.position.set(START.x,9,START.z+14);start();schleife();
