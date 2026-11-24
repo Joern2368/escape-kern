@@ -251,13 +251,14 @@ function kindModell(av,par){const g=grp(0,0,0,par);
   if(av.stil==='brille'){[-1,1].forEach(x=>{const r=new THREE.Mesh(new THREE.TorusGeometry(.15,.028,6,14),mat(0x2a2a2a));r.position.set(x*.2,.06,.5);kopf.add(r)});box(.12,.03,.03,0x2a2a2a,0,.08,.52,kopf)}
   return {g,bl,br,al,ar,kopf}}
 function besucherFigur(av){const m=kindModell(av);m.g.userData.keep=1;m.t=rnd()*9;return m}
-function besucherUpdate(dt){const px=spieler.position.x,pz=spieler.position.z;besucher.forEach(f=>{const g=f.g;const sicht=Math.hypot(g.position.x-px,g.position.z-pz)<58;if(g.visible!==sicht)g.visible=sicht;let dx=f.ziel[0]-g.position.x,dz=f.ziel[1]-g.position.z;const l=Math.hypot(dx,dz);
+function besucherUpdate(dt){const px=spieler.position.x,pz=spieler.position.z;besucher.forEach(f=>{const g=f.g;const sicht=Math.hypot(g.position.x-px,g.position.z-pz)<(dist>35&&typeof FERNBESUCHER==='number'?FERNBESUCHER:58);if(g.visible!==sicht)g.visible=sicht;let dx=f.ziel[0]-g.position.x,dz=f.ziel[1]-g.position.z;const l=Math.hypot(dx,dz);
   if(l<1.2){f.ziel=BPTS[Math.floor(rnd()*BPTS.length)];f.pause=1+rnd()*3}
   if(f.pause>0){f.pause-=dt;f.bl.rotation.x=f.br.rotation.x=f.al.rotation.x=f.ar.rotation.x=0;return}
   dx/=l;dz/=l;g.position.x+=dx*f.v*dt;g.position.z+=dz*f.v*dt;g.rotation.y=Math.atan2(dx,dz);f.t+=dt*7;const s=Math.sin(f.t)*.7;f.bl.rotation.x=s;f.br.rotation.x=-s;f.al.rotation.x=-s*.7;f.ar.rotation.x=s*.7})}
 
 /* ---------- Unbewegliche Teile zu Blöcken zusammenfassen (weniger Zeichenaufrufe, wichtig fürs iPad) ---------- */
 function verschmelzen(){
+  const ZELLE=typeof MERGEZELLE==='number'?MERGEZELLE:90;
   const gr={},alt=[];scene.updateMatrixWorld(true);
   scene.traverse(m=>{
     if(!m.isMesh||m.isInstancedMesh||!m.visible)return;
@@ -265,7 +266,7 @@ function verschmelzen(){
     for(let o=m;o;o=o.parent){if(o.userData&&(o.userData.anim||o.userData.keep))return}
     const g=m.geometry.clone();g.applyMatrix4(m.matrixWorld);g.computeBoundingSphere();
     if(g.boundingSphere.radius>40){g.dispose();return}
-    const c=g.boundingSphere.center,key=mt.uuid+'|'+Math.floor(c.x/90)+'|'+Math.floor(c.z/90)+'|'+(m.castShadow?1:0)+(m.receiveShadow?1:0);
+    const c=g.boundingSphere.center,key=mt.uuid+'|'+Math.floor(c.x/ZELLE)+'|'+Math.floor(c.z/ZELLE)+'|'+(m.castShadow?1:0)+(m.receiveShadow?1:0);
     (gr[key]=gr[key]||{mt,cast:m.castShadow,recv:m.receiveShadow,liste:[]}).liste.push(g);alt.push(m)});
   for(const k in gr){const q=gr[k];let nv=0,ni=0;q.liste.forEach(g=>{nv+=g.attributes.position.count;ni+=g.index?g.index.count:g.attributes.position.count});
     const P=new Float32Array(nv*3),N=new Float32Array(nv*3),I=new Uint32Array(ni);let vo=0,io=0;
@@ -325,11 +326,11 @@ addEventListener('keydown',e=>{tasten[e.key.toLowerCase()]=true});addEventListen
 const zeiger={};let halteT=0;
 cv3.addEventListener('pointerdown',e=>{cv3.setPointerCapture(e.pointerId);zeiger[e.pointerId]={x:e.clientX,y:e.clientY,t:performance.now(),bew:0}});
 cv3.addEventListener('pointermove',e=>{const p=zeiger[e.pointerId];if(!p)return;const ids=Object.keys(zeiger);
-  if(ids.length===2){const q=zeiger[ids.find(k=>+k!==e.pointerId)];const d0=Math.hypot(p.x-q.x,p.y-q.y);p.x=e.clientX;p.y=e.clientY;const d1=Math.hypot(p.x-q.x,p.y-q.y);dist=Math.max(5,Math.min(55,dist*d0/Math.max(d1,1)));p.bew+=99;return}
+  if(ids.length===2){const q=zeiger[ids.find(k=>+k!==e.pointerId)];const d0=Math.hypot(p.x-q.x,p.y-q.y);p.x=e.clientX;p.y=e.clientY;const d1=Math.hypot(p.x-q.x,p.y-q.y);dist=Math.max(5,Math.min(typeof ZOOMMAX==='number'?ZOOMMAX:55,dist*d0/Math.max(d1,1)));p.bew+=99;return}
   const dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;p.bew+=Math.abs(dx)+Math.abs(dy);if(p.bew>10){yaw-=dx*.006;pitch=Math.max(.2,Math.min(1.15,pitch+dy*.004))}});
 const zeigerAus=e=>{const p=zeiger[e.pointerId];delete zeiger[e.pointerId];if(p&&p.bew<10&&performance.now()-p.t<400&&!modal&&gestartet)tippGehen(e.clientX,e.clientY)};
 cv3.addEventListener('pointerup',zeigerAus);cv3.addEventListener('pointercancel',e=>{delete zeiger[e.pointerId]});
-cv3.addEventListener('wheel',e=>{dist=Math.max(5,Math.min(55,dist+e.deltaY*.03));e.preventDefault()},{passive:false});
+cv3.addEventListener('wheel',e=>{dist=Math.max(5,Math.min(typeof ZOOMMAX==='number'?ZOOMMAX:55,dist+e.deltaY*.03));e.preventDefault()},{passive:false});
 const ray=new THREE.Raycaster(),ebene=new THREE.Plane(new THREE.Vector3(0,1,0),0),pt=new THREE.Vector3();
 const zielMarke=new THREE.Mesh(new THREE.RingGeometry(.4,.65,20),new THREE.MeshBasicMaterial({color:0xf59e3f,side:THREE.DoubleSide,transparent:true,opacity:.9}));zielMarke.rotation.x=-Math.PI/2;zielMarke.visible=false;scene.add(zielMarke);
 function tippGehen(cx,cy,stumm){ray.setFromCamera({x:cx/innerWidth*2-1,y:-(cy/innerHeight)*2+1},camera);if(ray.ray.intersectPlane(ebene,pt)){ziel={x:Math.max(GRENZE.x0,Math.min(GRENZE.x1,pt.x)),z:Math.max(GRENZE.z0,Math.min(GRENZE.z1,pt.z))};zielMarke.position.set(ziel.x,.1,ziel.z);zielMarke.visible=true;if(!stumm)sKlick()}}
@@ -385,7 +386,7 @@ const parade=[];let finale=null;
 function paradeUpdate(t,dt){parade.forEach(p=>{p.o.position.x+=dt*3;if(p.o.position.x>12)p.o.position.x-=parade.length*3.8;if(p.o.userData.anim)p.o.userData.anim(t+p.i);p.o.position.y=Math.abs(Math.sin(t*6+p.i))*.3;p.o.position.z=FEST.z+2+Math.sin(p.o.position.x*.15+p.i)*2})}
 
 /* ---------- Tiere bewegen sich leicht ---------- */
-const _lw=new THREE.Vector3();function lebenUpdate(t){const px=spieler.position.x,pz=spieler.position.z;lebendig.forEach(l=>{const o=l.o;if(o.isObject3D){if(o.parent&&o.parent!==scene)o.getWorldPosition(_lw);else _lw.copy(o.position);const s=Math.hypot(_lw.x-px,_lw.z-pz)<85;if(o.visible!==s)o.visible=s;if(!s)return}if(o.userData.anim)o.userData.anim(t+l.ph)})}
+const _lw=new THREE.Vector3();function lebenUpdate(t){const px=spieler.position.x,pz=spieler.position.z;lebendig.forEach(l=>{const o=l.o;if(o.isObject3D){if(o.parent&&o.parent!==scene)o.getWorldPosition(_lw);else _lw.copy(o.position);const s=Math.hypot(_lw.x-px,_lw.z-pz)<(dist>35&&typeof FERNLEBEN==='number'?FERNLEBEN:85);if(o.visible!==s)o.visible=s;if(!s)return}if(o.userData.anim)o.userData.anim(t+l.ph)})}
 
 /* ---------- Oberfläche (HUD) ---------- */
 let sprechT=null;

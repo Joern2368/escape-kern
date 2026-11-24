@@ -3,6 +3,8 @@
 const SCHILDER_ALT=['Ausgang', 'Geschafft!', 'Rathaus', 'Bahnhof', 'Krankenhaus', 'Schule', 'Feuerwache', 'Polizei', 'Museum', 'KINO', 'Kino', 'Schwimmbad', 'Supermarkt', 'Hafen', 'Sportplatz'];
 const SCHILDER=['Ausgang','Geschafft!'];
 const WEGMAX=0;
+/* Leistung (iPad): Stadt ist groß – Zoom begrenzen, größere Verschmelz-Zellen, bewegte Teile beim Herauszoomen früher ausblenden */
+const ZOOMMAX=42,MERGEZELLE=150,FERNBESUCHER=40,FERNLEBEN=55;
 const MASKOTTCHEN='Toni Taube';
 const START={x:0,z:150};
 const BEREICHE={
@@ -13,6 +15,8 @@ const EXTRAZONEN=[{name:'Stadttor',x:0,z:128,r:17},{name:'Marktplatz',x:0,z:22,r
 {name:'Feuerwache',x:-55,z:-26,r:15},{name:'Polizeiwache',x:55,z:-26,r:14},{name:'Krankenhaus',x:-110,z:-18,r:21},{name:'Schule',x:-158,z:34,r:19},{name:'Bibliothek',x:-104,z:26,r:14},{name:'Postamt',x:140,z:22,r:12},{name:'Recyclinghof',x:-170,z:-70,r:15},
 {name:'Supermarkt',x:100,z:115,r:17},{name:'Bäckerei',x:-32,z:62,r:10},{name:'Eisdiele',x:34,z:62,r:10},{name:'Pizzeria',x:98,z:24,r:13},{name:'Kaufhaus',x:55,z:106,r:15},
 {name:'Stadtpark',x:-56,z:-72,r:19},{name:'Spielplatz',x:110,z:60,r:14},{name:'Schwimmbad',x:-112,z:-76,r:17},{name:'Sportplatz',x:155,z:-128,r:22},{name:'Kino',x:100,z:-62,r:12},{name:'Museum',x:52,z:-70,r:15},{name:'Baustelle',x:-110,z:-130,r:18},{name:'Wohnviertel',x:170,z:58,r:22}];
+/* Dichte-Runde (24.11.2026): neue Orte */
+EXTRAZONEN.push({name:'Skatepark',x:-176,z:-12,r:21},{name:'Hundewiese',x:-180,z:70,r:17},{name:'Hotel',x:112,z:-22,r:17},{name:'Café',x:183,z:9,r:13},{name:'Einkaufsgasse',x:36,z:150,r:21},{name:'Leuchtturm',x:174,z:-90,r:11},{name:'Tennisplatz',x:194,z:-121,r:15},{name:'Basketball',x:188,z:-141,r:10},{name:'Kiosk',x:-72,z:108,r:12});
 const SEITENWEGE=[84,-47,-103];
 const GRENZE={x0:-220,x1:220,z0:-215,z1:175};
 const TORZ=-160, FEST={x:0,z:-190};
@@ -61,7 +65,7 @@ function bau(x,z,w,d,h,wand,df,o){o=o||{};qb(w,h,d,wand,x,h/2,z,scene,true);
   kBox(x,z,w,d)}
 function kasten(x,y,z,w){qb(w,.4,.55,K.holz,x,y,z);for(let i=0;i<4;i++)qs(.2,BUNT[(i*3+Math.round(x))&7],x-w*.375+i*w*.25,y+.38,z)}
 function fahne(x,z,h,farbe,fl){qc(.07,h,K.grau,x,h/2,z,scene,true);const f=qb(1.5,.9,.06,farbe,x+.8,h-.55,z);if(fl)bewegt(f,t=>{f.rotation.y=Math.sin(t*2+x)*.25},x,z,70);kreis(x,z,.3)}
-function markise(par,w,y,fa,fb){const n=6;for(let i=0;i<n;i++){const m=box(w/n,.14,2.9,i%2?fb:fa,-w/2+(i+.5)*w/n,y,.55,par);m.rotation.x=.22}}
+function markise(par,w,y,fa,fb){const n=6;for(let i=0;i<n;i++){const m=box(w/n,.12,1.3,i%2?fb:fa,-w/2+(i+.5)*w/n,y+.25,.3,par);m.rotation.x=.3}}
 function bude(x,z,rot,w,fa,fb,text,hh){hh=hh||2.6;const g=grp(x,0,z);box(w,1,1.2,fa,0,.5,.9,g,true);box(w,hh,.25,K.creme,0,hh/2,-1.1,g);[-1,1].forEach(s=>box(.2,hh+1.4,.2,K.holz,s*(w/2-.1),(hh+1.4)/2,1.1,g));markise(g,w,hh,fa,fb);
   if(text)schild(text,0,hh+.9,1.3,Math.min(w,4.6),.85,null,'#fff8e6',0,g);g.rotation.y=rot||0;kreis(x,z,w*.5+.4);return g}
 function bank(x,z,rot){const g=grp(x,0,z);box(2.4,.15,.8,K.holz,0,.7,0,g,true);box(2.4,.7,.1,K.holz,0,1.1,-.35,g);box(.12,.7,.7,K.braun,-1,.35,0,g);box(.12,.7,.7,K.braun,1,.35,0,g);g.rotation.y=rot||0;kreis(x,z,1.2);return g}
@@ -86,7 +90,16 @@ function plakat(){const c=document.createElement('canvas');c.width=256;c.height=
   EXTRAZONEN.forEach((e,i)=>{if(e.name==='Straße')return;t.fillStyle=['#e0605a','#ffd45e','#4caf6a','#3b8fc4','#f59e3f','#b06ae0','#2fb5a8','#f47ab0'][i%8];t.beginPath();t.arc(X(e.x),Z(e.z),e.r*.4,0,6.3);t.fill()});
   t.fillStyle='#4a2f12';t.beginPath();t.arc(X(0),Z(150),6,0,6.3);t.fill();t.strokeStyle='#8b5a2b';t.lineWidth=8;t.strokeRect(4,4,248,332);
   return new THREE.Mesh(new THREE.PlaneGeometry(3.8,5),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c)}))}
-function leucht(par,x,y,z,r,m){const s=new THREE.Mesh(gSph,m);s.scale.set(r,r,r);s.position.set(x,y,z);par.add(s);return s}
+function leucht(par,x,y,z,r,m){const s=new THREE.Mesh(gSph,m);s.scale.set(r,r,r);s.position.set(x,y,z);s.userData.frei=1;par.add(s);return s}
+/* Fahrzeuge: unbewegte Teile (Karosserie, Fenster, Räder, Lichter) je Material zu einem Mesh verschmelzen; Gruppe braucht userData.vm; Teile mit userData.frei/anim/keep bleiben einzeln */
+function vmVerschm(g){g.updateMatrixWorld(true);if(Math.abs(g.matrixWorld.determinant())<1e-9)return;const inv=new THREE.Matrix4().copy(g.matrixWorld).invert(),gr={},alt=[];
+  g.traverse(m=>{if(m===g||!m.isMesh||!m.visible)return;const mt=m.material;if(Array.isArray(mt)||mt.transparent||mt.map)return;for(let o=m;o&&o!==g;o=o.parent){if(o.userData&&(o.userData.anim||o.userData.keep||o.userData.frei))return}
+    const ge=m.geometry.clone();ge.applyMatrix4(new THREE.Matrix4().multiplyMatrices(inv,m.matrixWorld));const k=mt.uuid+'|'+(m.castShadow?1:0);(gr[k]=gr[k]||{mt,c:m.castShadow,l:[]}).l.push(ge);alt.push(m)});
+  for(const k in gr){const q=gr[k];let nv=0,ni=0;q.l.forEach(e=>{nv+=e.attributes.position.count;ni+=e.index?e.index.count:e.attributes.position.count});const P=new Float32Array(nv*3),N=new Float32Array(nv*3),I=new Uint32Array(ni);let vo=0,io=0;
+    q.l.forEach(e=>{const c=e.attributes.position.count;P.set(e.attributes.position.array,vo*3);N.set(e.attributes.normal.array,vo*3);if(e.index){const ix=e.index.array;for(let j=0;j<ix.length;j++)I[io+j]=ix[j]+vo;io+=ix.length}else{for(let j=0;j<c;j++)I[io+j]=vo+j;io+=c}vo+=c;e.dispose()});
+    const G=new THREE.BufferGeometry();G.setAttribute('position',new THREE.BufferAttribute(P,3));G.setAttribute('normal',new THREE.BufferAttribute(N,3));G.setIndex(new THREE.BufferAttribute(I,1));const mm=new THREE.Mesh(G,q.mt);mm.castShadow=q.c;g.add(mm)}
+  alt.forEach(m=>{if(m.parent)m.parent.remove(m)})}
+function vmPass(){besucher.forEach(f=>{if(f.vmOk||!f.bl)return;f.vmOk=1;f.g.userData.vm=1;[f.bl,f.br,f.al,f.ar].forEach(l=>{vmVerschm(l);l.userData.frei=1})});const L=[];scene.traverse(o=>{if(o.userData&&o.userData.vm&&!o.userData.vmFertig)L.push(o)});L.forEach(g=>{g.userData.vmFertig=1;vmVerschm(g)})}
 const MBLAU=new THREE.MeshBasicMaterial({color:0x55aaff}),MGELB=new THREE.MeshBasicMaterial({color:0xffc83a});
 function lichtBauen(){const farbe={warm:0xfff0b8,rot:0xff5a4a,gelb:0xffe45a,blau:0x5ab4ff,gruen:0x6aff8a},m={};
   for(const k in LAMPEN)if(LAMPEN[k].length)m[k]=instanz(scene,gSph,farbe[k],LAMPEN[k],true);
@@ -111,22 +124,22 @@ function fliegendeTaube(par){const g=taube(par);const a=g.userData.anim;g.userDa
 function kleinKind(par,j,h){const g=grp(0,0,0,par);[-1,1].forEach(s=>box(.18,.5,.2,K.dunkel,s*.13,.28,0,g));cyl(.3,.7,j,0,.85,0,g,true);sph(.33,h,0,1.45,0,g);sph(.34,0x5a3a22,0,1.55,-.04,g,1,.7,1);return g}
 function rad4(g,xs,r,zz){xs.forEach(x=>[-1,1].forEach(s=>{cyl(r,.4,K.schwarz,x,r,s*zz,g).rotation.x=Math.PI/2;cyl(r*.5,.42,K.grau,x,r,s*zz,g).rotation.x=Math.PI/2}))}
 function lichter(g,x,y,z,b){[-1,1].forEach(s=>{box(.1,.28,.5,K.gelb,x,y,s*z,g);box(.12,.3,.55,K.rot,-x+(b||0),y,s*z,g)})}
-function pkw(par,f,fest){const g=grp(0,0,0,par);if(!fest)g.userData.keep=1;box(4.2,.8,2,f,0,.85,0,g,true);box(2.2,.75,1.8,f,-.3,1.6,0,g);box(1.9,.5,1.84,K.himmel,-.3,1.65,0,g);box(2.24,.5,1.5,K.himmel,-.3,1.65,0,g);rad4(g,[-1.3,1.3],.45,.95);lichter(g,2.12,.95,.62);return g}
+function pkw(par,f,fest){const g=grp(0,0,0,par);if(!fest){g.userData.keep=1;g.userData.vm=1}box(4.2,.8,2,f,0,.85,0,g,true);box(2.2,.75,1.8,f,-.3,1.6,0,g);box(1.9,.5,1.84,K.himmel,-.3,1.65,0,g);box(2.24,.5,1.5,K.himmel,-.3,1.65,0,g);rad4(g,[-1.3,1.3],.45,.95);lichter(g,2.12,.95,.62);return g}
 function parken(f,x,z,rot){const g=pkw(scene,f,true);g.position.set(x,0,z);g.rotation.y=rot||0;kreis(x,z,2.2);return g}
-function feuerwehr(par,fest){const g=grp(0,0,0,par);g.userData.keep=1;
+function feuerwehr(par,fest){const g=grp(0,0,0,par);g.userData.keep=1;g.userData.vm=1;
   box(7.6,.9,2.7,K.schwarz,0,.55,0,g);box(2.2,2,2.6,K.rot,2.7,1.9,0,g,true);box(.12,.9,2.2,K.himmel,3.82,2.3,0,g);box(4.8,2,2.6,K.rot,-1.2,1.9,0,g,true);box(7.4,.3,2.65,K.weiss,0,1.4,0,g);rad4(g,[-2.4,2.6],.65,1.25);lichter(g,3.82,1.2,.8);
-  const le=grp(-1.2,3.1,0,g);[-.45,.45].forEach(s=>box(4.6,.14,.14,K.grau,0,0,s,le));for(let i=0;i<5;i++)box(.1,.1,1,K.grau,-2+i,0,0,le);
+  const le=grp(-1.2,3.1,0,g);le.userData.frei=1;[-.45,.45].forEach(s=>box(4.6,.14,.14,K.grau,0,0,s,le));for(let i=0;i<5;i++)box(.1,.1,1,K.grau,-2+i,0,0,le);
   const b1=leucht(g,2.6,3.05,.6,.28,MBLAU),b2=leucht(g,2.6,3.05,-.6,.28,MBLAU);
   g.userData.anim=t=>{const a=Math.sin(t*7)>0;b1.visible=a;b2.visible=!a;le.rotation.z=.04+(Math.sin(t*.8)+1)*.16;le.rotation.y=Math.sin(t*.6)*.5};return g}
 function polizeiAuto(par){const g=pkw(par,K.weiss);box(4.3,.3,2.05,K.blau,0,.9,0,g);box(1.4,.18,1.6,K.blau,-.3,1.95,0,g);
   const b1=leucht(g,-.3,2.1,.55,.25,MBLAU),b2=leucht(g,-.3,2.1,-.55,.25,MBLAU);g.userData.anim=t=>{const a=Math.sin(t*6)>0;b1.visible=a;b2.visible=!a};return g}
-function rettung(par){const g=grp(0,0,0,par);g.userData.keep=1;box(6.2,.8,2.4,K.schwarz,0,.5,0,g);box(2,1.9,2.3,K.weiss,2.1,1.8,0,g,true);box(.1,.8,2,K.himmel,3.12,2.2,0,g);box(4.2,2.5,2.4,K.weiss,-1,2.05,0,g,true);box(6.1,.35,2.45,K.rot,0,1.5,0,g);box(1,1.1,.1,K.rot,-1,2.5,1.25,g);box(.3,.3,.12,K.weiss,-1,2.5,1.3,g);rad4(g,[-1.9,2.1],.6,1.1);lichter(g,3.12,1.2,.8);
+function rettung(par){const g=grp(0,0,0,par);g.userData.keep=1;g.userData.vm=1;box(6.2,.8,2.4,K.schwarz,0,.5,0,g);box(2,1.9,2.3,K.weiss,2.1,1.8,0,g,true);box(.1,.8,2,K.himmel,3.12,2.2,0,g);box(4.2,2.5,2.4,K.weiss,-1,2.05,0,g,true);box(6.1,.35,2.45,K.rot,0,1.5,0,g);box(1,1.1,.1,K.rot,-1,2.5,1.25,g);box(.3,.3,.12,K.weiss,-1,2.5,1.3,g);rad4(g,[-1.9,2.1],.6,1.1);lichter(g,3.12,1.2,.8);
   const b1=leucht(g,2.2,2.95,.5,.25,MBLAU),b2=leucht(g,2.2,2.95,-.5,.25,MBLAU);g.userData.anim=t=>{const a=Math.sin(t*6)>0;b1.visible=a;b2.visible=!a};return g}
-function busM(par,f){const g=grp(0,0,0,par);g.userData.keep=1;box(9,2.4,2.7,f||K.gelb,0,1.9,0,g,true);box(8.4,.9,2.74,K.himmel,-.1,2.35,0,g);box(9.2,.2,2.8,K.weiss,0,3.2,0,g);box(8,.9,2.6,K.schwarz,0,.5,0,g);box(.1,1,2.4,K.himmel,4.52,2.2,0,g);box(.1,.35,1.4,K.dunkel,4.52,3.0,0,g);rad4(g,[-2.9,2.9],.6,1.25);lichter(g,4.52,1.2,.9);return g}
-function muell(par){const g=grp(0,0,0,par);g.userData.keep=1;box(7.4,.8,2.6,K.schwarz,0,.5,0,g);box(2.4,2.2,2.5,K.orange,2.6,1.9,0,g,true);box(.1,.9,2.2,K.himmel,3.82,2.4,0,g);box(4.8,2.5,2.5,K.orange,-1.4,2.15,0,g,true);box(1.4,2.2,2.5,K.dunkel,-4.2,1.9,0,g);box(4.8,.25,2.55,K.weiss,-1.4,2.2,0,g);rad4(g,[-3.2,2.6],.65,1.2);lichter(g,3.82,1.2,.8);
+function busM(par,f){const g=grp(0,0,0,par);g.userData.keep=1;g.userData.vm=1;box(9,2.4,2.7,f||K.gelb,0,1.9,0,g,true);box(8.4,.9,2.74,K.himmel,-.1,2.35,0,g);box(9.2,.2,2.8,K.weiss,0,3.2,0,g);box(8,.9,2.6,K.schwarz,0,.5,0,g);box(.1,1,2.4,K.himmel,4.52,2.2,0,g);box(.1,.35,1.4,K.dunkel,4.52,3.0,0,g);rad4(g,[-2.9,2.9],.6,1.25);lichter(g,4.52,1.2,.9);return g}
+function muell(par){const g=grp(0,0,0,par);g.userData.keep=1;g.userData.vm=1;box(7.4,.8,2.6,K.schwarz,0,.5,0,g);box(2.4,2.2,2.5,K.orange,2.6,1.9,0,g,true);box(.1,.9,2.2,K.himmel,3.82,2.4,0,g);box(4.8,2.5,2.5,K.orange,-1.4,2.15,0,g,true);box(1.4,2.2,2.5,K.dunkel,-4.2,1.9,0,g);box(4.8,.25,2.55,K.weiss,-1.4,2.2,0,g);rad4(g,[-3.2,2.6],.65,1.2);lichter(g,3.82,1.2,.8);
   const l=leucht(g,2.6,3.2,0,.25,MGELB);g.userData.anim=t=>{l.visible=Math.sin(t*5)>0};return g}
 function wagenM(par,f){const g=grp(0,0,0,par);box(5.4,2.4,2.5,K.weiss,0,1.9,0,g,true);box(5,.9,2.55,K.himmel,0,2.4,0,g);box(5.4,.3,2.55,f,0,1.35,0,g);box(5.4,.25,2.6,K.dunkel,0,3.2,0,g);box(5,.9,2.6,K.schwarz,0,.6,0,g);rad4(g,[-1.7,1.7],.4,1.35);return g}
-function zugM(par,n){const g=grp(0,0,0,par);g.userData.keep=1;box(5,2.4,2.5,K.rot,0,1.9,0,g,true);box(.1,1,2.2,K.himmel,2.52,2.4,0,g);box(5,.25,2.6,K.weiss,0,3.2,0,g);box(4.6,.9,2.6,K.schwarz,0,.6,0,g);rad4(g,[-1.7,1.7],.4,1.35);box(.5,1.2,2.3,K.dunkel,2.7,1.5,0,g);leucht(g,2.55,1.7,.8,.2,MGELB);leucht(g,2.55,1.7,-.8,.2,MGELB);
+function zugM(par,n){const g=grp(0,0,0,par);g.userData.keep=1;g.userData.vm=1;box(5,2.4,2.5,K.rot,0,1.9,0,g,true);box(.1,1,2.2,K.himmel,2.52,2.4,0,g);box(5,.25,2.6,K.weiss,0,3.2,0,g);box(4.6,.9,2.6,K.schwarz,0,.6,0,g);rad4(g,[-1.7,1.7],.4,1.35);box(.5,1.2,2.3,K.dunkel,2.7,1.5,0,g);leucht(g,2.55,1.7,.8,.2,MGELB);leucht(g,2.55,1.7,-.8,.2,MGELB);
   for(let i=1;i<=n;i++)wagenM(g,i%2?K.gelb:K.blau).position.x=-5.8*i;return g}
 function radler(par,j,fest){const g=grp(0,0,0,par);if(!fest)g.userData.keep=1;[-.85,.85].forEach(x=>{cyl(.5,.1,K.schwarz,x,.5,0,g).rotation.x=Math.PI/2});box(1.9,.12,.12,K.rot,0,.85,0,g);box(.1,.7,.1,K.grau,.85,.9,0,g);
   cyl(.27,.9,j,-.2,1.55,0,g);sph(.27,HAUT[Math.floor(rnd()*4)],-.1,2.2,0,g);sph(.3,K.gelb,-.1,2.35,0,g,1,.6,1);
@@ -135,11 +148,11 @@ function radler(par,j,fest){const g=grp(0,0,0,par);if(!fest)g.userData.keep=1;[-
 function bagger(par){const g=grp(0,0,0,par);g.userData.keep=1;box(4.6,.8,2.8,K.schwarz,0,.5,0,g);const dr=grp(0,.9,0,g);box(2.8,1.2,2.4,K.gelb,0,.6,0,dr,true);box(1.3,1.2,1.4,K.himmel,.7,1.7,.4,dr);box(1,.8,2.2,K.dunkel,-1.2,.5,0,dr);
   const a1=grp(1.3,.9,-.6,dr);box(3.4,.4,.4,K.gelb,1.6,0,0,a1);const a2=grp(3.2,0,0,a1);box(2.6,.35,.35,K.gelb,1.2,0,0,a2);const sch=grp(2.5,0,0,a2);box(.9,.8,1.2,K.dunkel,.2,-.3,0,sch);
   g.userData.anim=t=>{dr.rotation.y=Math.sin(t*.5)*.9;a1.rotation.z=.5+Math.sin(t*.9)*.35;a2.rotation.z=-.9+Math.sin(t*.9+1)*.5;sch.rotation.z=-.4+Math.sin(t*1.8)*.5};return g}
-function schiff(par){const g=grp(0,0,0,par);g.userData.keep=1;box(11,1.5,3.8,K.dunkel,0,.45,0,g,true);cone(1.9,3.2,K.dunkel,6.6,.45,0,g).rotation.z=-Math.PI/2;box(11,.25,3.9,K.rot,0,1.1,0,g);[-4,-1,2,5].forEach(x=>[-1,1].forEach(q=>sph(.18,K.himmel,x,.7,q*1.92,g)));box(3.2,2.4,3,K.weiss,-3.6,2.4,0,g,true);box(3.4,.7,3.1,K.himmel,-3.6,2.8,0,g);qc2(g);
+function schiff(par){const g=grp(0,0,0,par);g.userData.keep=1;g.userData.vm=1;box(11,1.5,3.8,K.dunkel,0,.45,0,g,true);cone(1.9,3.2,K.dunkel,6.6,.45,0,g).rotation.z=-Math.PI/2;box(11,.25,3.9,K.rot,0,1.1,0,g);[-4,-1,2,5].forEach(x=>[-1,1].forEach(q=>sph(.18,K.himmel,x,.7,q*1.92,g)));box(3.2,2.4,3,K.weiss,-3.6,2.4,0,g,true);box(3.4,.7,3.1,K.himmel,-3.6,2.8,0,g);qc2(g);
   [[-1.2,K.rot],[1.4,K.blau],[3.8,K.gelb]].forEach((c,i)=>{box(2.2,1.6,2.8,c[1],c[0]+.4,2.1,0,g);box(2.2,1.6,2.8,BUNT[(i+4)%8],c[0]+.4,3.7,0,g)});return g}
 function qc2(g){cyl(.55,1.8,K.gelb,-3.9,4.4,0,g);cyl(.6,.4,K.rot,-3.9,5.2,0,g)}
-function heli(par){const g=grp(0,0,0,par);g.userData.keep=1;sph(1.1,K.rot,0,1.5,0,g,1.5,1,.9).castShadow=true;sph(.8,K.himmel,1,1.7,0,g,.9,.9,.9);box(3,.35,.35,K.rot,-2.3,1.8,0,g);box(.2,.9,.14,K.rot,-3.7,2.1,0,g);[-1,1].forEach(s=>{box(2.6,.1,.1,K.dunkel,0,.35,s*.7,g);box(.1,.9,.1,K.dunkel,.6,.8,s*.7,g);box(.1,.9,.1,K.dunkel,-.6,.8,s*.7,g)});
-  const ro=grp(0,2.7,0,g);box(6,.07,.28,K.dunkel,0,0,0,ro);box(.28,.07,6,K.dunkel,0,0,0,ro);box(.14,.4,.14,K.grau,0,-.2,0,ro);g.userData.anim=t=>{ro.rotation.y=t*14};return g}
+function heli(par){const g=grp(0,0,0,par);g.userData.keep=1;g.userData.vm=1;sph(1.1,K.rot,0,1.5,0,g,1.5,1,.9).castShadow=true;sph(.8,K.himmel,1,1.7,0,g,.9,.9,.9);box(3,.35,.35,K.rot,-2.3,1.8,0,g);box(.2,.9,.14,K.rot,-3.7,2.1,0,g);[-1,1].forEach(s=>{box(2.6,.1,.1,K.dunkel,0,.35,s*.7,g);box(.1,.9,.1,K.dunkel,.6,.8,s*.7,g);box(.1,.9,.1,K.dunkel,-.6,.8,s*.7,g)});
+  const ro=grp(0,2.7,0,g);ro.userData.frei=1;box(6,.07,.28,K.dunkel,0,0,0,ro);box(.28,.07,6,K.dunkel,0,0,0,ro);box(.14,.4,.14,K.grau,0,-.2,0,ro);g.userData.anim=t=>{ro.rotation.y=t*14};return g}
 function kranBauen(x,z,h,jib,farbe,fern){qb(1,h,1,farbe,x,h/2,z,scene,true);for(let i=0;i<5;i++)qb(1.5,.2,1.5,K.grau,x,h*.2*(i+.5)*1,z);kreis(x,z,1.2);
   const dr=grp(x,h,z);box(.9,1.2,1.4,K.himmel,.4,.8,.9,dr);box(jib,.5,.5,farbe,jib*.3,.3,0,dr);box(3,1.4,1.4,K.dunkel,-jib*.35,.4,0,dr);box(.3,2,.3,farbe,0,1.5,0,dr);
   const sl=box(.6,.5,.7,K.dunkel,jib*.4,-.2,0,dr),sei=cyl(.05,1,K.schwarz,jib*.4,-1,0,dr),ha=box(.7,.5,.7,K.gelb,jib*.4,-2,0,dr);
@@ -155,7 +168,7 @@ function dinoBau(par){const g=grp(0,0,0,par),b=0xf4ecd2;
   const nk=grp(2.6,2.8,0,g);for(let i=0;i<6;i++)sph(.3-i*.015,b,i*.38,i*.5,0,nk);
   const kp=grp(2.3,3.2,0,nk);box(1.3,.55,.5,b,.5,0,0,kp);box(1,.16,.42,b,.45,-.38,0,kp);for(let i=0;i<5;i++)cone(.05,.2,K.weiss,.15+i*.2,-.26,.16,kp).rotation.x=Math.PI;[-1,1].forEach(z=>sph(.13,K.dunkel,.35,.1,z*.26,kp));
   g.userData.nk=nk;return g}
-function postAuto(par){const g=grp(0,0,0,par);g.userData.keep=1;box(5.4,.5,2.2,K.schwarz,0,.75,0,g);box(3.4,2,2.2,K.gelb,-.9,1.95,0,g,true);box(1.7,1.5,2.2,K.gelb,1.75,1.7,0,g,true);box(.1,.75,1.9,K.himmel,2.62,2.1,0,g);[-1,1].forEach(q=>{box(1.5,.7,.1,K.himmel,1.7,2.1,q*1.12,g);const hr=new THREE.Mesh(new THREE.TorusGeometry(.35,.08,6,14),mat(K.schwarz));hr.position.set(-.9,2.4,q*1.13);g.add(hr);box(2.8,.12,.12,K.rot,-.9,1.5,q*1.14,g)});box(3.4,.18,2.25,K.rot,-.9,2.98,0,g);rad4(g,[-1.8,1.9],.55,1.05);lichter(g,2.7,1.1,.7);box(.2,.3,2.2,K.grau,2.75,.6,0,g);return g}
+function postAuto(par){const g=grp(0,0,0,par);g.userData.keep=1;g.userData.vm=1;box(5.4,.5,2.2,K.schwarz,0,.75,0,g);box(3.4,2,2.2,K.gelb,-.9,1.95,0,g,true);box(1.7,1.5,2.2,K.gelb,1.75,1.7,0,g,true);box(.1,.75,1.9,K.himmel,2.62,2.1,0,g);[-1,1].forEach(q=>{box(1.5,.7,.1,K.himmel,1.7,2.1,q*1.12,g);const hr=new THREE.Mesh(new THREE.TorusGeometry(.35,.08,6,14),mat(K.schwarz));hr.position.set(-.9,2.4,q*1.13);g.add(hr);box(2.8,.12,.12,K.rot,-.9,1.5,q*1.14,g)});box(3.4,.18,2.25,K.rot,-.9,2.98,0,g);rad4(g,[-1.8,1.9],.55,1.05);lichter(g,2.7,1.1,.7);box(.2,.3,2.2,K.grau,2.75,.6,0,g);return g}
 /* ---------- Ampel und Ringstraße um den Marktplatz ---------- */
 const ampelPhase=t=>{const c=t%30;return c<14?0:c<17?1:2};
 const fussGruen=t=>{const c=t%30;return c>=19&&c<28};
@@ -190,6 +203,42 @@ function vschild(typ,x,z,rot){const g=grp(x,0,z);g.rotation.y=rot||0;cyl(.07,2.8
   else if(typ==='rad'){cyl(.7,.08,K.blau,0,0,0,k).rotation.x=Math.PI/2;[-.25,.25].forEach(s=>{cyl(.2,.05,K.weiss,s,-.15,.06,k).rotation.x=Math.PI/2});box(.5,.07,.05,K.weiss,0,-.05,.06,k)}
   else if(typ==='halt'){cyl(.7,.08,K.gelb,0,0,0,k).rotation.x=Math.PI/2;box(.18,.7,.06,K.gruen,-.15,0,.06,k);box(.18,.7,.06,K.gruen,.18,0,.06,k)}
   kreis(x,z,.3)}
+/* ---------- Dichte-Runde (24.11.2026): neue Hilfsfunktionen ---------- */
+const glatt=u=>u*u*(3-2*u);
+/* Figur mit beweglichen Armen und Beinen (schaut nach +z); fest = unbewegt (wird verschmolzen) */
+function figur(par,jacke,hose,haut,haar,fest){const g=grp(0,0,0,par);if(!fest)g.userData.keep=1;
+  const bl=grp(-.14,.72,0,g),br=grp(.14,.72,0,g);[bl,br].forEach(b=>box(.2,.72,.22,hose,0,-.36,0,b));
+  box(.6,.72,.36,jacke,0,1.08,0,g);sph(.3,haut,0,1.72,0,g);sph(.31,haar,0,1.8,-.05,g,1,.72,1);[-1,1].forEach(s=>sph(.045,K.schwarz,s*.1,1.76,.27,g));
+  const al=grp(-.4,1.4,0,g),ar=grp(.4,1.4,0,g);[al,ar].forEach(a=>box(.14,.62,.15,jacke,0,-.3,0,a));
+  g.userData.bl=bl;g.userData.br=br;g.userData.al=al;g.userData.ar=ar;return g}
+function gehen(g,t,v){const s=Math.sin(t*v)*.7,u=g.userData;u.bl.rotation.x=s;u.br.rotation.x=-s;u.al.rotation.x=-s*.8;u.ar.rotation.x=s*.8}
+/* Hund (schaut nach +x). Bewegt: g.userData.bein[4], g.userData.sw (Schwanz) */
+function hund(par,fell,hell,ohr,fest){const g=grp(0,0,0,par);if(!fest)g.userData.keep=1;
+  sph(.5,fell,0,.95,0,g,1.45,.72,.68);sph(.3,hell,.3,.8,0,g,1,.7,.95);sph(.3,fell,.72,1.2,0,g,.75,1.1,.7);
+  const kopf=grp(.9,1.38,0,g);sph(.3,fell,0,0,0,kopf);box(.34,.2,.22,hell,.3,-.07,0,kopf);sph(.06,K.schwarz,.49,-.01,0,kopf);
+  [-1,1].forEach(s=>{sph(.045,K.schwarz,.2,.1,s*.14,kopf);const o=box(.1,.3,.12,ohr,-.02,-.04,s*.25,kopf);o.rotation.x=s*.25});
+  const bein=[[.5,.24],[.5,-.24],[-.5,.24],[-.5,-.24]].map(p=>{const l=grp(p[0],.62,p[1],g);box(.15,.62,.15,fell,0,-.31,0,l);return l});
+  const sw=grp(-.72,1.1,0,g);box(.5,.1,.1,fell,-.25,.12,0,sw).rotation.z=.5;g.userData.bein=bein;g.userData.sw=sw;g.userData.kopf=kopf;return g}
+function hundGeh(g,t,v){const s=Math.sin(t*v)*.65,b=g.userData.bein;b[0].rotation.z=s;b[3].rotation.z=s;b[1].rotation.z=-s;b[2].rotation.z=-s;g.userData.sw.rotation.y=Math.sin(t*13)*.5}
+/* Skateboard mit Kind (Brett längs x) */
+function skater(par,j,h,quer){const g=grp(0,0,0,par);g.userData.keep=1;const bd=grp(0,0,0,g);box(1.5,.09,.42,K.rot,0,.22,0,bd);[-.5,.5].forEach(x=>box(.14,.1,.34,K.grau,x,.13,0,bd));if(quer)bd.rotation.y=Math.PI/2;const k=kleinKind(g,j,h);k.position.y=.27;return g}
+/* Gehen auf einem geschlossenen Linienzug (Tempo v); dreht weich; liefert die Animationsfunktion für bewegt2 */
+function laufPfad(g,pts,v,off,hop){const P=pts.concat([pts[0]]),L=[];let tot=0;for(let i=0;i<P.length-1;i++){const l=Math.hypot(P[i+1][0]-P[i][0],P[i+1][1]-P[i][1]);L.push(l);tot+=l}let tl=null,yaw=null;
+  return t=>{const dt=tl==null?0:Math.min(.1,Math.max(0,t-tl));tl=t;let s=(((t*v+(off||0))%tot)+tot)%tot,i=0;while(i<L.length-1&&s>L[i]){s-=L[i];i++}const a=P[i],b=P[i+1],f=L[i]>0?s/L[i]:0;
+    const ty=Math.atan2(b[0]-a[0],b[1]-a[1]);if(yaw==null)yaw=ty;let d=ty-yaw;d=Math.atan2(Math.sin(d),Math.cos(d));yaw+=d*Math.min(1,dt*7);
+    g.position.x=a[0]+(b[0]-a[0])*f;g.position.z=a[1]+(b[1]-a[1])*f;g.position.y=hop?Math.abs(Math.sin(t*9))*.1:0;g.rotation.y=yaw;if(g.userData.bl)gehen(g,t,v>2.4?11:8)}}
+/* Rampe: Viertelkreis aus geneigten Platten, wächst von (x0,0) nach außen (s=+1 nach +x, -1 nach -x); w = Breite in z */
+function viertel(g,x0,z,r,w,col,s){const n=5;let px=x0,py=0;
+  for(let i=1;i<=n;i++){const a0=(i-1)/n*Math.PI/2,a=i/n*Math.PI/2,nx=x0+s*r*Math.sin(a),ny=r-r*Math.cos(a);stab(g,px,py,z,nx,ny,z,w,col,.22,false);
+    const ym=r-r*Math.cos((a0+a)/2),bw=r*(Math.sin(a)-Math.sin(a0)),cx=x0+s*r*(Math.sin(a)+Math.sin(a0))/2;[-1,1].forEach(q=>box(bw,ym,.14,K.grau,cx,ym/2,z+q*(w/2-.07),g));px=nx;py=ny}
+  box(2.2,.24,w,col,x0+s*(r+1.1),r-.12,z,g);box(2.2,r-.24,w-.3,K.grau,x0+s*(r+1.1),(r-.24)/2,z,g);cyl(.07,w,K.hellgrau,x0+s*r,r+.02,z,g).rotation.x=Math.PI/2}
+function halfpipe(g,x,z,L,r,w,col){box(L,.24,w,col,x,.12,z,g);viertel(g,x-L/2,z,r,w,col,-1);viertel(g,x+L/2,z,r,w,col,1)}
+function leerRad(par,f){const g=grp(0,0,0,par);[-.85,.85].forEach(x=>cyl(.5,.1,K.schwarz,x,.5,0,g).rotation.x=Math.PI/2);box(1.9,.12,.12,f,0,.85,0,g);box(.1,.7,.1,K.grau,.85,.9,0,g);box(.5,.08,.2,K.schwarz,-.55,1.05,0,g);box(.12,.12,.7,K.grau,.85,1.25,0,g);return g}
+/* Fahrradständer: Reihe von n Rädern, Räder zeigen nach -z, Reihe läuft in x-Richtung */
+function radStaender(x,z,n,rot){const g=grp(x,0,z);g.rotation.y=rot||0;qb(n*1.2+.4,.07,.14,K.grau,0,.04,-1.1,g);for(let i=0;i<=n;i++)qb(.06,.5,.06,K.grau,-n*.6+i*1.2,.3,-1.1,g);
+  for(let i=0;i<n;i++){const r=leerRad(g,BUNT[(i*3+Math.round(x))&7]);r.position.set(-n*.6+.6+i*1.2,0,0);r.rotation.y=Math.PI/2}kreis(x,z,n*.6+.6);return g}
+/* Gaststuhl und liegende Gäste sind einfache Kästen; Popcorn und Dampf: weiße Kügelchen */
+function dampf(x,y,z,n,hoch,sx){const pg=grp(x,y,z),pu=[];for(let i=0;i<n;i++)pu.push(sph(1,K.weiss,0,0,0,pg));bewegt(pg,t=>{pu.forEach((s,i)=>{const f=(t*.4+i/n)%1;s.position.set(Math.sin(t*1.5+i)*.08*hoch,f*hoch,0);s.scale.setScalar((sx||.12)*(.4+f*.9))})},x,z,60)}
 const schiffX=t=>91+109*Math.sin(t*.08);
 function weltBauen(){
 FARBEN={boden:0x93c97a,pfad:0xe6dcc0,platz:K.platz};
@@ -296,9 +345,8 @@ for(let x=-216;x<=216;x+=6){if(Math.abs(x)<12||Math.abs(x+30)<12)continue;kreis(
   [[114,-92,2],[121,-92,3],[114,-87.5,1],[121,-87.5,2]].forEach((s,i)=>{for(let k=0;k<s[2];k++)qb(5.8,2.4,2.4,BUNT[(i*3+k*2)%8],s[0],1.3+k*2.4,s[1],scene,k===0);kBox(s[0],s[1],5.8,2.4)});
   bau(145,-84,14,8,6,K.hellgrau,K.blau,{flach:true,fenster:false,tuer:false});qb(3,3.6,.2,K.orange,145,1.8,-79.9);tafel('Hafen',145,5,-79.8,5,1.2,null,0,56);
   kranBauen(130,-94,15,17,K.orange,110);
-  qc(1.6,3,K.rot,153,1.5,-94);qc(1.4,3,K.weiss,153,4.5,-94);qc(1.2,3,K.rot,153,7.5,-94);qk(1.2,1.2,K.dunkel,153,9.6,-94);leucht(scene,153,8.9,-94,.45,MGELB);kreis(153,-94,1.7);
   [112,121].forEach((x,i)=>{const g=grp(x,0,-100.4);qs(1,K.rot,0,.3,0,g,1.8,.4,.75);qk(.6,1,K.rot,1.9,.3,0,g).rotation.z=-Math.PI/2;qc(.09,3.4,K.holz,0,1.8,0,g);qk(1.1,2.6,K.weiss,.5,1.8,0,g);bewegt(g,t=>{g.position.y=Math.sin(t*1.5+x)*.08;g.rotation.z=Math.sin(t*1.1+x)*.05},x,-101,90)});
-  const sh=schiff(scene);bewegt2(sh,t=>{const x=schiffX(t),v=Math.cos(t*.08);sh.position.set(x,.1+Math.sin(t*2)*.05,-103);sh.rotation.y=v>0?0:Math.PI},170);
+  const sh=schiff(scene);bewegt2(sh,t=>{const x=schiffX(t),v=Math.cos(t*.08);sh.position.set(x,.1+Math.sin(t*2)*.05,-105.5);sh.rotation.y=v>0?0:Math.PI},170);
   laterne(108,-96);laterne(150,-87);eimer(125,-84);baeumchen(110,-82,1)})();
 /* ---------- Flussbrücke und Zugbrücke ---------- */
 (function(){scheibe(-15,-98,6,K.platz,.1);
@@ -473,6 +521,195 @@ for(let x=-216;x<=216;x+=6){if(Math.abs(x)<12||Math.abs(x+30)<12)continue;kreis(
   [152,164].forEach(x=>qc(.08,3,K.holz,x,1.5,39));qb(12,.04,.04,K.dunkel,158,3,39);for(let i=0;i<5;i++){const g=grp(153+i*2.1,3,39);box(.9,1.1,.05,BUNT[(i*3)%8],0,-.6,0,g);bewegt(g,t=>{g.rotation.z=Math.sin(t*1.8+i)*.12},158,39,90)}
   parken(K.blau,188,60,Math.PI/2);parken(K.rot,152,62,Math.PI/2);for(let i=0;i<5;i++)baeumchen(150+i*10,56+(i%2)*3,.9);beet(165,62,4,16);beet(178,62,4,16);
   [0,1,2].forEach(i=>schmetterling(160+i*10,52,5,BUNT[(i*3+2)%8],i));laterne(155,58);laterne(185,58);tafel('Wohnviertel',cx,2.5,78.7,4.6,.9)})();
+/* ========== Dichte-Runde (24.11.2026): neue Orte ========== */
+/* ---------- Skatepark (Rampen, Halfpipe, Rails, Skater) ---------- */
+(function(){const cx=-176,cz=-12,g=grp(cx,0,cz);
+  qb(38,.12,28,K.hellgrau,0,.06,0,g);[-1,1].forEach(s=>{qb(38.6,.3,.3,K.grau,0,.15,s*14.1,g);qb(.3,.3,28,K.grau,s*19.1,.15,0,g)});
+  halfpipe(g,-8,-8,6,2.8,7,K.blau);sperrKasten(cx-8,cz-8,16,7,0);
+  viertel(g,11.5,-8,2.6,8,K.orange,1);sperrKasten(cx+13.9,cz-8,4.8,8,0);
+  qb(3.6,.9,4,K.gelb,5,.45,-8,g);stab(g,.8,0,-8,3.2,.9,-8,4,K.orange,.2,false);stab(g,9.2,0,-8,6.8,.9,-8,4,K.orange,.2,false);[-1,1].forEach(q=>[2,8].forEach(x=>qb(2.4,.35,.14,K.grau,x,.17,-8+q*1.93,g)));
+  [3.6,6.4].forEach(x=>qc(.05,.5,K.grau,x,1.15,-8,g));cyl(.06,3.6,K.rot,5,1.42,-8,g).rotation.z=Math.PI/2;sperrKasten(cx+5,cz-8,8.4,4,0);
+  [-5,-1.5,2].forEach(x=>{qc(.06,.9,K.grau,x,.45,-1,g);kreis(cx+x,cz-1,.3)});cyl(.07,7.4,K.gelb,-1.5,.92,-1,g).rotation.z=Math.PI/2;
+  qb(5,.5,.9,K.hellgrau,-12,.25,4,g);qb(5.02,.08,.2,K.gelb,-12,.5,3.6,g);sperrKasten(cx-12,cz+4,5,.9,0);
+  for(let i=0;i<4;i++)qb(1,.3*(i+1),3.4,i%2?K.tuerkis:K.blau,9.5+i,.15*(i+1),6.5,g);stab(g,9,.95,8.3,13.6,1.95,8.3,.1,K.rot,.1,false);[[9,1],[13.6,2]].forEach(p=>{qc(.05,p[1],K.rot,p[0],p[1]/2,8.3,g);qc(.05,p[1],K.rot,p[0],p[1]/2,4.7,g)});stab(g,9,.95,4.7,13.6,1.95,4.7,.1,K.rot,.1,false);sperrKasten(cx+11.5,cz+6.5,5,3.6,0);
+  qb(34,3.2,.4,K.grau,0,1.6,-13.4,g);for(let i=0;i<6;i++){const x=-14+i*5.6;qb(4.4,2.2,.06,BUNT[i],x,1.6,-13.15,g);qs(.7,BUNT[(i+4)%8],x+.5,1.9,-13.1,g,1,1,.1);qb(1.6,.3,.08,K.weiss,x-1,1.0,-13.1,g)}sperrKasten(cx,cz-13.4,34,.5,0);
+  bank(cx-3,cz+12,0);bank(cx+3,cz+12,0);eimer(cx+6,cz+12);laterne(cx-18,cz+12);laterne(cx+18,cz+12);laterne(cx-18,cz-12);baeumchen(cx-21,cz+6,1);baeumchen(cx+21,cz+2,1.1);baeumchen(cx+21,cz-10,1);
+  [0,1].forEach(i=>{const k=kleinKind(scene,BUNT[i*3+2],HAUT[i]);k.position.set(cx-3.6+i*7+i*.3,.35,cz+12)});
+  {const r=grp(cx+15,0,cz+10);box(1.1,.1,.3,K.rot,0,.35,0,r);cyl(.04,1.1,K.grau,.5,.9,0,r);box(.04,.04,.5,K.grau,.5,1.45,0,r);[-.5,.5].forEach(x=>cyl(.15,.06,K.schwarz,x,.15,0,r).rotation.x=Math.PI/2);const k=kleinKind(r,K.gruen,HAUT[2]);k.position.set(.1,.3,.1);r.rotation.y=-.7;kreis(cx+15,cz+10,.6)}
+  const s1=skater(scene,K.gruen,HAUT[1]);bewegt2(s1,t=>{const L=6,r=2.8,xx=Math.sin(t*.85)*(L/2+r*.9),q=Math.max(0,Math.abs(xx)-L/2),y=r-Math.sqrt(r*r-q*q),sl=Math.asin(Math.min(.95,q/r));s1.position.set(cx-8+xx,y+.02,cz-8+Math.sin(t*.4)*1.2);s1.rotation.z=Math.sign(xx)*sl},110);
+  const cp=[];for(let i=0;i<16;i++){const a=i/16*6.283;cp.push([cx-4+Math.cos(a)*3.5,cz+8+Math.sin(a)*3.5])}const s2=skater(scene,K.rot,HAUT[0],true);bewegt2(s2,laufPfad(s2,cp,4.6,0),110);
+  const s3=skater(scene,K.lila,HAUT[2],true);bewegt2(s3,laufPfad(s3,[[cx-13,cz+2.5],[cx+13,cz+2.5]],6.5,0),110)})();
+/* ---------- Café mit Terrasse ---------- */
+(function(){const cx=183,cz=2;bau(cx,cz,14,7,5.5,K.creme,K.braun,{flach:true,n:3,et:1,tuerF:K.rot});
+  const aw=grp(cx,0,cz+3.5);markise(aw,12,3.5,K.rot,K.weiss);
+  const ta=grp(cx-4,6.1,cz);qc(1.6,.2,K.rosa,0,0,0,ta);qc(1.05,1.5,K.weiss,0,.85,0,ta);qc(.95,.08,K.braun,0,1.62,0,ta);const hn=new THREE.Mesh(new THREE.TorusGeometry(.5,.14,6,12),mat(K.weiss));hn.position.set(1.15,.85,0);ta.add(hn);dampf(cx-4,7.9,cz,3,2.2,.35);
+  qb(16,.22,8.4,K.holz,cx,.11,cz+7.7);const rz=cz+11.9;
+  const rl=(x1,z1,x2,z2)=>{const n=Math.max(1,Math.round(Math.hypot(x2-x1,z2-z1)/1.6));for(let i=0;i<=n;i++)qc(.07,1,K.weiss,x1+(x2-x1)*i/n,.6,z1+(z2-z1)*i/n);stab(scene,x1,1.05,z1,x2,1.05,z2,.08,K.weiss,.08,false);stab(scene,x1,.6,z1,x2,.6,z2,.06,K.weiss,.06,false);sperrLinie(x1,z1,x2,z2,.2)};
+  rl(175,rz,180.5,rz);rl(185.5,rz,191,rz);rl(175,cz+3.6,175,rz);rl(191,cz+3.6,191,rz);
+  [[178,cz+6.4,K.rot],[188,cz+6.4,K.gelb],[178,cz+10,K.blau],[188,cz+10,K.gruen]].forEach((t,i)=>{tisch(t[0],t[1],t[2]);qc(.12,.14,K.weiss,t[0]+.3,1.07,t[1]);qc(.12,.14,K.weiss,t[0]-.3,1.07,t[1]+.2);
+    [[1.1,0],[-1.1,0],[0,1.1]].forEach((p,k)=>{if((i+k)%2===0){const g=kleinKind(scene,BUNT[(i*3+k*2+1)%8],HAUT[(i+k)%4]);g.position.set(t[0]+p[0],.3,t[1]+p[1]);g.rotation.y=Math.atan2(-p[0],-p[1])}})});
+  mast(175,rz,4.2,K.holz);mast(191,rz,4.2,K.holz);girlande(175,4.1,rz,191,4.1,rz,16,.7,'warm');kuebel(176,cz+4.6);kuebel(190,cz+4.6);
+  const w=kleinKind(scene,K.weiss,HAUT[0]);box(.9,.05,.5,K.grau,.5,1.5,.2,w);qc(.1,.14,K.weiss,.5,1.6,.2,w);qc(.1,.14,K.rot,.8,1.6,.3,w);bewegt2(w,laufPfad(w,[[183,cz+4.5],[183,cz+8.2],[180.6,cz+8.2],[183,cz+8.2],[185.6,cz+8.2],[183,cz+8.2]],1.5,0,true),70);
+  [0,1].forEach(i=>{const k=kleinKind(scene,BUNT[i*4+1],HAUT[i+1]);bewegt2(k,laufPfad(k,[[168+i*4,cz+17],[198-i*3,cz+17]],1.4,i*20,true),90)});
+  radStaender(165,cz+2,3,Math.PI);laterne(172,cz+16);laterne(196,cz+16);bank(180,cz+18,Math.PI);baeumchen(200,cz+14,1.1);baeumchen(166,cz+12,1);beet(172,cz+10,3,12);beet(196,cz+8,3,12)})();
+/* ---------- Einkaufsgasse mit vier kleinen Läden ---------- */
+(function(){const z0=150,d=6,zf=z0+d/2;
+  const laden=(x,h,wand,dach,tuer)=>{bau(x,z0,8,d,h,wand,dach,{flach:true,fenster:false,tuer:false});qb(4.2,2.2,.12,K.himmel,x-1.5,1.6,zf+.07);qb(1.7,2.6,.2,tuer,x+2.4,1.3,zf+.1);qb(.12,.12,.14,K.gold,x+2.9,1.3,zf+.22);qb(4.5,.12,.4,K.grau,x-1.5,.5,zf+.2);fen(x-2.8,4.5,zf+.07,1.2,1.4);fen(x+2.8,4.5,zf+.07,1.2,1.4);const a=grp(x,0,zf);return a};
+  /* Apotheke */
+  {const x=24;const a=laden(x,6.4,K.weiss,K.gruen,K.gruen);markise(a,8,3.2,K.gruen,K.weiss);qb(2.6,2.6,.12,K.weiss,x,5.3,zf+.1);qb(1.9,.55,.1,K.gruen,x,5.3,zf+.2);qb(.55,1.9,.1,K.gruen,x,5.3,zf+.2);
+    for(let i=0;i<6;i++){const c=[K.gruen,K.weiss,K.blau,K.orange,K.gruen,K.rosa][i];qc(.14,.5,c,x-3.1+i*.5,.82,zf+.32);qs(.1,K.weiss,x-3.1+i*.5,1.12,zf+.32)}for(let i=0;i<3;i++)qb(.5,.35,.3,BUNT[i*2],x-1.2+i*.7,.72,zf+.4);qb(.6,1.5,.3,K.gruen,x-3.5,1.1,zf+.6);qb(.1,.6,.35,K.weiss,x-3.5,1.5,zf+.62)}
+  /* Friseur */
+  {const x=32;const a=laden(x,5.6,K.himmel,K.blau,K.blau);markise(a,8,3.2,K.blau,K.weiss);const px=x-3.7;qc(.22,.18,K.blau,px,.95,zf+.4);qc(.2,2,K.weiss,px,2,zf+.4);qc(.22,.18,K.blau,px,3.05,zf+.4);qs(.2,K.blau,px,3.2,zf+.4);
+    const bd=[0,1,2,3].map(i=>qc(.215,.24,K.rot,px,1,zf+.4));bewegt(bd,t=>{bd.forEach((b,i)=>{b.position.y=1.05+((i*.5+t*.35)%2)*.95})},px,zf,60);
+    qb(2.5,1.6,.1,K.blau,x+2.4,4.7,zf+.1);const s1=qb(.14,1.4,.08,K.grau,x+2.4,4.7,zf+.2);s1.rotation.z=.6;const s2=qb(.14,1.4,.08,K.grau,x+2.4,4.7,zf+.2);s2.rotation.z=-.6;[-.35,.35].forEach(o=>{const r=new THREE.Mesh(new THREE.TorusGeometry(.2,.05,5,10),mat(K.weiss));r.position.set(x+2.4+o,4.1,zf+.22);scene.add(r)});
+    qs(.55,K.holz,x-.3,1.9,zf+.15,scene,1,1.4,.2);qs(.5,K.hellgrau,x-.3,1.9,zf+.2,scene,1,1.4,.2);[0,1].forEach(i=>qs(.13,BUNT[i*3],x-2,1.2+i*.9,zf+.15))}
+  /* Blumenladen */
+  {const x=40;const a=laden(x,5.4,K.gelb,K.gruen,K.rosa);markise(a,8,3.2,K.rosa,K.weiss);
+    for(let i=0;i<6;i++){const bx=x-3.6+i*1.3;qc(.36,.5,K.hellgrau,bx,.25,zf+1.5);for(let k=0;k<4;k++){const fh=.7+(k%2)*.3,fx=bx+(k-1.5)*.18;qc(.025,fh,K.gruen,fx,.5+fh/2,zf+1.5+(k%2)*.1);qs(.16,BUNT[(i*2+k)%8],fx,.5+fh,zf+1.5+(k%2)*.1)}}
+    for(let i=0;i<3;i++)for(let k=0;k<5;k++)qs(.17,BUNT[(i*3+k)%8],x-2.8+k*.55,.95+i*.5,zf+.15);qs(.5,K.gelb,x+2.4,4.7,zf+.12,scene,1,1,.3);for(let i=0;i<6;i++){const a2=i*1.047;qs(.3,K.rosa,x+2.4+Math.cos(a2)*.7,4.7+Math.sin(a2)*.7,zf+.12,scene,1,1,.3)}
+    [-1,1].forEach(s=>{qs(.35,K.gruen,x+s*3.9,3.2,zf+.5);qs(.2,BUNT[s>0?1:3],x+s*3.9,3.5,zf+.8)})}
+  /* Buchladen */
+  {const x=48;const a=laden(x,5.8,K.ziegel,K.dunkel,K.holz);markise(a,8,3.2,K.blau,K.weiss);
+    for(let r=0;r<3;r++){qb(4,.08,.6,K.holz,x-1.5,.75+r*.8,zf+.35);for(let k=0;k<14;k++)qb(.22,.55+(k%3)*.08,.4,BUNT[(k*3+r)%8],x-3.2+k*.27,1.05+r*.8+(k%3)*.04,zf+.35)}
+    qb(2.8,1.2,.14,K.braun,x+2.4,4.7,zf+.1);qb(1.2,.95,.1,K.weiss,x+1.75,4.7,zf+.2).rotation.z=.12;qb(1.2,.95,.1,K.weiss,x+3.05,4.7,zf+.2).rotation.z=-.12;
+    for(let i=0;i<3;i++)qb(1.4,.2,1.0,BUNT[i*2+1],x-3.4,.1+i*.2+.1,zf+1.6)}
+  pfad(16,158,58,158,5,K.platz);
+  laterne(21,157);laterne(53,157);laterne(37,157);bank(30,160.6,Math.PI);bank(44,160.6,Math.PI);baeumchen(16,160,1);baeumchen(58,160,1);kuebel(35,155.8);kuebel(41,155.8);eimer(27,155.6);radStaender(52,156.5,3,0);
+  [[26,K.rot],[35,K.blau],[47,K.gruen]].forEach((p,i)=>{const k=kleinKind(scene,p[1],HAUT[i]);k.position.set(p[0],0,157.2);k.rotation.y=Math.PI;qb(.3,.4,.15,BUNT[i*2+3],p[0]+.4,.9,157.3)});
+  [0,1].forEach(i=>{const k=kleinKind(scene,BUNT[i*4+2],HAUT[i+1]);bewegt2(k,laufPfad(k,[[20,159.2],[54,159.2]],1.5,i*14,true),90)})})();
+/* ---------- Hotel mit Dachterrasse ---------- */
+(function(){const cx=112,cz=-26,zf=cz+5;scheibe(cx,-16,13,K.platz,.1);bau(cx,cz,14,10,27,K.sand,K.dunkel,{flach:true,n:4,et:7,tuer:false});
+  qb(7.4,3.4,.2,K.himmel,cx,1.8,zf+.12);qb(7.6,.25,.3,K.dunkel,cx,3.6,zf+.2);[-3.6,3.6].forEach(s=>qb(.2,3.4,.3,K.dunkel,cx+s,1.8,zf+.2));for(let f=1;f<7;f++)qb(14.4,.28,.16,K.weiss,cx,3.857*f,zf+.05);
+  const aw=grp(cx,0,zf+.1);markise(aw,7,4.4,K.rot,K.weiss);[-3.2,3.2].forEach(s=>{qc(.1,4.3,K.gold,cx+s,2.15,zf+2.3);kreis(cx+s,zf+2.3,.3)});qb(2.8,.05,7.4,K.rot,cx,.08,zf+3.7);
+  for(let i=0;i<4;i++){const x=cx-1.8+i*1.2;qb(.7,.7,.1,K.gold,x,7,zf+.12);qb(.7,.7,.1,K.gold,x,7,zf+.13).rotation.z=Math.PI/4}
+  const dr=grp(cx,0,zf+1.3);[-1,1].forEach(s=>qc(.07,2.8,K.grau,s*1.4,1.4,0,dr));qc(1.5,.2,K.dunkel,0,2.9,0,dr);qc(1.5,.06,K.hellgrau,0,.04,0,dr);const fl=grp(0,1.4,0,dr);[0,1].forEach(i=>{const b=box(2.7,2.6,.07,K.himmel,0,0,0,fl);b.rotation.y=i*1.57});bewegt(fl,t=>{fl.rotation.y=t*.7},cx,zf,70);
+  [-5.5,5.5].forEach((s,i)=>{qc(.4,.7,K.holz,cx+s,.35,zf+1.5);kreis(cx+s,zf+1.5,.6);qc(.18,2.6,K.holz,cx+s,2,zf+1.5);for(let k=0;k<5;k++){const a=k*1.257,c=qk(.3,1.7,K.laub,cx+s+Math.cos(a)*.75,3.5,zf+1.5+Math.sin(a)*.75);c.rotation.z=-Math.cos(a)*1.0;c.rotation.x=Math.sin(a)*1.0}});
+  const page=kleinKind(scene,K.rot,HAUT[1]);page.position.set(cx+4.2,0,zf+4);page.rotation.y=-.6;qb(1.5,.12,.9,K.gold,cx+5.7,.5,zf+4.6);[0,1].forEach(i=>qb(.9,.7,.4,BUNT[i*3+1],cx+5.4+i*.7,.95+i*.1,zf+4.6));qb(.08,1.1,.9,K.gold,cx+6.4,1,zf+4.6);kreis(cx+5.7,zf+4.6,1);
+  const li=parken(K.schwarz,cx-10,-13,Math.PI/2);li.scale.x=1.3;fahne(cx-8,zf+1.5,9,K.rot,true);fahne(cx+8,zf+1.5,9,K.blau,true);laterne(cx-6,zf+7);laterne(cx+6,zf+7);bank(cx-9,zf+8,Math.PI);eimer(cx+9,zf+7);beet(cx-5,zf+9,3,12);beet(cx+5,zf+9,3,12);baeumchen(cx+13,-14,1.1);
+  /* Dachterrasse entfernt: von keiner Kamera aus sichtbar */
+})();
+/* ---------- Hundewiese mit Agility-Geräten ---------- */
+(function(){const cx=-180,cz=70;scheibe(cx,cz,13.6,0x7cc16a,.1);zaun(cx,cz,14,44,0);pfad(cx+13,cz,-152,83,3,K.platz);
+  const tx=cx-5,tz=cz-6;qc(.9,4,K.blau,tx,.9,tz).rotation.z=Math.PI/2;[-1,1].forEach(s=>qc(.78,.06,K.dunkel,tx+s*2.03,.9,tz).rotation.z=Math.PI/2);[-1.4,0,1.4].forEach(o=>qc(.92,.3,K.gelb,tx+o,.9,tz).rotation.z=Math.PI/2);sperrKasten(tx,tz,4.2,1.9,0);
+  [[cx+4,cz-8],[cx+6,cz+4]].forEach((p,i)=>{[-1,1].forEach(s=>{qc(.06,1.2,K.weiss,p[0],.6,p[1]+s*1.1);kreis(p[0],p[1]+s*1.1,.25)});qc(.05,2.2,i?K.blau:K.rot,p[0],1,p[1]).rotation.x=Math.PI/2;qc(.045,2.2,K.weiss,p[0],.6,p[1]).rotation.x=Math.PI/2});
+  for(let i=0;i<6;i++){qc(.05,1.3,BUNT[i],cx-9+i*1.3,.65,cz+7);kreis(cx-9+i*1.3,cz+7,.2)}
+  stab(scene,cx-1.8,.1,cz+10,cx,1.7,cz+10,1.6,K.gelb,.12,false);stab(scene,cx,1.7,cz+10,cx+1.8,.1,cz+10,1.6,K.gelb,.12,false);sperrKasten(cx,cz+10,3.8,1.6,0);
+  [-1,1].forEach(s=>qc(.07,2.3,K.weiss,cx-8+s*1.1,1.15,cz-1));const ri=new THREE.Mesh(new THREE.TorusGeometry(.7,.13,6,14),mat(K.rot));ri.position.set(cx-8,1.3,cz-1);scene.add(ri);qb(2.6,.1,.3,K.weiss,cx-8,.05,cz-1);kreis(cx-9.1,cz-1,.25);kreis(cx-6.9,cz-1,.25);
+  [0,1,2].forEach(i=>qs(.2,BUNT[i*3],cx+1+i*2.3,.22,cz-3+i%2*3));qc(.35,.15,K.blau,cx+11,.08,cz+2);
+  bank(cx+9,cz+10,Math.PI*.8);bank(cx-11,cz+4,Math.PI/2);eimer(cx+11,cz-3);eimer(cx+12,cz+4);laterne(cx+15,cz-5);baeumchen(cx-12,cz-5,1.1);baeumchen(cx+6,cz-11,1);baeumchen(cx-6,cz+11,1);
+  [[cx+9.5,cz-6,K.rot,K.orange,K.weiss,K.orange],[cx-10.5,cz-1,K.blau,K.schwarz,K.weiss,K.schwarz],[cx+8,cz+7,K.gruen,K.holz,K.sand,K.holz]].forEach((o,i)=>{const k=kleinKind(scene,o[2],HAUT[i]);k.position.set(o[0],0,o[1]);k.scale.setScalar(1.15);k.rotation.y=i*1.7+.5;const h=hund(scene,o[3],o[4],o[5],true);h.position.set(o[0]+1.2,0,o[1]+.5);h.rotation.y=-.5+i;h.scale.setScalar(.9)});
+  const lauf=(pts,v,off,fell,hell,ohr,sprung)=>{const w=grp(0,0,0,scene);w.userData.keep=1;const d=hund(w,fell,hell,ohr);d.rotation.y=-Math.PI/2;const L=laufPfad(w,pts,v,off);bewegt2(w,t=>{L(t);hundGeh(d,t,v>4?15:11);if(sprung){const dz=Math.abs(w.position.z-sprung);w.position.y=dz<1.5?Math.cos(dz/1.5*Math.PI/2)*1.1:0}},75)};
+  const c1=[];for(let i=0;i<14;i++){const a=i/14*6.283;c1.push([cx-1+Math.cos(a)*7,cz+1+Math.sin(a)*5])}lauf(c1,5,0,K.orange,K.weiss,K.holz);
+  lauf([[cx-9,cz-8],[cx+9,cz-10],[cx+8,cz+2],[cx-6,cz+3]],4.2,6,K.schwarz,K.weiss,K.schwarz);
+  lauf([[cx+4,cz-13],[cx+4,cz-3]],4.6,0,K.holz,K.sand,K.dunkel,cz-8)})();
+/* ---------- Leuchtturm und Fähre ---------- */
+(function(){const cx=174,cz=-90,top=18.5;scheibe(cx,cz,5.3,K.platz,.1);qc(4.4,.5,K.hellgrau,cx,.25,cz,scene,true);
+  for(let i=0;i<6;i++)qc(3.1-i*.14,3.02,i%2?K.weiss:K.rot,cx,.5+1.5+i*3,cz,scene,true);
+  [5,9,13,17].forEach(y=>{const r=3.1-Math.floor((y-.5)/3)*.14;fen(cx,y,cz+r,.5,.9)});qb(1.4,2.5,.3,K.holz,cx,1.75,cz+3.1);
+  qc(2.9,.35,K.dunkel,cx,top+.2,cz);for(let i=0;i<14;i++){const a=i/14*6.283;qc(.05,.9,K.grau,cx+Math.cos(a)*2.75,top+.8,cz+Math.sin(a)*2.75)}const rg=new THREE.Mesh(new THREE.TorusGeometry(2.75,.05,4,20),mat(K.grau));rg.rotation.x=Math.PI/2;rg.position.set(cx,top+1.25,cz);scene.add(rg);
+  for(let i=0;i<8;i++){const a=i/8*6.283;qc(.07,2.2,K.dunkel,cx+Math.cos(a)*1.3,top+1.3,cz+Math.sin(a)*1.3)}qc(1.5,.2,K.dunkel,cx,top+.45,cz);qk(2.1,1.5,K.rot,cx,top+3.2,cz);qs(.3,K.gold,cx,top+4.1,cz);
+  const la=grp(cx,top+1.6,cz);leucht(la,0,0,0,.6,MGELB);const bm=new THREE.MeshBasicMaterial({color:0xfff2b0,transparent:true,opacity:.2,depthWrite:false,blending:THREE.AdditiveBlending});[1,-1].forEach(s=>{const b=new THREE.Mesh(gCone,bm);b.scale.set(4.5,26,4.5);b.position.set(s*13,0,0);b.rotation.z=s*Math.PI/2;la.add(b)});bewegt(la,t=>{la.rotation.y=t*.8},cx,cz,130);kreis(cx,cz,3.5);
+  bau(cx-10,cz+3,6,5,3.8,K.weiss,K.rot,{n:2,et:1});qb(.8,1.6,.8,K.ziegel,cx-11.5,4.6,cz+2,scene,true);dampf(cx-11.5,5.5,cz+2,3,1.8,.3);
+  for(let i=0;i<9;i++)felsen(cx-5+i*1.3,-94.2+(i%2)*.7,.8+(i%3)*.25);
+  [[160,-94.4],[166,-94.6],[183,-94.5],[196,-94.3]].forEach((p,i)=>felsen(p[0],p[1],.7+i%2*.4));
+  /* Anleger Ost */
+  qb(12,.3,6,0xb8b4a8,188,.15,-94.8);[184,192].forEach(x=>{qc(.25,.5,K.dunkel,x,.55,-97);kreis(x,-97,.3)});laterne(194,-92);bank(186,-91.4,0);eimer(190,-91.6);
+  [0,1].forEach(i=>{const k=kleinKind(scene,BUNT[i*3+2],HAUT[i]);k.position.set(188+i*1.2,.3,-95);k.rotation.y=Math.PI});
+  [144,150].forEach(x=>{qc(.25,.5,K.dunkel,x,.55,-96.9)});
+  const g=grp(0,0,0,scene);g.userData.keep=1;box(5.6,.9,2.4,K.blau,0,.45,0,g);[-1,1].forEach(s=>{box(1.7,.9,1.7,K.blau,s*2.8,.45,0,g).rotation.y=Math.PI/4});box(6,.2,2.4,K.weiss,0,.98,0,g);
+  box(4.2,1.5,2,K.weiss,0,1.85,0,g);box(4.3,.5,2.05,K.himmel,0,2.0,0,g);box(4.6,.2,2.4,K.rot,0,2.7,0,g);box(1.6,.9,1.6,K.weiss,0,3.25,0,g);box(1.7,.4,1.7,K.himmel,0,3.3,0,g);box(1.9,.15,1.9,K.rot,0,3.8,0,g);
+  cyl(.3,1,K.gelb,1.3,3.3,0,g);cyl(.32,.15,K.dunkel,1.3,3.85,0,g);cyl(.04,1.4,K.grau,-1.4,3.5,0,g);box(.6,.35,.04,K.rot,-1.1,3.95,0,g);
+  [-1,1].forEach(s=>{const r=new THREE.Mesh(new THREE.TorusGeometry(.25,.07,6,10),mat(K.orange));r.position.set(s*1.2,1.5,1.03);g.add(r)});
+  [[-2.55,K.gruen],[2.55,K.rosa],[-2.7,K.gelb],[2.7,K.lila]].forEach((p,i)=>{box(.3,.5,.25,p[1],p[0],1.35,(i<2?.45:-.45),g);sph(.17,HAUT[i],p[0],1.75,(i<2?.45:-.45),g)});
+  bewegt2(g,t=>{const u=t%24;let x=147;if(u>=4&&u<12)x=147+41*glatt((u-4)/8);else if(u>=12&&u<16)x=188;else if(u>=16)x=188-41*glatt((u-16)/8);g.position.set(x,.1+Math.sin(t*1.5)*.03,-99.6);g.rotation.z=Math.sin(t*1.1)*.025},140)})();
+/* ---------- Tennisplatz ---------- */
+(function(){const cx=194,cz=-124;sperrLinie(cx,cz-5.7,cx,cz+5.7,.2);qb(27,.08,14,K.gruen,cx,.05,cz);qb(22,.1,10.6,K.blau,cx,.1,cz);
+  [-1,1].forEach(s=>{qb(22.2,.03,.12,K.weiss,cx,.17,cz+s*5.3);qb(.12,.03,10.7,K.weiss,cx+s*11,.17,cz);qb(22,.03,.1,K.weiss,cx,.17,cz+s*4);qb(.1,.03,8,K.weiss,cx+s*6.4,.17,cz)});qb(12.8,.03,.1,K.weiss,cx,.17,cz);
+  [-1,1].forEach(s=>{qc(.07,1.2,K.grau,cx,.6,cz+s*5.7);kreis(cx,cz+s*5.7,.3)});qb(.05,.85,11.4,K.dunkel,cx,.65,cz);qb(.08,.12,11.4,K.weiss,cx,1.1,cz);
+  const gt=(x1,z1,x2,z2)=>{const n=Math.max(1,Math.round(Math.hypot(x2-x1,z2-z1)/3));for(let i=0;i<=n;i++)qc(.06,3.2,K.grau,x1+(x2-x1)*i/n,1.6,z1+(z2-z1)*i/n);[.7,1.5,2.3,3.1].forEach(y=>stab(scene,x1,y,z1,x2,y,z2,.05,K.grau,.05,false));sperrLinie(x1,z1,x2,z2,.2)};
+  gt(cx-13.5,cz-7,cx+13.5,cz-7);gt(cx-13.5,cz-7,cx-13.5,cz+7);gt(cx+13.5,cz-7,cx+13.5,cz+7);gt(cx-13.5,cz+7,cx-2,cz+7);gt(cx+2,cz+7,cx+13.5,cz+7);
+  [[cx-1.6,cz-6.1],[cx+1.6,cz-6.1]].forEach(p=>{qc(.06,2.2,K.grau,p[0],1.1,p[1])});qb(1.2,.1,1.2,K.weiss,cx,2.3,cz-6.1);qb(1.2,.9,.1,K.weiss,cx,2.8,cz-6.6);[-1,1].forEach(s=>[-1,1].forEach(q=>qc(.05,2.3,K.weiss,cx+s*.5,1.15,cz-6.1+q*.5)));const ur=kleinKind(scene,K.weiss,HAUT[1]);ur.position.set(cx,2.35,cz-6.1);ur.scale.setScalar(.75);
+  bank(cx-8,cz+9,Math.PI);bank(cx+8,cz+9,Math.PI);eimer(cx+11,cz+9);laterne(cx-14,cz+9);baeumchen(cx-16,cz-5,1.1);baeumchen(cx+16.5,cz+8,1);
+  const sp=(i,fa)=>{const k=kleinKind(scene,fa,HAUT[i]);const r=grp(.55,1.15,.2,k);box(.07,.55,.07,K.holz,0,.28,0,r);const h=new THREE.Mesh(new THREE.TorusGeometry(.26,.04,5,12),mat(K.weiss));h.position.y=.8;r.add(h);k.userData.rk=r;return k};
+  const p1=sp(0,K.rot),p2=sp(2,K.gelb),ba=qs(.16,K.gelb,cx,1,cz);
+  bewegt([p1,p2,ba],t=>{const u=(t/1.5)%2,f=u<1?u:2-u,z1=cz+Math.sin(t*.7)*3.2,z2=cz+Math.sin(t*.7+1.7)*3.2;p1.position.set(cx-9.5,Math.abs(Math.sin(t*4))*.06,z1);p2.position.set(cx+9.5,Math.abs(Math.sin(t*4+1))*.06,z2);p1.rotation.y=Math.PI/2;p2.rotation.y=-Math.PI/2;p1.userData.rk.rotation.z=u<.12||(u>1&&u<1.04)?-.9:.2;p2.userData.rk.rotation.z=u>1&&u<1.12?-.9:.2;
+    ba.position.set(cx-9+f*18,.6+Math.sin(f*Math.PI)*2.6,z1+(z2-z1)*f)},cx,cz,100)})();
+/* ---------- Basketballplatz ---------- */
+(function(){const cx=188,cz=-141;qb(17,.06,10,K.grau,cx,.03,cz);qb(15,.1,8,K.ziegel,cx,.1,cz);
+  [-1,1].forEach(s=>{qb(15,.03,.12,K.weiss,cx,.17,cz+s*3.94);qb(.12,.03,8,K.weiss,cx+s*7.44,.17,cz);qb(2.8,.03,3.6,K.blau,cx+s*6.1,.16,cz);
+    qc(.1,3.4,K.grau,cx+s*8.1,1.7,cz);kreis(cx+s*8.1,cz,.3);qb(.5,.1,.1,K.grau,cx+s*7.85,3.3,cz);qb(.1,1.2,1.8,K.weiss,cx+s*7.5,3.2,cz);qb(.06,.5,.7,K.rot,cx+s*7.45,3.05,cz);
+    const ri=new THREE.Mesh(new THREE.TorusGeometry(.36,.04,6,12),mat(K.orange));ri.rotation.x=Math.PI/2;ri.position.set(cx+s*7.1,3,cz);scene.add(ri);const ne=qk(.32,.65,K.weiss,cx+s*7.1,2.65,cz);ne.rotation.x=Math.PI});
+  qb(.1,.03,8,K.weiss,cx,.17,cz);const mc=new THREE.Mesh(new THREE.TorusGeometry(1.2,.05,4,20),mat(K.weiss));mc.rotation.x=Math.PI/2;mc.position.set(cx,.18,cz);scene.add(mc);
+  bank(cx,cz+6.2,Math.PI);eimer(cx+4,cz+6.2);qs(.28,K.orange,cx-3.6,.3,cz+6.3);laterne(cx-10,cz+5);baeumchen(cx+11,cz+5,1);
+  [0,1].forEach(i=>{const k=kleinKind(scene,BUNT[i*3+3],HAUT[i+1]);k.position.set(cx-.6+i*1.2,.35,cz+6.2)});
+  const ks=[0,1,2,3].map(i=>{const k=kleinKind(scene,i<2?K.rot:K.blau,HAUT[i]);return k}),ball=qs(.26,K.orange,cx,1,cz);
+  const rt=[[[cx-4,cz-2.5],[cx+4,cz-2],[cx+4,cz+2.5],[cx-4,cz+2]],[[cx+5,cz+2],[cx-3,cz+2.8],[cx-5,cz-1.5],[cx+3,cz-2.8]],[[cx-6,cz],[cx+1,cz-3],[cx+6,cz],[cx+1,cz+3]],[[cx+6,cz-1],[cx,cz+3],[cx-6,cz+1],[cx,cz-3]]];
+  const ls=ks.map((k,i)=>laufPfad(k,rt[i],2.6,i*5,true));
+  bewegt(ks.concat([ball]),t=>{ks.forEach((k,i)=>ls[i](t));ball.position.set(ks[0].position.x+Math.sin(ks[0].rotation.y)*.7,.3+Math.abs(Math.sin(t*6))*.9,ks[0].position.z+Math.cos(ks[0].rotation.y)*.7)},cx,cz,100)})();
+/* ---------- Kiosk mit Taxi-Stand ---------- */
+(function(){const cx=-72,cz=104,g=grp(cx,0,cz);box(6,3,3.6,K.rot,0,1.5,0,g,true);box(7.2,.3,4.4,K.dunkel,0,3.15,.4,g);box(4.2,1.2,.2,K.dunkel,0,1.9,1.82,g);box(4.6,.15,.7,K.holz,0,1.25,2.1,g);kBox(cx,cz,6,3.6);
+  for(let i=0;i<8;i++){box(.42,.58,.04,BUNT[i],-2.1+i*.6,1.62,2.3,g).rotation.x=-.3}[-1,1].forEach(s=>box(.12,.6,.12,K.holz,s*2.5,1.55,2.4,g));
+  const ag=grp(cx,0,cz+1.9);markise(ag,6.4,3,K.gelb,K.weiss);const vb=box(.8,.7,.5,K.blau,.4,1.65,1.55,g);sph(.28,HAUT[2],.4,2.3,1.55,g);sph(.29,K.dunkel,.4,2.38,1.5,g,1,.7,1);
+  const zt=box(2.4,.12,1.6,K.weiss,0,4,0,g);zt.rotation.x=-.35;[-.3,0,.3].forEach(o=>box(1.9,.05,.08,K.grau,0,4.03+o*.2,o*1.1,g).rotation.x=-.35);
+  [[-4.4,1.5],[4.4,1.5]].forEach((p,i)=>{const r=grp(cx+p[0],0,cz+p[1]);box(1.2,1.8,.5,K.holz,0,.9,0,r,true);for(let k=0;k<3;k++)for(let m=0;m<3;m++)box(.3,.4,.06,BUNT[(k*3+m+i*2)%8],-.35+m*.35,.7+k*.5,.3,r);kreis(cx+p[0],cz+p[1],.9)});
+  const sp=grp(cx+3.4,0,cz+3.6);cyl(.06,1.6,K.grau,0,.8,0,sp);const spc=grp(0,1.5,0,sp);for(let i=0;i<4;i++){const a=box(.5,.7,.05,BUNT[(i*2+1)%8],0,0,0,spc);a.position.set(Math.cos(i*1.57)*.5,0,Math.sin(i*1.57)*.5);a.rotation.y=-i*1.57+1.57}bewegt(spc,t=>{spc.rotation.y=t*.5},cx,cz,60);kreis(cx+3.4,cz+3.6,.7);
+  qb(18,.05,7,K.asph,-72,.075,117);qb(18,.06,.3,K.gelb,-72,.1,113.6);for(let i=0;i<5;i++)qb(.1,.03,4.6,K.weiss,-79.5+i*3.8,.12,116.4);
+  [-77.6,-70].forEach((x,i)=>{const t=parken(K.gelb,x,116.4,Math.PI/2);box(1,.36,.56,K.weiss,-.3,2.2,0,t);const lf=new THREE.Mesh(gBox,MGELB);lf.scale.set(.9,.14,.6);lf.position.set(-.3,2.42,0);t.add(lf);for(let k=0;k<4;k++)box(.1,.38,.58,K.schwarz,-.6+k*.2,2.2,0,t);for(let k=0;k<10;k++)for(let m=0;m<2;m++)[-1,1].forEach(q=>box(.4,.2,.04,(k+m)%2?K.schwarz:K.weiss,-1.9+k*.42,.78+m*.2,q*1.02,t));const d=kleinKind(scene,K.blau,HAUT[i+1]);d.position.set(x+(i?-2.6:2.8),0,i?114.8:118);d.rotation.y=i?-.5:2.5});
+  const pa=kleinKind(scene,K.lila,HAUT[0]);pa.position.set(-80.5,0,114.6);qb(.7,.9,.4,K.rot,-79.6,.55,114.6);qb(.1,.5,.1,K.grau,-79.6,1.2,114.6);
+  [0,1].forEach(i=>{const k=kleinKind(scene,BUNT[i*4+1],HAUT[i+2]);k.position.set(cx-1+i*1.6,0,cz+4.2);k.rotation.y=Math.PI});
+  bank(-64,108,-Math.PI/2);eimer(-64.2,105);laterne(-80,108);laterne(-62,114);baeumchen(-84,100,1.1);baeumchen(-60,100,1);beet(-80,102,3,10);beet(-65,121,3,10);radStaender(-82,111,2,Math.PI/2)})();
+/* ========== Dichte-Runde: karge Orte füllen ========== */
+/* ---------- Bushaltestelle: Wartende, Fahrgäste ---------- */
+(function(){const x=-45;
+  [[-47.4,92.2,K.rot,0],[-45.6,91.8,K.blau,1],[-43.7,92.4,K.gruen,2],[-41.9,92,K.orange,3]].forEach(p=>{const k=kleinKind(scene,p[2],HAUT[p[3]]);k.position.set(p[0],0,p[1]);k.rotation.y=Math.PI+(p[3]-1.5)*.15});
+  const si=kleinKind(scene,K.lila,HAUT[1]);si.position.set(-45.9,.38,93.7);const su=kleinKind(scene,K.gelb,HAUT[2]);su.position.set(-44.2,.38,93.7);
+    qb(.8,1.8,.6,K.blau,-37.5,.9,93.6,scene,true);qb(.5,.4,.08,K.himmel,-37.5,1.4,93.28);qb(.4,.1,.08,K.gelb,-37.5,.95,93.28);kreis(-37.5,93.6,.7);
+  radStaender(-52,98,3,0);const hu=hund(scene,K.holz,K.sand,K.dunkel,true);hu.position.set(-41,0,96.5);hu.rotation.y=-.6;hu.scale.setScalar(.9);const bs=kleinKind(scene,K.tuerkis,HAUT[3]);bs.position.set(-39.8,0,96.8);bs.scale.setScalar(1.12);
+  const kf=qb(.5,.55,.3,K.gold,-47,.45,95.2);const kg=kleinKind(scene,K.rosa,HAUT[0]);kg.position.set(-48.2,0,95.4);
+  const fk=kleinKind(scene,K.gelb,HAUT[1]);bewegt2(fk,laufPfad(fk,[[-41,100],[-34,100],[-34,104],[-41,104]],1.7,0,true),80);eimer(-50,92);laterne(-38,100)})();
+/* ---------- Schwimmbad: Schwimmer, Leinen, Liegen, Planschbecken, Bademeister ---------- */
+function schwimmer(par,hz,kappe,col){const g=grp(0,0,0,par);g.userData.keep=1;sph(.3,hz,0,.55,.1,g);sph(.32,kappe,0,.65,.05,g,1,.6,1);box(.55,.2,.9,col,0,.42,-.55,g);const a1=grp(.38,.5,.1,g),a2=grp(-.38,.5,.1,g);box(.14,.1,.7,hz,0,0,.3,a1);box(.14,.1,.7,hz,0,0,.3,a2);g.userData.a=[a1,a2];return g}
+(function(){const cx=-112,cz=-80;
+  [-1.4,1.4].forEach(o=>{for(let i=0;i<16;i++)qs(.13,i%2?K.rot:K.weiss,cx-8+i*1.07,.54,cz+o)});
+  [[-2.8,0,K.gelb],[0,7,K.rot],[2.8,12,K.lila]].forEach((l,i)=>{const w=schwimmer(scene,HAUT[i],BUNT[(i*3+1)%8],l[2]);const L=laufPfad(w,[[cx-8,cz+l[0]],[cx+8,cz+l[0]]],1.6+i*.2,l[1]);bewegt2(w,t=>{L(t);w.position.y=.1+Math.sin(t*2+i)*.03;w.userData.a.forEach((a,k)=>{a.rotation.x=Math.sin(t*4+k*3.1)*1.1})},90)});
+  const bb=grp(0,0,0,scene);sph(.4,K.rot,0,0,0,bb);sph(.41,K.weiss,0,0,0,bb,1,.3,1);bewegt2(bb,t=>{bb.position.set(cx+Math.sin(t*.35)*6.5,.7+Math.abs(Math.sin(t*2.5))*.12,cz+Math.cos(t*.27)*2.2);bb.rotation.y=t},80);
+  [0,1,3].forEach((i,k)=>{const x=cx-8+i*2.4,su=BUNT[(k*3+2)%8];qb(.35,.2,.7,HAUT[k],x,.64,-71.1);qb(.45,.22,.7,su,x,.66,-70.4);sph(.2,HAUT[k],x,.74,-69.8,scene);sph(.21,K.dunkel,x,.8,-69.7,scene,1,.7,1)});
+  schirm(cx-12,-66,K.gruen);schirm(cx-1,-66,K.orange);schirm(cx+9,-68,K.lila);[[cx-12,-66],[cx-1,-66],[cx+9,-68]].forEach(p=>kreis(p[0],p[1],1.2));
+  [[-124,-65,K.rot],[-107,-65.5,K.blau],[-127,-69,K.gelb],[-104,-69,K.gruen]].forEach((t,i)=>{qb(1.1,.04,2,t[2],t[0],.13,t[1]).rotation.y=i*.5;qs(.22,BUNT[i*2],t[0]+1.1,.25,t[1]+.6)});
+  const px=-97,pz=-79;qc(3.3,.45,K.tuerkis,px,.22,pz);qc(2.95,.1,WASSER,px,.45,pz);kreis(px,pz,3.4);qs(.2,K.gelb,px+.5,.6,pz,scene,1.2,.8,1);qs(.12,K.gelb,px+.8,.72,pz);
+  [0,1].forEach(i=>{const k=kleinKind(scene,BUNT[i*3+1],HAUT[i]);k.position.set(px-1+i*1.4,.2,pz+.5);k.scale.set(.8,.55,.8)});const pb=qs(.18,K.rot,px,.6,pz-1);bewegt(pb,t=>{pb.position.set(px+Math.cos(t*.6)*1.4,.6+Math.abs(Math.sin(t*3))*.15,pz+Math.sin(t*.6)*1.4)},px,pz,60);
+  const lx=-100,lz=-72,lg=grp(lx,0,lz);[[-.8,-.8],[.8,-.8],[-.8,.8],[.8,.8]].forEach(p=>box(.12,2.4,.12,K.weiss,p[0],1.2,p[1],lg,true));box(2,.12,2,K.holz,0,2.4,0,lg);box(2,.9,.1,K.weiss,0,2.9,-.95,lg);box(2.5,.12,2.5,K.rot,0,3.5,0,lg);for(let i=0;i<5;i++)box(.1,.12,.6,K.holz,.8,.4+i*.5,1.1,lg);
+  const bm=kleinKind(lg,K.rot,HAUT[1]);bm.position.set(0,2.46,0);const bo=new THREE.Mesh(new THREE.TorusGeometry(.35,.1,6,12),mat(K.rot));bo.position.set(1.05,1.4,0);bo.rotation.y=Math.PI/2;lg.add(bo);kreis(lx,lz,1.3);
+  qc(.06,2.4,K.grau,-126,1.2,-73);qs(.2,K.grau,-125.7,2.45,-73,scene,1.5,.5,1);qb(1.2,.06,1.2,K.hellgrau,-126,.1,-73);kreis(-126,-73,.4);eimer(-108,-64);baeumchen(-128,-80,1.1)})();
+/* ---------- Hafen: Container, Lastwagen, Gabelstapler, Boote, Möwen ---------- */
+function lkw(par,fa,cc){const g=grp(0,0,0,par);box(8.2,.7,2.5,K.schwarz,0,.9,0,g);box(2.2,2.2,2.5,fa,3.2,2.1,0,g,true);box(.1,.9,2.2,K.himmel,4.32,2.5,0,g);box(5.8,2.6,2.5,cc,-1.3,2.5,0,g,true);for(let i=0;i<8;i++)box(.1,2.4,2.55,K.weiss,-3.6+i*.66,2.5,0,g);rad4(g,[-3.4,-2.1,2.8],.6,1.3);lichter(g,4.32,1.2,.8);return g}
+function moewe(par){const g=grp(0,0,0,par);g.userData.keep=1;sph(.35,K.weiss,0,0,0,g,1.5,.7,.7);sph(.2,K.weiss,.5,.12,0,g);cone(.07,.25,K.orange,.78,.1,0,g).rotation.z=-Math.PI/2;box(.4,.08,.3,K.hellgrau,-.6,.05,0,g);const fl=[-1,1].map(s=>{const w=grp(0,.1,s*.15,g);box(.5,.06,1.1,K.hellgrau,0,0,s*.55,w);return w});g.userData.fl=fl;return g}
+(function(){
+  [[128,-91.5,2],[134,-91.5,3],[128,-87.5,3],[134,-87.5,1],[108,-87,2]].forEach((s,i)=>{for(let k=0;k<s[2];k++){const c=BUNT[(i*3+k*2+1)%8];qb(5.8,2.4,2.4,c,s[0],1.3+k*2.4,s[1],scene,k===0);for(let r=0;r<7;r++)qb(.12,2.3,2.5,K.weiss,s[0]-2.6+r*.87,1.3+k*2.4,s[1])}kBox(s[0],s[1],5.8,2.4)});
+  const t=lkw(scene,K.blau,K.orange);t.position.set(144,0,-91.6);kBox(144,-91.6,8.8,2.6);
+  const fg=grp(126,0,-84);fg.rotation.y=-.5;box(2.2,1,1.4,K.gelb,0,.9,0,fg,true);box(.1,3,.1,K.dunkel,1.2,1.7,.4,fg);box(.1,3,.1,K.dunkel,1.2,1.7,-.4,fg);box(.7,.08,.12,K.grau,1.5,.3,.4,fg);box(.7,.08,.12,K.grau,1.5,.3,-.4,fg);box(.1,1.3,1.4,K.dunkel,-.5,1.9,0,fg);[[.8,.6],[.8,-.6],[-.8,.6],[-.8,-.6]].forEach(p=>cyl(.3,.25,K.schwarz,p[0],.3,p[1],fg).rotation.x=Math.PI/2);const fk=kleinKind(fg,K.orange,HAUT[0]);fk.position.set(-.4,1.2,0);fk.scale.setScalar(.7);box(.8,.7,.8,K.holz,1.9,.7,0,fg);kreis(126,-84,1.5);
+  for(let i=0;i<6;i++){qb(1.1,.8,1.1,K.holz,111+(i%3)*1.15,.4+Math.floor(i/3)*.8,-94.6);}kreis(112,-94.6,1.8);
+  [[150,-90.5,K.rot],[151,-89.5,K.blau],[150.6,-91.7,K.gruen]].forEach(b=>{qc(.4,.9,b[2],b[0],.45,b[1]);qc(.42,.08,K.dunkel,b[0],.92,b[1])});kreis(150.7,-90.7,1.3);
+  const fi=kleinKind(scene,K.gruen,HAUT[2]);fi.position.set(106.2,.28,-96.2);fi.rotation.y=Math.PI;stab(scene,106.5,1.4,-96.2,110.8,3.2,-99.4,.06,K.holz);stab(scene,110.8,3.2,-99.4,110.8,.4,-99.6,.02,K.weiss);const fb=qs(.16,K.rot,110.8,.3,-99.6);bewegt(fb,t=>{fb.position.y=.3+Math.sin(t*1.8)*.05},110,-99,70);
+  [134,139].forEach((x,i)=>{const g=grp(x,0,-99.9);box(3.2,.5,1.1,i?K.rot:K.gruen,0,.25,0,g);box(.8,.5,.8,i?K.rot:K.gruen,1.7,.25,0,g).rotation.y=Math.PI/4;box(1,.8,.9,K.weiss,-.5,.8,0,g);box(1.1,.08,1,K.dunkel,-.5,1.25,0,g);bewegt(g,t=>{g.position.y=Math.sin(t*1.5+x)*.06;g.rotation.z=Math.sin(t*1.1+x)*.05},x,-100,90)});
+  [0,1,2].forEach(i=>{const m=moewe(scene);bewegt2(m,t=>{const a=t*(.35+i*.07)+i*2.1,r=13+i*5;m.position.set(130+Math.cos(a)*r,9+i*1.6+Math.sin(t*1.2+i)*.8,-92+Math.sin(a)*r*.6);m.rotation.y=Math.atan2(-Math.cos(a)*r*.6,-Math.sin(a)*r);m.userData.fl.forEach((w,k)=>{w.rotation.x=(k?1:-1)*Math.sin(t*9+i)*.5})},120)});
+  const mw=moewe(scene);mw.position.set(122,3.6,-98.5);mw.userData.fl.forEach(w=>{w.rotation.x=0});mw.scale.setScalar(.8)})();
+/* ---------- Kino-Umfeld: Popcorn-Wagen, Schaukästen, Teppich, Scheinwerfer ---------- */
+(function(){const cx=100;
+  const pw=grp(cx-5,0,-53);pw.rotation.y=.3;box(2.2,1,1.4,K.rot,0,.95,0,pw,true);box(2,1.1,1.2,K.himmel,0,2,0,pw);box(2.3,.14,1.5,K.weiss,0,2.62,0,pw);[-1,1].forEach(s=>cyl(.4,.2,K.schwarz,s*.8,.4,.8,pw).rotation.x=Math.PI/2);[-1,1].forEach(s=>cyl(.4,.2,K.schwarz,s*.8,.4,-.8,pw).rotation.x=Math.PI/2);box(.1,.1,1.4,K.grau,-1.5,.9,0,pw);
+  for(let i=0;i<14;i++)sph(.2,i%2?K.weiss:K.gelb,Math.cos(i*2.4)*.7,2.85+Math.floor(i/5)*.16,Math.sin(i*2.4)*.35,pw);box(2.6,.1,1.8,K.rot,0,3.6,0,pw);[-1,1].forEach(s=>[-1,1].forEach(q=>cyl(.05,1,K.grau,s*1.2,3.1,q*.8,pw)));kreis(cx-5,-53,1.4);
+  const pp=[0,1,2].map(i=>sph(.15,K.weiss,0,0,0,scene));bewegt(pp,t=>{pp.forEach((s,i)=>{const f=(t*.7+i/3)%1;s.position.set(cx-5+(i-1)*.5,2.9+Math.sin(f*Math.PI)*1.1,-53)})},cx-5,-53,60);
+  const vk=kleinKind(scene,K.gelb,HAUT[2]);vk.position.set(cx-3.4,0,-52.2);vk.rotation.y=2.6;
+  [[-1,K.blau,K.gelb],[1,K.rot,K.weiss]].forEach((v,i)=>{const x=cx+v[0]*4.4,g=grp(x,0,-56.4);[-.8,.8].forEach(o=>cyl(.07,.9,K.grau,o,.45,0,g));box(2.2,3.2,.3,K.dunkel,0,2.4,0,g,true);box(1.9,2.8,.08,v[1],0,2.4,.17,g);
+    if(i===0){sph(.5,v[2],-.3,3.1,.22,g,1,1,.1);sph(1.2,K.gruen,.3,1.5,.2,g,1.2,.55,.1)}else{box(.9,.9,.08,v[2],0,2.6,.22,g);box(.9,.9,.08,v[2],0,2.6,.23,g).rotation.z=.785;box(1.6,.3,.08,K.gold,0,1.6,.22,g)}kreis(x,-56.4,1.3)});
+  for(let i=0;i<4;i++)[-1,1].forEach(s=>{const z=-61+i*2.7;qc(.07,1,K.gold,cx+s*1.8,.5,z);if(i)qb(.04,.04,2.7,K.rot,cx+s*1.8,.85,z+1.35)});
+  for(let i=0;i<7;i++)[-1,1].forEach(s=>{const x=cx+s*2.6,z=-61.2+i*1.15;qb(.8,.03,.8,K.gold,x,.14,z);qb(.8,.03,.8,K.gold,x,.15,z).rotation.y=.785});
+  [0,1,2,3].forEach(i=>{const k=kleinKind(scene,BUNT[(i*3+1)%8],HAUT[i%4]);k.position.set(cx+(i%2?.4:-.4),0,-55.6+i*1.5);k.rotation.y=Math.PI});
+  [-1,1].forEach((s,i)=>{const sg=grp(cx+s*4,9.2,-66);const b=new THREE.Mesh(gCone,new THREE.MeshBasicMaterial({color:0xfff2b0,transparent:true,opacity:.16,depthWrite:false,blending:THREE.AdditiveBlending}));b.scale.set(3,22,3);b.position.set(0,11,0);sg.add(b);bewegt(sg,t=>{sg.rotation.z=s*(.35+Math.sin(t*.9+i*2)*.3);sg.rotation.x=Math.sin(t*.7+i)*.25},cx,-66,120);box(.8,.5,.8,K.dunkel,cx+s*4,9.35,-66,scene)});
+})();
+/* ---------- Fahrradstraße: mehr Radfahrer und Ständer ---------- */
+(function(){[4,5,6,7].forEach(i=>{const g=radler(scene,BUNT[(i*3+2)%8]),v=4+i*.45,lo=-146,hi=-68;bewegt2(g,t=>{const u=(t*v/(hi-lo)+i*.31)%2,f=u<1?u:2-u;g.position.set(lo+f*(hi-lo),0,u<1?(i%2?85.4:86.6):(i%2?81.4:82.6));g.rotation.y=u<1?0:Math.PI;g.userData.anim(t)},70)});
+  radStaender(-141,77,4,0);radStaender(-90,77,3,0);radStaender(-104,93,3,0);beet(-132,76,3,10);beet(-84,76,3,10)})();
 /* ---------- Straßenmöbel: Laternen, Bänke, Mülleimer, Fahnen, Wegweiser ---------- */
 (function(){
   [-58,-28,24,50,100,130,160,190].forEach(x=>laterne(x,77.4));[-62,28,100,130,160,190].forEach(x=>laterne(x,90.8));[-190,-160,-130,-30,30,70,100].forEach(x=>laterne(x,-53.6));[-190,-130,-30,30,100].forEach(x=>laterne(x,-40.4));
@@ -487,17 +724,68 @@ for(let x=-216;x<=216;x+=6){if(Math.abs(x)<12||Math.abs(x+30)<12)continue;kreis(
   wegweiserN(-14,94,['Fahrradstraße'],0);wegweiserN(14,64,['Spielplatz','Wohnviertel'],0);wegweiserN(-6.8,-150,['Ausgang'],0)})();
 /* ---------- Bäume (instanziert) ---------- */
 const baumListe=[];
-function weitWeg(x,z){if(Math.abs(x)<8&&z>TORZ-2&&z<172)return true;if(Math.abs(z-84)<9&&x>-155)return true;if(Math.abs(z+47)<9&&x<126)return true;if(Math.abs(x+82)<9&&z>-100&&z<88)return true;if(Math.abs(x-76)<9&&z>-100&&z<88)return true;if(z>-116&&z<-90)return true;if(Math.abs(z-134)<7&&x<-30)return true;
+function weitWeg(x,z){if(Math.abs(x)<8&&z>TORZ-2&&z<172)return true;if(Math.abs(z-84)<9&&x>-155)return true;if(Math.abs(z+47)<9&&x<126)return true;if(Math.abs(x+82)<9&&z>-100&&z<88)return true;if(Math.abs(x-76)<9&&z>-100&&z<88)return true;if(z>-116&&z<-90)return true;if(Math.abs(z-134)<7&&x<-30)return true;if(z>30&&z<44&&x>86)return true;
   for(const e of EXTRAZONEN){if(e.name==='Straße')continue;if(Math.hypot(x-e.x,z-e.z)<e.r+6)return true}if(z<TORZ+2&&Math.hypot(x-FEST.x,z-FEST.z)<32)return true;if(Math.abs(x)<6&&z<TORZ)return true;return false}
 for(let i=0;i<340;i++){const x=GRENZE.x0+8+rnd()*(GRENZE.x1-GRENZE.x0-16),z=GRENZE.z0+8+rnd()*(GRENZE.z1-GRENZE.z0-16);if(!weitWeg(x,z))baumListe.push({x,z,s:.8+rnd()*.5})}
 for(let x=GRENZE.x0;x<=GRENZE.x1;x+=11){if(Math.abs(x)>8)baumListe.push({x,z:GRENZE.z1,s:1.2});baumListe.push({x,z:GRENZE.z0,s:1.2});if(Math.abs(x)>3.5)baumListe.push({x,z:TORZ,s:1})}
 for(let z=GRENZE.z0;z<=GRENZE.z1;z+=11){baumListe.push({x:GRENZE.x0,z,s:1.2});baumListe.push({x:GRENZE.x1,z,s:1.2})}
+/* ---------- Alleen (Bäume entlang von Straßen und Ufer, instanziert) ---------- */
+[-136,-128,-120,-112,-98].forEach(x=>baumListe.push({x,z:94.5,s:1}));
+for(let x=95;x<=203;x+=10)baumListe.push({x,z:93.5,s:1.05});
+for(let x=92;x<=148;x+=11)baumListe.push({x,z:76,s:1});
+for(let z=76;z>=48;z-=7)baumListe.push({x:-94,z,s:1});
+[-196,-184,-172,-160,-148,-136,-88,-76,-64,-52,18,30,42,54,66,78,90,102,114].forEach(x=>baumListe.push({x,z:-114.5,s:1.05}));
 const BAUMTEIL=[[gCyl,0x7a5230,0,1.3,0,.36,2.6,.36],[gSph,0x4aa84e,0,3.9,0,2.1,1.8,2.1],[gSph,0x5cba5c,1.2,3.4,.6,1.5,1.3,1.5],[gSph,0x3f9a46,-1.2,3.5,-.5,1.6,1.4,1.6]];
 (function(){const n=baumListe.length;
   const ms=BAUMTEIL.map(m=>{const im=new THREE.InstancedMesh(m[0],mat(m[1]),n);im.frustumCulled=false;scene.add(im);return im});ms[1].castShadow=true;
   const M=new THREE.Matrix4(),Q=new THREE.Quaternion(),P=new THREE.Vector3(),SC=new THREE.Vector3();
   baumListe.forEach((t,i)=>{const s=t.s;BAUMTEIL.forEach((m,k)=>{P.set(t.x+m[2]*s,m[3]*s,t.z+m[4]*s);SC.set(m[5]*s,m[6]*s,m[7]*s);M.compose(P,Q,SC);ms[k].setMatrixAt(i,M)});kreis(t.x,t.z,.9*s)});
   ms.forEach(m=>{m.instanceMatrix.needsUpdate=true})})();
+/* ========== Dichte-Runde: Straßenbahn, Vorgärten, Landschaft, Bewegung ========== */
+function strassenbahn(par){const g=grp(0,0,0,par);g.userData.keep=1;g.userData.vm=1;
+  [-3.4,3.4].forEach(sx=>{box(6.2,.55,2.5,K.dunkel,sx,.75,0,g);box(6.2,1.9,2.5,K.rot,sx,1.95,0,g);box(6.25,.25,2.55,K.weiss,sx,1.35,0,g);box(6,.8,2.54,K.himmel,sx,2.4,0,g);box(6.3,.2,2.6,K.weiss,sx,3.05,0,g);box(1.1,1.7,.06,K.dunkel,sx*.5,1.85,1.28,g);box(1.1,1.7,.06,K.dunkel,sx*.5,1.85,-1.28,g)});
+  box(1.6,2.2,2.2,K.dunkel,0,1.9,0,g);[-5.2,0,5.2].forEach(x=>[-1,1].forEach(s=>cyl(.55,.3,K.schwarz,x,.55,s*1.0,g).rotation.x=Math.PI/2));
+  [-1,1].forEach(s=>{box(.1,1,2.2,K.himmel,s*6.55,2.4,0,g);[-.8,.8].forEach(q=>box(.1,.3,.4,K.gelb,s*6.55,1.2,q,g))});
+  box(1.4,.1,1.2,K.dunkel,-1.5,3.2,0,g);stab(g,-2.2,3.2,0,-1.5,5.35,0,.1,K.dunkel,.1,false);stab(g,-.8,3.2,0,-1.5,5.35,0,.1,K.dunkel,.1,false);box(.15,.08,1.5,K.grau,-1.5,5.4,0,g);return g}
+(function(){const z0=36.5,x0=92,x1=202;
+  qb(x1-x0+4,.08,3.4,0x8c8a85,(x0+x1)/2,.04,z0);[-.72,.72].forEach(s=>qb(x1-x0+4,.2,.14,K.grau,(x0+x1)/2,.18,z0+s));for(let x=x0-1;x<=x1+1;x+=1.8)SCHWELLEN.push([x,.14,z0,.5,.12,2.8]);
+  [x0-2.3,x1+2.3].forEach(x=>{qb(.5,.7,2.4,K.rot,x,.45,z0);kreis(x,z0,1.1)});
+  for(let i=0;i<=5;i++){const x=x0+i*22;qc(.12,5.6,K.dunkel,x,2.8,z0+2.4);qb(.2,.2,2.6,K.dunkel,x,5.6,z0+1.2);kreis(x,z0+2.4,.3)}qb(x1-x0+4,.05,.05,K.schwarz,(x0+x1)/2,5.5,z0);
+  [126,172].forEach((px,i)=>{qb(14,.3,2.6,K.hellgrau,px,.15,z0-3.2);qb(14,.04,.3,K.gelb,px,.32,z0-2.1);[-1,1].forEach(s=>[-1,1].forEach(q=>{qc(.07,3.2,K.dunkel,px+s*3.6,1.6,z0-3.2+q*1.1);kreis(px+s*3.6,z0-3.2+q*1.1,.2)}));qb(8,.2,2.6,K.blau,px,3.3,z0-3.2);qb(3,.15,.7,K.holz,px+1,.7,z0-4.1);qb(.15,.6,.6,K.dunkel,px-.4,.45,z0-4.1);qb(.15,.6,.6,K.dunkel,px+2.4,.45,z0-4.1);laterne(px+6,z0-4.2);bank(px-4,z0-4.4,0);
+    [0,1,2].forEach(k=>{const w=kleinKind(scene,BUNT[(k*3+i*2+1)%8],HAUT[(k+i)%4]);w.position.set(px-1.5+k*1.2+i,.3,z0-2.9);w.rotation.y=0})});
+  sperre(x0,z0,x1,z0,3.5);
+  const tr=strassenbahn(scene),st=[100,126,172,198,172,126],ln=[26,46,26,26,46,26],P=3,seg=[];let T=0;st.forEach((a,i)=>{const b=st[(i+1)%st.length],d=ln[i]/7;seg.push({t0:T+P,t1:T+P+d,a,b});T+=P+d});
+  bewegt2(tr,t=>{const u=t%T;let x=st[0];for(const s of seg){if(u>=s.t0&&u<s.t1){x=s.a+(s.b-s.a)*glatt((u-s.t0)/(s.t1-s.t0));break}else if(u>=s.t1)x=s.b}tr.position.set(x,0,z0)},120)})();
+/* ---------- Vorgärten im Wohnviertel: Zäune, Hecken, Blumenkästen (instanziert) ---------- */
+(function(){const P=[],R=[],H=[],FB=[],FL=[[],[],[],[]];
+  const zaunSeg=(x1,x2,z)=>{const l=Math.abs(x2-x1),n=Math.max(1,Math.round(l/.9));for(let i=0;i<=n;i++)P.push([x1+(x2-x1)*i/n,.45,z,.12,.9,.12]);R.push([(x1+x2)/2,.7,z,l,.08,.06]);R.push([(x1+x2)/2,.3,z,l,.08,.06]);sperrLinie(x1,z,x2,z,.15)};
+  const kaesten=(x,y,z)=>{FB.push([x,y,z,1.4,.3,.4]);for(let k=0;k<5;k++)FL[(k+Math.round(x))&3].push([x-.55+k*.27,y+.28,z,.26,.26,.26])};
+  [157.25,163.75,170.25,176.75].forEach((x,i)=>{const zf=49.57;fen(x-2.35,2,zf,1.3,1.5);fen(x+2.35,2,zf,1.3,1.5);kaesten(x-2.35,1.1,zf+.25);kaesten(x+2.35,1.1,zf+.25);kaesten(x-1.6,4.75,zf+.25);kaesten(x+1.6,4.75,zf+.25);
+    zaunSeg(x-3.2,x-1.1,54.2);zaunSeg(x+1.1,x+3.2,54.2);qb(1.2,.05,4.5,K.platz,x,.1,51.9);H.push([x-3,.55,52,.7,1.1,.7]);H.push([x+3,.55,52,.7,1.1,.7]);kreis(x-3,52,.5);kreis(x+3,52,.5)});
+  [158,170,182].forEach((x,i)=>{const zf=73.07;fen(x-2.1,2.1,zf,1.3,1.5);fen(x+2.1,2.1,zf,1.3,1.5);kaesten(x-2.1,1.2,zf+.25);kaesten(x+2.1,1.2,zf+.25);zaunSeg(x-3,x-1.1,76.2);zaunSeg(x+1.1,x+3,76.2);qb(1.2,.05,3.1,K.platz,x,.1,74.7);H.push([x-3,.55,75.2,.7,1.1,.7]);H.push([x+3,.55,75.2,.7,1.1,.7]);kreis(x-3,75.2,.5);kreis(x+3,75.2,.5)});
+  instanz(scene,gBox,K.weiss,P);instanz(scene,gBox,K.weiss,R);instanz(scene,gBox,K.laub,H);instanz(scene,gBox,K.holz,FB);instanz(scene,gSph,K.rot,FL[0]);instanz(scene,gSph,K.gelb,FL[1]);instanz(scene,gSph,K.rosa,FL[2]);instanz(scene,gSph,K.lila,FL[3])})();
+/* ---------- Joggerinnen und Jogger ---------- */
+(function(){const j1=figur(scene,K.orange,K.dunkel,HAUT[1],K.schwarz),j2=figur(scene,K.tuerkis,K.blau,HAUT[0],K.holz),j3=figur(scene,K.rosa,K.dunkel,HAUT[2],0xe8c24a);
+  bewegt2(j1,laufPfad(j1,[[-80,-93.4],[-40,-93.4]],3.3,0),65);
+  const el=[];for(let i=0;i<20;i++){const a=i/20*6.283;el.push([-52+Math.cos(a)*17,-70+Math.sin(a)*12])}bewegt2(j2,laufPfad(j2,el,3.1,0),65);
+  bewegt2(j3,laufPfad(j3,[[-3.5,62],[-3.5,-8],[3.5,-8],[3.5,62]],2.9,12),65);
+})();
+/* ---------- Drachen am Himmel ---------- */
+(function(){[[126,58,118,52,14,K.rot,K.gelb],[-36,-84,-46,-98,16,K.gruen,K.orange],[198,62,190,50,15,K.blau,K.rosa]].forEach((d,i)=>{const kid=kleinKind(scene,BUNT[i*3+1],HAUT[i]);kid.position.set(d[0],0,d[1]);kid.rotation.y=Math.PI;
+    const g=grp(0,0,0,scene);box(1.5,1.5,.05,d[5],0,0,0,g).rotation.z=Math.PI/4;box(.1,2.1,.07,d[6],0,0,.03,g);box(2.1,.1,.07,d[6],0,0,.03,g);const sc=[0,1,2,3].map(k=>{const b=box(.35,.25,.05,BUNT[(k*2+i)%8],0,-1.4-k*.6,0,g);return b});
+    const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(6),3));const ln=new THREE.Line(geo,new THREE.LineBasicMaterial({color:0xffffff}));ln.frustumCulled=false;scene.add(ln);
+    bewegt2(g,t=>{const a=t*.4+i*2,kx=d[2]+Math.sin(a)*6,kz=d[3]+Math.cos(a*.8)*4,ky=d[4]+Math.sin(t*.9+i)*1.4;g.position.set(kx,ky,kz);g.rotation.z=Math.sin(t*.8+i)*.25;g.rotation.y=Math.sin(a)*.5;sc.forEach((b,k)=>{b.position.x=Math.sin(t*3+k*.9)*.3});
+      const p=geo.attributes.position.array;p[0]=d[0]+.4;p[1]=1.5;p[2]=d[1];p[3]=kx;p[4]=ky-.8;p[5]=kz;geo.attributes.position.needsUpdate=true;ln.visible=g.visible},120)})})();
+/* ---------- Hecken, Büsche, Gras und Blumen (instanziert) ---------- */
+(function(){const nahe=(x,z,m)=>{if(Math.abs(x)<8&&z>TORZ-2&&z<172)return true;if(Math.abs(z-84)<9&&x>-155)return true;if(Math.abs(z+47)<9&&x<126)return true;if(Math.abs(x+82)<9&&z>-100&&z<88)return true;if(Math.abs(x-76)<9&&z>-100&&z<88)return true;if(z>-116&&z<-90)return true;if(Math.abs(z-134)<7&&x<-30)return true;if(z>30&&z<44&&x>86)return true;
+    for(const e of EXTRAZONEN){if(e.name==='Straße')continue;if(Math.hypot(x-e.x,z-e.z)<e.r+m)return true}for(const c of colliders){if(Math.hypot(x-c.x,z-c.z)<c.r+m*.4)return true}if(z<TORZ+2&&Math.hypot(x-FEST.x,z-FEST.z)<32)return true;if(Math.abs(x)<6&&z<TORZ)return true;return false};
+  const BU=[[],[]],GR=[[],[]],ST=[],BL=[[],[],[],[]];const X0=GRENZE.x0+6,W=GRENZE.x1-GRENZE.x0-12,Z0=GRENZE.z0+6,Hh=GRENZE.z1-GRENZE.z0-12;
+  for(let i=0;i<190;i++){const x=X0+rnd()*W,z=Z0+rnd()*Hh;if(nahe(x,z,2))continue;const s=.7+rnd()*.6;BU[i&1].push([x,.5*s,z,1.3*s,.95*s,1.2*s]);kreis(x,z,.8*s)}
+  for(let i=0;i<620;i++){const x=X0+rnd()*W,z=Z0+rnd()*Hh;if(nahe(x,z,0))continue;for(let k=0;k<3;k++){const h=.5+rnd()*.5;GR[(i+k)&1].push([x+(rnd()-.5)*.7,h/2,z+(rnd()-.5)*.7,.14,h,.14])}}
+  for(let i=0;i<160;i++){const x=X0+rnd()*W,z=Z0+rnd()*Hh;if(nahe(x,z,0))continue;const gx=x,gz=z;for(let k=0;k<4;k++){const px=gx+(rnd()-.5)*1.6,pz=gz+(rnd()-.5)*1.6;ST.push([px,.2,pz,.03,.4,.03]);BL[(i+k)&3].push([px,.45,pz,.16,.16,.16])}}
+  instanz(scene,gSph,K.laub,BU[0]);instanz(scene,gSph,0x2f8a3e,BU[1]);instanz(scene,gCone,0x3f9a46,GR[0]);instanz(scene,gCone,0x5cba5c,GR[1]);instanz(scene,gCyl,K.laub,ST);[K.rot,K.gelb,K.rosa,K.lila].forEach((c,i)=>instanz(scene,gSph,c,BL[i]));
+  /* Hecken an der Zufahrt zum Ausgang */
+  [-1,1].forEach(s=>{const H=[];for(let z=-124;z>=-152;z-=2.2)H.push([s*8.4,.55,z,1.1,1.1,2.4]);instanz(scene,gBox,K.laub,H);sperrLinie(s*8.4,-123,s*8.4,-153,.6)})})();
 /* ---------- Ausgang (Tor wird geöffnet) ---------- */
 ausgang=(function(){const g=grp(0,0,TORZ);g.userData.keep=1;[-1,1].forEach(s=>{for(let i=0;i<4;i++)box(1.7,1.7,1.7,i%2?K.ziegel:K.sand,s*4.4,.85+i*1.7,0,g,true);cone(1.4,1.8,K.rot,s*4.4,7.7,0,g)});box(11,1,.7,K.blau,0,6.4,0,g,true);
   const s=schildText('Ausgang','#e6f6ea',5.4,1.3);s.position.set(0,6.4,.4);g.add(s);
@@ -526,9 +814,10 @@ lichtBauen();
 /* ---------- Besucher ---------- */
 (function(){const jc=[0xe0605a,0x4caf6a,0xb06ae0,0xf59e3f,0x2fb5a8,0xffd45e,0x3b8fc4,0xe0605a,0x9b6fd0,0x4caf6a],hc=[0x6b4626,0xe8c24a,0x2a1d14,0xb5651d,0x1b1410,0x8a6a4a,0xe8c24a,0x2a1d14,0xb5651d,0x6b4626],st=['kurz','zoepfe','cap','pferd','kurz','zoepfe','cap','pferd','kurz','zoepfe'];
   for(let i=0;i<8;i++){const f=besucherFigur(Object.assign({},AVATARE[(i+1)%AVATARE.length],{jacke:jc[i%10],haar:hc[(i*3)%10],stil:st[i%10]}));const p=BPTS[(i*2)%BPTS.length];f.g.position.set(p[0]+(rnd()-.5)*2,0,p[1]);f.ziel=BPTS[(i*3+1)%BPTS.length];f.v=1.8+rnd()*.8;besucher.push(f)}})();
+vmPass();
 }
 /* Wegpunkte der Besucher (nur auf dem freien Hauptweg südlich des Rathauses) */
 const BPTS=[[0,146],[-5,142],[7,142],[0,128],[-4,124],[4,124],[0,110],[-4,102],[4,100],[0,92],[-9,74],[9,72],[0,64],[-6,52],[7,48],[0,40],[-2,28],[6,24],[0,12],[-8,4],[8,6],[0,-6],[-10,-9],[10,-9]];
 function radGruppe(par){const g=grp(0,0,0,par),r=[0,1,2].map(i=>{const q=radler(g,BUNT[(i*3)%8]);q.position.set(-i*3,0,(i-1)*1.8);return q});g.userData.anim=t=>r.forEach(q=>q.userData.anim(t));return g}
 function paradeBauen(){const liste=[[toni,1.2],[feuerwehr,.42],[polizeiAuto,.45],[q=>busM(q,K.gelb),.4],[muell,.42],[q=>zugM(q,2),.27],[radGruppe,.5],[bagger,.5],[toni,.8]];
-  liste.forEach((f,i)=>{const o=f[0](scene);o.position.set(-20-i*3.8,0,FEST.z+2);o.scale.setScalar(f[1]);parade.push({o,i})})}
+  liste.forEach((f,i)=>{const o=f[0](scene);o.position.set(-20-i*3.8,0,FEST.z+2);o.scale.setScalar(f[1]);parade.push({o,i})});vmPass()}
