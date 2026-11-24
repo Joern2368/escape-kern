@@ -16,7 +16,7 @@ const EXTRAZONEN=[{name:'Stadttor',x:0,z:128,r:17},{name:'Marktplatz',x:0,z:22,r
 {name:'Supermarkt',x:100,z:115,r:17},{name:'Bäckerei',x:-32,z:62,r:10},{name:'Eisdiele',x:34,z:62,r:10},{name:'Pizzeria',x:98,z:24,r:13},{name:'Kaufhaus',x:55,z:106,r:15},
 {name:'Stadtpark',x:-56,z:-72,r:19},{name:'Spielplatz',x:110,z:60,r:14},{name:'Schwimmbad',x:-112,z:-76,r:17},{name:'Sportplatz',x:155,z:-128,r:22},{name:'Kino',x:100,z:-62,r:12},{name:'Museum',x:52,z:-70,r:15},{name:'Baustelle',x:-110,z:-130,r:18},{name:'Wohnviertel',x:170,z:58,r:22}];
 /* Dichte-Runde (24.11.2026): neue Orte */
-EXTRAZONEN.push({name:'Skatepark',x:-176,z:-12,r:21},{name:'Hundewiese',x:-180,z:70,r:17},{name:'Hotel',x:112,z:-22,r:17},{name:'Café',x:183,z:9,r:13},{name:'Einkaufsgasse',x:36,z:150,r:21},{name:'Leuchtturm',x:174,z:-90,r:11},{name:'Tennisplatz',x:194,z:-121,r:15},{name:'Basketball',x:188,z:-141,r:10},{name:'Kiosk',x:-72,z:108,r:12});
+EXTRAZONEN.push({name:'Skatepark',x:-176,z:-12,r:21},{name:'Hundewiese',x:-180,z:70,r:17},{name:'Hotel',x:112,z:-22,r:17},{name:'Café',x:183,z:9,r:13},{name:'Einkaufsgasse',x:36,z:150,r:21},{name:'Leuchtturm',x:174,z:-90,r:11},{name:'Tennisplatz',x:194,z:-121,r:15},{name:'Basketballplatz',x:188,z:-141,r:10},{name:'Kiosk',x:-72,z:108,r:12},{name:'Straßenbahn',x:147,z:36.5,r:6});
 const SEITENWEGE=[84,-47,-103];
 const GRENZE={x0:-220,x1:220,z0:-215,z1:175};
 const TORZ=-160, FEST={x:0,z:-190};

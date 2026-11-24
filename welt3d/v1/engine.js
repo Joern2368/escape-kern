@@ -6,6 +6,7 @@ document.body.insertAdjacentHTML('afterbegin',`<div id="gl"></div>
 <canvas id="mini" width="170" height="225"></canvas>
 <button class="knopf" id="aktion"></button>
 <canvas id="konf"></canvas>
+<div id="gk"><div id="gkbox"><div id="gkkopf"><h2>🗺️ Karte</h2><button class="x" id="gkx" aria-label="Schließen">✕</button></div><div id="gkinhalt"><div id="gkkarte"><canvas id="gkc"></canvas><div id="gkblase"></div></div><div id="gkseite"><div id="gkzeichen"></div><h3 id="gkort">Orte</h3><div id="gkliste"></div><div id="gkmehr">↓ mehr Orte</div></div></div></div></div>
 <div id="maske"><div class="karte" id="karte"></div></div>`);
 /* ===================================================================
    HILFSFUNKTIONEN UND RÄTSELTYPEN (fest)
@@ -291,14 +292,36 @@ BPTS.forEach(p=>{if(Math.abs(p[0])<3)p[0]=wegX(p[1])});
 verschmelzen();
 
 /* ---------- Stationen (Rätsel) und Wissenskarten ---------- */
-function marke(txt,bg){const c=document.createElement('canvas');c.width=c.height=128;const t=c.getContext('2d');t.fillStyle=bg;t.beginPath();t.arc(64,64,58,0,6.3);t.fill();t.strokeStyle='#fff';t.lineWidth=8;t.stroke();t.fillStyle='#fff';t.font='bold 80px Andika,Arial,sans-serif';t.textAlign='center';t.textBaseline='middle';t.fillText(txt,64,70);const tx=new THREE.CanvasTexture(c);return tx}
+function marke(txt,bg){const c=document.createElement('canvas');c.width=c.height=128;const t=c.getContext('2d');t.fillStyle=bg;t.beginPath();t.arc(64,64,58,0,6.3);t.fill();t.strokeStyle='#fff';t.lineWidth=8;t.stroke();t.fillStyle='#fff';t.font='bold '+(String(txt).length>2?46:String(txt).length>1?64:80)+'px Andika,Arial,sans-serif';t.textAlign='center';t.textBaseline='middle';t.fillText(txt,64,70);const tx=new THREE.CanvasTexture(c);return tx}
 const balkenMat=(c)=>new THREE.MeshBasicMaterial({color:c,transparent:true,opacity:.22,depthWrite:false,blending:THREE.AdditiveBlending});
 const stationen=[],karten=[];
-/* gut verteilte freie Stellen im ganzen Zoo (je Rätsel eine Stelle und je Wissenskarte eine) */
-const SPOTS=(function(){const cand=[];for(let x=GRENZE.x0+10;x<=GRENZE.x1-10;x+=5)for(let z=TORZ+12;z<=GRENZE.z1-14;z+=5){let ok=true;for(const c of colliders){if(Math.hypot(x-c.x,z-c.z)<c.r+2.4){ok=false;break}}if(ok&&(sperrKaesten.some(k=>Math.hypot(x-k.x,z-k.z)<Math.hypot(k.hb,k.ht)+3)||sperrLinien.some(q=>{const vx=q.x2-q.x1,vz=q.z2-q.z1,l2=vx*vx+vz*vz||1;let t=((x-q.x1)*vx+(z-q.z1)*vz)/l2;t=t<0?0:t>1?1:t;return Math.hypot(x-q.x1-vx*t,z-q.z1-vz*t)<3})))ok=false;if(ok&&typeof EXTRAZONEN!=='undefined'&&EXTRAZONEN.some(e=>Math.hypot(x-e.x,z-e.z)<(e.r||0)+1.5))ok=false;if(ok)cand.push([x,z])}
-  const need=2*N,pick=[],dm=cand.map(c=>Math.min(Math.hypot(c[0]-START.x,c[1]-START.z),Math.hypot(c[0],c[1]-TORZ)*.6));
-  while(pick.length<need&&cand.length){let bj=0;for(let j=1;j<cand.length;j++)if(dm[j]>dm[bj])bj=j;const c=cand[bj];pick.push(c);for(let j=0;j<cand.length;j++){const d=Math.hypot(cand[j][0]-c[0],cand[j][1]-c[1]);if(d<dm[j])dm[j]=d}}
-  return pick})();
+/* Wissenskarte als ein einziges Teil (Vertexfarben): 1 statt 5 Zeichenaufrufe je Karte, wichtig bei bis zu 24 Karten */
+const KARTENGEO=(function(){const T=[[1.2,1.6,.12,0xe8b930,0],[.95,1.3,.14,0xfff6d0,0],[.6,.08,.16,0xc99a20,.35],[.6,.08,.16,0xc99a20,.1],[.6,.08,.16,0xc99a20,-.15]],gs=[];let nv=0,ni=0;
+  T.forEach(q=>{const g=gBox.clone();g.applyMatrix4(new THREE.Matrix4().makeScale(q[0],q[1],q[2]));g.translate(0,q[4],0);const n=g.attributes.position.count,c=new THREE.Color(q[3]),ca=new Float32Array(n*3);for(let i=0;i<n;i++){ca[i*3]=c.r;ca[i*3+1]=c.g;ca[i*3+2]=c.b}g.setAttribute('color',new THREE.BufferAttribute(ca,3));gs.push(g);nv+=n;ni+=g.index.count});
+  const P=new Float32Array(nv*3),N=new Float32Array(nv*3),C=new Float32Array(nv*3),I=new Uint16Array(ni);let vo=0,io=0;gs.forEach(g=>{P.set(g.attributes.position.array,vo*3);N.set(g.attributes.normal.array,vo*3);C.set(g.attributes.color.array,vo*3);const ix=g.index.array;for(let j=0;j<ix.length;j++)I[io+j]=ix[j]+vo;io+=ix.length;vo+=g.attributes.position.count});
+  const G=new THREE.BufferGeometry();G.setAttribute('position',new THREE.BufferAttribute(P,3));G.setAttribute('normal',new THREE.BufferAttribute(N,3));G.setAttribute('color',new THREE.BufferAttribute(C,3));G.setIndex(new THREE.BufferAttribute(I,1));return G})(),KARTENMAT=new THREE.MeshLambertMaterial({vertexColors:true});
+/* Platzwahl (ab 24.11.2026): Die begehbare Flaeche wird in N gleich grosse Gebiete geteilt (k-means ueber alle freien Stellen). In jedem Gebiet liegen ein Raetsel-Schild und seine Wissenskarte, nicht direkt nebeneinander, aber in der Naehe. Die Nummern laufen als Rundweg vom Eingang aus. Rein rechnerisch (ohne Zufall): gleiche Welt und gleiche Anzahl ergeben immer dieselben Plaetze. Nur Stellen, die vom Start aus ueber freie Flaeche zu erreichen sind (Zusammenhang der freien Rasterpunkte). SPOTS[2*i] = Raetsel i, SPOTS[2*i+1] = Karte i. */
+const SPOTS=(function(){const X0=GRENZE.x0+14,Z0=TORZ+12,ST=5,nx=Math.floor((GRENZE.x1-14-X0)/ST)+1,nz=Math.floor((GRENZE.z1-16-Z0)/ST)+1,grid=new Array(nx*nz).fill(null),cand=[];
+  for(let i=0;i<nx;i++)for(let j=0;j<nz;j++){const x=X0+i*ST,z=Z0+j*ST;let ok=Math.hypot(x-START.x,z-START.z)>=18;for(const c of colliders){if(!ok)break;if(Math.hypot(x-c.x,z-c.z)<c.r+2.4)ok=false}if(ok&&(sperrKaesten.some(k=>Math.hypot(x-k.x,z-k.z)<Math.hypot(k.hb,k.ht)+3)||sperrLinien.some(q=>{const vx=q.x2-q.x1,vz=q.z2-q.z1,l2=vx*vx+vz*vz||1;let t=((x-q.x1)*vx+(z-q.z1)*vz)/l2;t=t<0?0:t>1?1:t;return Math.hypot(x-q.x1-vx*t,z-q.z1-vz*t)<3})))ok=false;if(ok&&typeof EXTRAZONEN!=='undefined'&&EXTRAZONEN.some(e=>Math.hypot(x-e.x,z-e.z)<(e.r||0)+1.5))ok=false;if(ok){const c={x,z,i,j,k:-1};grid[i*nz+j]=c;cand.push(c)}}
+  /* Zusammenhangskomponenten der freien Rasterpunkte; nur die groesste zaehlt (Stellen in abgeschlossenen Ecken faellen weg) */
+  let nk=0;const gr=[];cand.forEach(c=>{if(c.k>=0)return;c.k=nk;let n=0;const st=[c];while(st.length){const a=st.pop();n++;for(let di=-2;di<=2;di++)for(let dj=-2;dj<=2;dj++){const b=a.i+di>=0&&a.i+di<nx&&a.j+dj>=0&&a.j+dj<nz?grid[(a.i+di)*nz+a.j+dj]:null;if(b&&b.k<0){b.k=nk;st.push(b)}}}gr.push(n);nk++});
+  let bk=0;gr.forEach((n,k)=>{if(n>gr[bk])bk=k});let pool=cand.filter(c=>c.k===bk);if(pool.length<2*N||pool.length<cand.length*.8)pool=cand;
+  const inP=new Set(pool),H=(a,b,c,d)=>Math.hypot(a-c,b-d),n=Math.max(1,Math.min(N,pool.length>>1));
+  /* Gebiete: Startpunkte weit auseinander, danach k-means (Lloyd) */
+  const cs=[];{const dm=pool.map(c=>H(c.x,c.z,START.x,START.z));for(let k=0;k<n;k++){let b=0;for(let j=1;j<pool.length;j++)if(dm[j]>dm[b])b=j;cs.push([pool[b].x,pool[b].z]);for(let j=0;j<pool.length;j++){const d=H(pool[j].x,pool[j].z,pool[b].x,pool[b].z);if(d<dm[j])dm[j]=d}}}
+  for(let it=0;it<14;it++){const sm=cs.map(()=>[0,0,0]);pool.forEach(p=>{let b=0,bd=1e9;for(let k=0;k<n;k++){const d=H(p.x,p.z,cs[k][0],cs[k][1]);if(d<bd){bd=d;b=k}}sm[b][0]+=p.x;sm[b][1]+=p.z;sm[b][2]++});sm.forEach((s,k)=>{if(s[2]){cs[k][0]=s[0]/s[2];cs[k][1]=s[1]/s[2]}})}
+  /* Reihenfolge: Rundweg vom Eingang aus (naechster unbesuchter Mittelpunkt) */
+  const ord=[];{const rest=cs.map((c,k)=>k);let px=START.x,pz=START.z;while(rest.length){let bi=0,bd=1e9;rest.forEach((k,ri)=>{const d=H(cs[k][0],cs[k][1],px,pz);if(d<bd){bd=d;bi=ri}});const k=rest.splice(bi,1)[0];ord.push(k);px=cs[k][0];pz=cs[k][1]}}
+  const dp=Math.max(24,Math.min(56,Math.sqrt(pool.length*ST*ST/n)*.85));
+  const near=(x,z,md)=>{const ci=Math.round((x-X0)/ST),cj=Math.round((z-Z0)/ST);let b=null,bd=md;for(let di=-2;di<=2;di++)for(let dj=-2;dj<=2;dj++){const i=ci+di,j=cj+dj;if(i<0||j<0||i>=nx||j>=nz)continue;const c=grid[i*nz+j];if(!c||!inP.has(c))continue;const d=H(x,z,c.x,c.z);if(d<bd){bd=d;b=c}}return b};
+  const placed=[[START.x,START.z]],out=[];
+  ord.forEach((k,t)=>{const c=cs[k];let best=null,bs=-1e9;
+    for(let a=0;a<16;a++){const ang=a*Math.PI/8+t*.9,dx=Math.cos(ang)*dp/2,dz=Math.sin(ang)*dp/2,p=near(c[0]-dx,c[1]-dz,7),q=near(c[0]+dx,c[1]+dz,7);if(!p||!q||p===q)continue;const dpq=H(p.x,p.z,q.x,q.z);if(dpq<dp*.75)continue;
+      let m=1e9;for(const o of placed)m=Math.min(m,H(p.x,p.z,o[0],o[1]),H(q.x,q.z,o[0],o[1]));for(let u=0;u<n;u++)if(u!==k)m=Math.min(m,H(p.x,p.z,cs[u][0],cs[u][1])-dp/2,H(q.x,q.z,cs[u][0],cs[u][1])-dp/2);
+      const s=m-Math.abs(dpq-dp)*.5;if(s>bs){bs=s;best=[p,q]}}
+    if(!best){let p=near(c[0],c[1],40)||pool[0],q=null,qs=-1e9;pool.forEach(r=>{const d=H(r.x,r.z,p.x,p.z);if(d<dp*.5||d>dp*1.6)return;let m=1e9;for(const o of placed)m=Math.min(m,H(r.x,r.z,o[0],o[1]));if(m>qs){qs=m;q=r}});if(!q)q=pool.find(r=>r!==p)||p;best=[p,q]}
+    placed.push([best[0].x,best[0].z],[best[1].x,best[1].z]);out.push(t%2?[[best[1].x,best[1].z],[best[0].x,best[0].z]]:[[best[0].x,best[0].z],[best[1].x,best[1].z]])});
+  const pick=[];out.forEach(pq=>{pick.push(pq[0],pq[1])});pick.info={cand:cand.length,pool:pool.length,komp:gr.slice().sort((a,b)=>b-a).slice(0,6)};return pick})();
 CONFIG.auftraege.forEach((a,i)=>{
   const x=SPOTS[2*i%SPOTS.length][0],z=SPOTS[2*i%SPOTS.length][1];
   const g=grp(x,0,z);cyl(.18,2.2,0x7a5230,0,1.1,0,g,true);const ring=new THREE.Mesh(new THREE.RingGeometry(1.5,2.1,32),new THREE.MeshBasicMaterial({color:0xf59e3f,side:THREE.DoubleSide,transparent:true,opacity:.85}));ring.rotation.x=-Math.PI/2;ring.position.y=.08;g.add(ring);
@@ -306,7 +329,7 @@ CONFIG.auftraege.forEach((a,i)=>{
   const nr=schildText(String(i+1),'#fff8e6',1.3,1.3);nr.position.set(0,2.3,.25);g.add(nr);kreis(x,z,.5);
   stationen.push({i,x,z,g,ring,spr});
   /* Wissenskarte in der Nähe */
-  const kx=SPOTS[(2*i+1)%SPOTS.length][0],kz=SPOTS[(2*i+1)%SPOTS.length][1];const kg=grp(kx,0,kz);const kar=grp(0,1.9,0,kg);box(1.2,1.6,.12,0xe8b930,0,0,0,kar,true);box(.95,1.3,.14,0xfff6d0,0,0,0,kar);box(.6,.08,.16,0xc99a20,0,.35,0,kar);box(.6,.08,.16,0xc99a20,0,.1,0,kar);box(.6,.08,.16,0xc99a20,0,-.15,0,kar);
+  const kx=SPOTS[(2*i+1)%SPOTS.length][0],kz=SPOTS[(2*i+1)%SPOTS.length][1];const kg=grp(kx,0,kz);const kar=grp(0,1.9,0,kg);const km=new THREE.Mesh(KARTENGEO,KARTENMAT);km.castShadow=true;kar.add(km);
   const ks2=new THREE.Sprite(new THREE.SpriteMaterial({map:marke(String(i+1),'#e8b930')}));ks2.scale.set(1.3,1.3,1);ks2.position.y=3.5;kg.add(ks2);
   const ks=new THREE.Mesh(new THREE.RingGeometry(.9,1.3,24),new THREE.MeshBasicMaterial({color:0xffd45e,side:THREE.DoubleSide,transparent:true,opacity:.8}));ks.rotation.x=-Math.PI/2;ks.position.y=.08;kg.add(ks);
   karten.push({i,x:kx,z:kz,g:kg,kar,da:true});
@@ -392,17 +415,72 @@ const _lw=new THREE.Vector3();function lebenUpdate(t){const px=spieler.position.
 let sprechT=null;
 function sag(text,ms){const s=$('#spruch');s.textContent=text;s.style.opacity=1;clearTimeout(sprechT);sprechT=setTimeout(()=>s.style.opacity=0,ms||6000)}
 function hud(){$('#mappe').textContent='\uD83D\uDCD6 '+zaehle(S.karten);$('#zk').textContent=zaehle(S.karten);$('#zr').textContent=zaehle(S.geloest);$('#zn').textContent=N;$('#zn2').textContent=N}
-const mini=$('#mini'),mx=mini.getContext('2d');let miniAn=true;mini.height=Math.round(mini.width*(GRENZE.z1-GRENZE.z0)/(GRENZE.x1-GRENZE.x0));
-$('#kartenknopf').onclick=()=>{miniAn=!miniAn;mini.style.display=miniAn?'block':'none';if(!miniAn)miniGross(false)};
-function miniGross(an){mini.classList.toggle('gross',an);mini.width=an?640:170;mini.height=Math.round(mini.width*(GRENZE.z1-GRENZE.z0)/(GRENZE.x1-GRENZE.x0))}
-mini.onclick=()=>{if(modal)return;miniGross(!mini.classList.contains('gross'));sKlick()};
-function miniZeichnen(){const W=mini.width,H=mini.height,ms=W/170,sx=W/(GRENZE.x1-GRENZE.x0),sz=H/(GRENZE.z1-GRENZE.z0);const PD=10*ms,X=x=>PD+(x-GRENZE.x0)*(W-2*PD)/(GRENZE.x1-GRENZE.x0),Z=z=>PD+(z-GRENZE.z0)*(H-2*PD)/(GRENZE.z1-GRENZE.z0);
-  mx.clearRect(0,0,W,H);mx.fillStyle='#eaf4fa';mx.fillRect(0,0,W,H);mx.strokeStyle='#e0cfa6';mx.lineWidth=4*ms;mx.beginPath();mx.moveTo(X(0),Z(GRENZE.z1));for(let zz=GRENZE.z1;zz>TORZ;zz-=8)mx.lineTo(X(wegX(zz)),Z(zz));mx.lineTo(X(0),Z(TORZ));mx.lineTo(X(0),Z(GRENZE.z0));if(typeof WEGBOGEN!=='number')SEITENWEGE.forEach(w=>{mx.moveTo(X(GRENZE.x0+25),Z(w));mx.lineTo(X(GRENZE.x1-25),Z(w))});else WEGE.forEach(e=>{mx.moveTo(X(e[0][0]),Z(e[0][1]));e.forEach(q=>mx.lineTo(X(q[0]),Z(q[1])))});mx.stroke();
-  mx.fillStyle='#6f98b4';mx.font=(6*ms)+'px Arial';mx.textAlign='center';const belegt=[],label=(txt,x,y)=>{const w=mx.measureText(txt).width,h=6*ms;x=Math.max(w/2+3,Math.min(W-w/2-3,x));for(const dy of[0,1.15*h,-1.15*h,2.3*h,-2.3*h,3.4*h]){const yy=y+dy,r=[x-w/2-2,yy-h,x+w/2+2,yy+3];let ok=true;for(const q of belegt)if(r[0]<q[2]&&r[2]>q[0]&&r[1]<q[3]&&r[3]>q[1]){ok=false;break}if(!ok)continue;belegt.push(r);mx.lineWidth=3*ms;mx.strokeStyle='rgba(234,244,250,.95)';mx.strokeText(txt,x,yy);mx.fillText(txt,x,yy);return}};for(const k in BEREICHE){const b=BEREICHE[k];label(b.name,X(b.x),Z(b.z)-26*ms*.3)}if(EXTRAZONEN.length<=20||ms>1.5)EXTRAZONEN.forEach(b=>label(b.name,X(b.x),Z(b.z)));
-  mx.fillStyle='#3e9468';mx.fillRect(X(-5),Z(TORZ)-3*ms,X(5)-X(-5),6*ms);mx.fillStyle='#e0605a';mx.fillText('Ausgang',X(0),Z(TORZ)-6*ms);
-  mx.textAlign='center';karten.forEach(k=>{if(!k.da)return;mx.fillStyle='#e8b930';mx.fillRect(X(k.x)-5*ms,Z(k.z)-6*ms,10*ms,12*ms);mx.fillStyle='#4a2f0a';mx.font='bold '+(9*ms)+'px Arial';mx.fillText(String(k.i+1),X(k.x),Z(k.z)+3*ms)});
-  stationen.forEach(s=>{mx.fillStyle=S.geloest[s.i]?'#4caf6a':'#f59e3f';mx.beginPath();mx.arc(X(s.x),Z(s.z),7*ms,0,6.3);mx.fill();mx.fillStyle='#fff';mx.font='bold '+(9*ms)+'px Arial';mx.fillText(S.geloest[s.i]?'\u2713':String(s.i+1),X(s.x),Z(s.z)+3*ms)})
-  mx.save();mx.translate(X(spieler.position.x),Z(spieler.position.z));mx.rotate(-blickWinkel+Math.PI);mx.scale(ms,ms);mx.fillStyle='#e0302a';mx.beginPath();mx.moveTo(0,-8);mx.lineTo(6,6);mx.lineTo(-6,6);mx.closePath();mx.fill();mx.restore()}
+/* ---------- Karte (ab 24.11.2026): kleine Karte oben rechts, grosse Karte mit nummerierten Orten, Legende und Antippen ---------- */
+const ASP=(GRENZE.z1-GRENZE.z0)/(GRENZE.x1-GRENZE.x0),VIEL=N>12,PUNKTFARBE='#3b6b8c';
+/* Orte (Bereiche und Zonen) in fester Reihenfolge: Zeilen von Sueden nach Norden, in jeder Zeile von links nach rechts. Nur suedlich vom Tor. */
+const ORTE=(function(){const l=[],roh=[];for(const k in BEREICHE){const b=BEREICHE[k];roh.push([b.name,b.x,b.z])}EXTRAZONEN.forEach(e=>roh.push([e.name,e.x,e.z]));const anz={};roh.forEach(r=>anz[r[0]]=(anz[r[0]]||0)+1);/* Namen, die oft vorkommen (z. B. Straße), sind keine Orte */
+  const add=(name,x,z)=>{if(anz[name]>=3||z<=TORZ+4||l.some(o=>o.name===name&&Math.hypot(o.x-x,o.z-z)<25))return;l.push({name,x,z})};roh.forEach(r=>add(r[0],r[1],r[2]));
+  l.sort((a,b)=>(Math.round(b.z/30)-Math.round(a.z/30))||(a.x-b.x));l.forEach((o,i)=>o.n=i+1);return l})();
+const mini=$('#mini'),mx=mini.getContext('2d');let miniAn=true;mini.width=VIEL?210:170;mini.height=Math.round(mini.width*ASP);if(VIEL)mini.classList.add('viel');
+let gkAuf=false,gkWahl=null,gkLay=null,gkGebaut=false;const gkAus={o:false,r:false,k:false};
+$('#kartenknopf').onclick=()=>{if(gkAuf){miniGross(false);return}miniAn=!miniAn;mini.style.display=miniAn?'block':'none'};
+function miniGross(an){if(an===gkAuf)return;gkAuf=an;$('#gk').classList.toggle('auf',an);modal=an;if(an){gkBauen();gkWahl=null;gkLayout();gkBlase()}}
+mini.onclick=()=>{if(modal)return;miniGross(true);sKlick()};
+$('#gkx').onclick=()=>miniGross(false);
+$('#gk').onclick=e=>{if(e.target===$('#gk'))miniGross(false)};
+addEventListener('keydown',e=>{if(e.key==='Escape'&&gkAuf)miniGross(false)});
+function gkMehr(){const l=$('#gkliste'),m=$('#gkmehr');m.style.display=l.scrollHeight-l.clientHeight>6&&l.scrollTop+l.clientHeight<l.scrollHeight-6?'block':'none'}
+function gkBauen(){if(gkGebaut)return;gkGebaut=true;$('#gkliste').onscroll=gkMehr;
+  const zz=$('#gkzeichen');[['o','zo','','Ort (Nummer in der Liste)'],['r','zr','1','Rätsel'],['k','zk','1','Wissenskarte']].forEach(a=>{const b=el('button','gks');b.type='button';b.setAttribute('aria-pressed','true');b.dataset.g=a[0];const i=el('i',a[1],a[2]);b.appendChild(i);b.appendChild(el('span','gkh','✓'));b.appendChild(document.createTextNode(a[3]));b.onclick=()=>{sKlick();gkSchalt(a[0],gkAus[a[0]])};zz.appendChild(b)});
+  zz.insertAdjacentHTML('beforeend','<span><i class="zg">✓</i>gelöst</span><span><i class="zd"></i>Du</span><span><i class="za"></i>Ausgang</span>');
+  const ls=$('#gkliste');if(!ORTE.length)$('#gkort').style.display='none';
+  ORTE.forEach((o,i)=>{const b=el('button','gko');b.appendChild(el('span','gkn',String(o.n)));b.appendChild(el('span','gkt',o.name));b.onclick=()=>{sKlick();if(gkAus.o)gkSchalt('o',true,true);gkSetze(gkWahl&&gkWahl.t==='o'&&gkWahl.i===i?null:{t:'o',i},false)};ls.appendChild(b)});
+  $('#gkc').onclick=e=>{const c=$('#gkc'),r=c.getBoundingClientRect(),k=gkLay.w/r.width,x=(e.clientX-r.left)*k,z=(e.clientY-r.top)*k;let best=null,bd=17;
+    const probe=(t,i,px,pz)=>{const d=Math.hypot(px-x,pz-z);if(d<bd){bd=d;best={t,i}}};
+    if(!gkAus.o)gkLay.o.forEach((p,i)=>probe('o',i,p.px,p.pz));if(!gkAus.r)stationen.forEach(s=>probe('r',s.i,gkLay.X(s.x),gkLay.Z(s.z)));if(!gkAus.k)karten.forEach(s=>{if(s.da)probe('k',s.i,gkLay.X(s.x),gkLay.Z(s.z))});
+    sKlick();gkSetze(best,true)}}
+/* Schalter der grossen Karte: an=true blendet die Gruppe (o/r/k) ein, false aus; Positionen bleiben (Layout wird nicht neu berechnet) */
+function gkSchalt(g,an,still){gkAus[g]=!an;document.querySelectorAll('#gkzeichen .gks').forEach(b=>{if(b.dataset.g===g){b.setAttribute('aria-pressed',an?'true':'false');b.classList.toggle('aus',!an)}});if(!an&&gkWahl&&gkWahl.t===g)gkWahl=null;document.querySelectorAll('#gkliste .gko').forEach((b,i)=>b.classList.toggle('an',!!gkWahl&&gkWahl.t==='o'&&gkWahl.i===i));if(!still){gkBlase();gkZeichnen()}}
+function gkSetze(w,ausKarte){gkWahl=w;document.querySelectorAll('#gkliste .gko').forEach((b,i)=>b.classList.toggle('an',!!w&&w.t==='o'&&w.i===i));
+  if(w&&w.t==='o'){const b=document.querySelectorAll('#gkliste .gko')[w.i];if(b&&ausKarte)b.scrollIntoView({block:'nearest'})}gkBlase()}
+function gkPos(w){if(!w)return null;if(w.t==='o'){const p=gkLay.o[w.i];return[p.px,p.pz,12]}if(w.t==='r'){const s=stationen[w.i];return[gkLay.X(s.x),gkLay.Z(s.z),13]}const k=karten[w.i];return[gkLay.X(k.x),gkLay.Z(k.z),13]}
+function gkBlase(){const b=$('#gkblase'),w=gkWahl;if(!w||!gkLay){b.style.display='none';return}
+  b.textContent=w.t==='o'?ORTE[w.i].n+' · '+ORTE[w.i].name:w.t==='r'?'Rätsel '+(w.i+1)+(S.geloest[w.i]?' (gelöst)':''):'Wissenskarte '+(w.i+1);
+  b.style.display='block';const p=gkPos(w),bw=b.offsetWidth,bh=b.offsetHeight,W=gkLay.w,H=gkLay.h,g=p[2]+18,L=gkLay;
+  /* Sprechblase: mehrere Lagen (oben, unten, rechts, links, versetzt) pruefen; gewaehlt wird die mit der kleinsten Ueberdeckung (Raetsel/Karten zaehlen sehr stark, Orte schwach, die eigene Markierung am staerksten) */
+  const mk=[[p[0],p[1],p[2]+4,5000]];if(!gkAus.r)stationen.forEach(s=>{const x=L.X(s.x),z=L.Z(s.z);if(Math.abs(x-p[0])>.5||Math.abs(z-p[1])>.5)mk.push([x,z,14,1000])});karten.forEach(k=>{if(!k.da||gkAus.k)return;const x=L.X(k.x),z=L.Z(k.z);if(Math.abs(x-p[0])>.5||Math.abs(z-p[1])>.5)mk.push([x,z,14,1000])});if(!gkAus.o)L.o.forEach(q=>{if(Math.abs(q.px-p[0])>.5||Math.abs(q.pz-p[1])>.5)mk.push([q.px,q.pz,12,1])});
+  const kl=(v,lo,hi)=>Math.max(lo,Math.min(hi,v)),cand=[];[.5,.25,.75,.1,.9].forEach(f=>{cand.push(['o',p[0]-f*bw,p[1]-g-bh]);cand.push(['u',p[0]-f*bw,p[1]+g])});[.5,.15,.85].forEach(f=>{cand.push(['r',p[0]+g,p[1]-f*bh]);cand.push(['l',p[0]-g-bw,p[1]-f*bh])});[.5,.25,.75].forEach(f=>{cand.push(['o',p[0]-f*bw,p[1]-g-22-bh,300]);cand.push(['u',p[0]-f*bw,p[1]+g+22,300]);cand.push(['r',p[0]+g+22,p[1]-f*bh,300]);cand.push(['l',p[0]-g-22-bw,p[1]-f*bh,300])});
+  let best=null,bs=1e18;for(const c of cand){const x=kl(c[1],4,W-bw-4),y=kl(c[2],4,H-bh-4);let sc=c[3]||0;for(const m of mk){const d=Math.hypot(kl(m[0],x,x+bw)-m[0],kl(m[1],y,y+bh)-m[1]);if(d<m[2])sc+=m[3]*(m[2]-d)}if(sc<bs-.001){bs=sc;best={d:c[0],x,y}}}
+  b.style.left=best.x+'px';b.style.top=best.y+'px';b.style.setProperty('--sp',(best.d==='o'||best.d==='u'?kl(p[0]-best.x,12,bw-12):kl(p[1]-best.y,10,bh-10))+'px');b.classList.toggle('unten',best.d==='u');b.classList.toggle('sl',best.d==='r');b.classList.toggle('sr',best.d==='l')}
+function gkLayout(){if(!gkAuf)return;const c=$('#gkc'),dpr=Math.min(2,window.devicePixelRatio||1),hoch=innerHeight>innerWidth,viele=ORTE.length>14;let w;
+  if(hoch)w=Math.min(innerWidth-24,(innerHeight*(viele?.54:.62))/ASP,680);else w=Math.min((innerHeight-92)/ASP,(innerWidth-48)*(viele?.58:.66),780);
+  w=Math.max(220,Math.floor(w));const h=Math.round(w*ASP);c.style.width=w+'px';c.style.height=h+'px';c.width=Math.round(w*dpr);c.height=Math.round(h*dpr);
+  const PD=10,X=x=>PD+(x-GRENZE.x0)*(w-2*PD)/(GRENZE.x1-GRENZE.x0),Z=z=>PD+(z-GRENZE.z0)*(h-2*PD)/(GRENZE.z1-GRENZE.z0);
+  /* Ort-Markierungen so verschieben, dass sie weder einander noch Raetseln, Karten und dem Ausgang ueberdecken */
+  const fix=[];stationen.forEach(s=>fix.push([X(s.x),Z(s.z),13]));karten.forEach(k=>fix.push([X(k.x),Z(k.z),13]));fix.push([X(0),Z(TORZ),15],[X(START.x),Z(START.z),9]);
+  const o=ORTE.map(p=>({px:X(p.x),pz:Z(p.z),x:X(p.x),z:Z(p.z)})),R=11;
+  for(let it=0;it<80;it++){let b=0;for(let a=0;a<o.length;a++){const p=o[a];
+    for(const f of fix){const dx=p.px-f[0],dz=p.pz-f[1],d=Math.hypot(dx,dz),m=R+f[2]+2;if(d<m){const u=d<.01?1:dx/d,v=d<.01?0:dz/d;p.px+=u*(m-d);p.pz+=v*(m-d);b=1}}
+    for(let q=a+1;q<o.length;q++){const r=o[q],dx=p.px-r.px,dz=p.pz-r.pz,d=Math.hypot(dx,dz),m=2*R+2;if(d<m){const u=d<.01?1:dx/d,v=d<.01?.3:dz/d,s=(m-d)/2;p.px+=u*s;p.pz+=v*s;r.px-=u*s;r.pz-=v*s;b=1}}
+    p.px=Math.max(R+2,Math.min(w-R-2,p.px));p.pz=Math.max(R+2,Math.min(h-R-2,p.pz))}if(!b)break}
+  gkLay={w,h,dpr,X,Z,o};gkBlase();gkMehr();setTimeout(gkMehr,60)}
+function gkZeichnen(){if(!gkAuf||!gkLay)return;const c=$('#gkc'),cx=c.getContext('2d'),L=gkLay;cx.setTransform(L.dpr,0,0,L.dpr,0,0);kartenBild(cx,L.w,L.h,1,true)}
+function miniZeichnen(){kartenBild(mx,mini.width,mini.height,mini.width/170,false);if(gkAuf)gkZeichnen()}
+/* gemeinsames Zeichnen: q = Pixel je Grundeinheit (klein: Breite/170, gross: 1), gross = grosse Karte */
+function kartenBild(cx,W,H,q,gross){const PD=10*q,X=x=>PD+(x-GRENZE.x0)*(W-2*PD)/(GRENZE.x1-GRENZE.x0),Z=z=>PD+(z-GRENZE.z0)*(H-2*PD)/(GRENZE.z1-GRENZE.z0);
+  const rR=gross?12.5:(VIEL?5.2:7)*q,kb=gross?11:(VIEL?4.4:5)*q,kh=gross?12:(VIEL?5.2:6)*q,fs=gross?13:(VIEL?7.4:9)*q;
+  cx.clearRect(0,0,W,H);cx.fillStyle='#eaf4fa';cx.fillRect(0,0,W,H);cx.strokeStyle='#e0cfa6';cx.lineWidth=(gross?7:4)*q;cx.lineJoin='round';cx.beginPath();cx.moveTo(X(0),Z(GRENZE.z1));for(let zz=GRENZE.z1;zz>TORZ;zz-=8)cx.lineTo(X(wegX(zz)),Z(zz));cx.lineTo(X(0),Z(TORZ));cx.lineTo(X(0),Z(GRENZE.z0));if(typeof WEGBOGEN!=='number')SEITENWEGE.forEach(w=>{cx.moveTo(X(GRENZE.x0+25),Z(w));cx.lineTo(X(GRENZE.x1-25),Z(w))});else WEGE.forEach(e=>{cx.moveTo(X(e[0][0]),Z(e[0][1]));e.forEach(p=>cx.lineTo(X(p[0]),Z(p[1])))});cx.stroke();
+  cx.textAlign='center';cx.textBaseline='alphabetic';
+  /* Orte: klein = Punkte ohne Text (nur wo kein anderes Zeichen liegt), gross = nummerierte Kreise */
+  if(!gross){cx.fillStyle=PUNKTFARBE;ORTE.forEach(o=>{const x=X(o.x),y=Z(o.z);if(stationen.some(s=>Math.hypot(X(s.x)-x,Z(s.z)-y)<rR+3.5*q)||karten.some(k=>Math.hypot(X(k.x)-x,Z(k.z)-y)<kh+3.5*q)||Math.hypot(X(0)-x,Z(TORZ)-y)<9*q)return;cx.beginPath();cx.arc(x,y,2.5*q,0,6.3);cx.fill()})}
+  else if(!gkAus.o){ORTE.forEach((o,i)=>{const p=gkLay.o[i],x0=X(o.x),y0=Z(o.z);if(Math.hypot(p.px-x0,p.pz-y0)>5){cx.strokeStyle=PUNKTFARBE;cx.lineWidth=1.5;cx.beginPath();cx.moveTo(x0,y0);cx.lineTo(p.px,p.pz);cx.stroke();cx.fillStyle=PUNKTFARBE;cx.beginPath();cx.arc(x0,y0,2.5,0,6.3);cx.fill()}})}
+  cx.fillStyle='#3e9468';cx.fillRect(X(-5),Z(TORZ)-(gross?5:3*q),X(5)-X(-5),gross?10:6*q);cx.fillStyle='#e0605a';cx.font='bold '+(gross?13:6*q)+'px Andika,Arial,sans-serif';cx.fillText('Ausgang',X(0),Z(TORZ)-(gross?9:6*q));
+  cx.font='bold '+fs+'px Andika,Arial,sans-serif';
+  karten.forEach(k=>{if(!k.da||(gross&&gkAus.k))return;const x=X(k.x),y=Z(k.z);cx.fillStyle='#e8b930';cx.fillRect(x-kb,y-kh,2*kb,2*kh);if(gross){cx.strokeStyle='#fff';cx.lineWidth=2;cx.strokeRect(x-kb,y-kh,2*kb,2*kh)}cx.fillStyle='#4a2f0a';cx.fillText(String(k.i+1),x,y+fs*.36)});
+  stationen.forEach(s=>{if(gross&&gkAus.r)return;const x=X(s.x),y=Z(s.z);cx.fillStyle=S.geloest[s.i]?'#2f7d4b':'#b85c00';cx.beginPath();cx.arc(x,y,rR,0,6.3);cx.fill();if(gross){cx.strokeStyle='#fff';cx.lineWidth=2;cx.stroke()}cx.fillStyle='#fff';cx.fillText(S.geloest[s.i]?'✓':String(s.i+1),x,y+fs*.36)});
+  if(gross){cx.font='bold 12px Andika,Arial,sans-serif';if(!gkAus.o)ORTE.forEach((o,i)=>{const p=gkLay.o[i],w=gkWahl&&gkWahl.t==='o'&&gkWahl.i===i;cx.fillStyle=w?'#173a55':PUNKTFARBE;cx.beginPath();cx.arc(p.px,p.pz,w?13:11,0,6.3);cx.fill();cx.strokeStyle='#fff';cx.lineWidth=2;cx.stroke();cx.fillStyle='#fff';cx.fillText(String(o.n),p.px,p.pz+4.4)});
+    if(gkWahl){const p=gkPos(gkWahl);cx.strokeStyle='#1f3a4d';cx.lineWidth=3;cx.beginPath();cx.arc(p[0],p[1],p[2]+5,0,6.3);cx.stroke();cx.strokeStyle='#fff';cx.lineWidth=1.2;cx.beginPath();cx.arc(p[0],p[1],p[2]+7,0,6.3);cx.stroke()}}
+  cx.save();cx.translate(X(spieler.position.x),Z(spieler.position.z));cx.rotate(-blickWinkel+Math.PI);const ps=gross?1.15:q;cx.scale(ps,ps);cx.fillStyle='#e0302a';cx.beginPath();cx.moveTo(0,-8);cx.lineTo(6,6);cx.lineTo(-6,6);cx.closePath();cx.fill();if(gross){cx.strokeStyle='#fff';cx.lineWidth=1.6;cx.stroke()}cx.restore()}
 
 /* ---------- Ton / Konfetti ---------- */
 const kcv=$('#konf'),kx=kcv.getContext('2d');let bunt=[];
@@ -441,13 +519,14 @@ function geloest(k,i,a){S.geloest[i]=true;speichern();stationFertig(stationen[i]
   const rest=N-zaehle(S.geloest);k.appendChild(el('div','beute',rest>0?'Noch '+rest+' Rätsel':'Alle Rätsel gelöst!'));
   const l=el('div','leiste');l.appendChild(el('div','platz'));const b=el('button','knopf','Weiter');b.onclick=()=>{karteSchliessen();if(rest===0)torAuf(true)};l.appendChild(b);k.appendChild(l)}
 function torAuf(meldung){ausgang.ziel=1;if(meldung)sag('Alle Rätsel gelöst! Das Tor zum Ausgang ist offen. Geh zum Ausgang, dort wartet eine Überraschung!',12000)}
-function mappeZeigen(){const k=karteOeffnen();k.className='karte papyrus';
+let mappeScroll=0;
+function mappeZeigen(){const k=karteOeffnen();k.className='karte papyrus mappe';
   const kp=el('div','mkopf');kp.appendChild(el('h2',null,'\uD83C\uDCCF Deine Wissensmappe'));const x=el('button','x','\u00D7');x.onclick=karteSchliessen;kp.appendChild(x);k.appendChild(kp);
   const f=CONFIG.auftraege.map((a,i)=>i).filter(i=>S.karten[i]);
   k.appendChild(el('div',f.length?'keinraetsel':'tafeltext',f.length?'\uD83D\uDC49 Tippe eine Karte an, dann wird sie groß.':'Du hast noch keine Karten. Suche die goldenen Wissenskarten im Zoo. Die Zahl auf der Karte zeigt, zu welchem Rätsel sie gehört.'));
-  const raster=el('div','mappe-raster');f.forEach(i=>{const t=CONFIG.auftraege[i].tafel;const sk=el('div','sk');sk.style.cursor='pointer';sk.appendChild(el('h3',null,(i+1)+'. '+t.titel));sk.appendChild(el('p',null,t.text));sk.onclick=()=>{sKlick();tafelAnsicht(k,i,mappeZeigen,false,'\u2190 Zurück zur Mappe')};raster.appendChild(sk)});k.appendChild(raster);
-  const l=el('div','leiste');l.appendChild(el('div','platz'));const z=el('button','knopf','Zurück zum Spiel');z.onclick=karteSchliessen;l.appendChild(z);k.appendChild(l)}
-$('#mappe').onclick=()=>{if(modal)return;mappeZeigen()};
+  const viel=N>8,raster=el('div','mappe-raster'+(viel?' kompakt':''));f.forEach(i=>{const t=CONFIG.auftraege[i].tafel;const sk=el('div','sk'+(viel?' klein':''));sk.style.cursor='pointer';sk.appendChild(el('h3',null,(i+1)+'. '+t.titel));if(!viel)sk.appendChild(el('p',null,t.text));sk.onclick=()=>{sKlick();mappeScroll=k.scrollTop;tafelAnsicht(k,i,mappeZeigen,false,'\u2190 Zurück zur Mappe')};raster.appendChild(sk)});k.appendChild(raster);
+  const l=el('div','leiste');l.appendChild(el('div','platz'));const z=el('button','knopf','Zurück zum Spiel');z.onclick=karteSchliessen;l.appendChild(z);k.appendChild(l);k.scrollTop=mappeScroll}
+$('#mappe').onclick=()=>{if(modal)return;mappeScroll=0;mappeZeigen()};
 $('#tonknopf').onclick=()=>{tonAn=!tonAn;$('#tonknopf').textContent=tonAn?'🔊':'🔇'};
 $('#aktion').onclick=()=>{if(modal||!aktiv)return;raetselOeffnen(aktiv.i)};
 let aktiv=null,warnT=0;
@@ -532,5 +611,5 @@ function start(){document.title=CONFIG.spielname;$('#titel').textContent=CONFIG.
   const alle=gespeicherte();if(alle.length){k.appendChild(el('div','frage','Gespeicherte Spiele:'));const ls=el('div','pool');
     alle.forEach(s=>{const bt=el('button','chip','▶ '+s.name+' ('+zaehle(s.karten||{})+' Karten, '+zaehle(s.geloest||{})+' von '+N+' Rätseln)');bt.onclick=()=>losGehts(s.name,AVATARE[s.jacke]?s.jacke:0,s);ls.appendChild(bt)});k.appendChild(ls)}
   l.appendChild(b);k.appendChild(l);$('#maske').onclick=null}
-addEventListener('resize',()=>{renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();kgroesse()});
+addEventListener('resize',()=>{gkLayout();renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();kgroesse()});
 kgroesse();hud();camera.position.set(START.x,9,START.z+14);start();schleife();
