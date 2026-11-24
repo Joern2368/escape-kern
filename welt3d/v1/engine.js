@@ -258,21 +258,21 @@ function besucherUpdate(dt){const px=spieler.position.x,pz=spieler.position.z;be
 
 /* ---------- Unbewegliche Teile zu Blöcken zusammenfassen (weniger Zeichenaufrufe, wichtig fürs iPad) ---------- */
 function verschmelzen(){
-  const ZELLE=typeof MERGEZELLE==='number'?MERGEZELLE:90;
+  const ZELLE=typeof MERGEZELLE==='number'?MERGEZELLE:90,VC=typeof VERTEXFARBEN!=='undefined'&&VERTEXFARBEN;
   const gr={},alt=[];scene.updateMatrixWorld(true);
   scene.traverse(m=>{
     if(!m.isMesh||m.isInstancedMesh||!m.visible)return;
     const mt=m.material;if(Array.isArray(mt)||mt.transparent||mt.map||mt.wireframe||mt.isShaderMaterial)return;
     for(let o=m;o;o=o.parent){if(o.userData&&(o.userData.anim||o.userData.keep))return}
-    const g=m.geometry.clone();g.applyMatrix4(m.matrixWorld);g.computeBoundingSphere();
+    const g=m.geometry.clone();g.applyMatrix4(m.matrixWorld);g.computeBoundingSphere();const vcm=VC&&mt.isMeshLambertMaterial&&!mt.vertexColors;if(vcm){const n=g.attributes.position.count,ca=new Float32Array(n*3);for(let i=0;i<n;i++){ca[i*3]=mt.color.r;ca[i*3+1]=mt.color.g;ca[i*3+2]=mt.color.b}g.setAttribute('color',new THREE.BufferAttribute(ca,3))}
     if(g.boundingSphere.radius>40){g.dispose();return}
-    const c=g.boundingSphere.center,key=mt.uuid+'|'+Math.floor(c.x/ZELLE)+'|'+Math.floor(c.z/ZELLE)+'|'+(m.castShadow?1:0)+(m.receiveShadow?1:0);
-    (gr[key]=gr[key]||{mt,cast:m.castShadow,recv:m.receiveShadow,liste:[]}).liste.push(g);alt.push(m)});
+    const c=g.boundingSphere.center,key=(vcm?'vc':mt.uuid)+'|'+Math.floor(c.x/ZELLE)+'|'+Math.floor(c.z/ZELLE)+'|'+(m.castShadow?1:0)+(m.receiveShadow?1:0);
+    (gr[key]=gr[key]||{mt:vcm?(window.__VMAT=window.__VMAT||new THREE.MeshLambertMaterial({vertexColors:true})):mt,vc:vcm,cast:m.castShadow,recv:m.receiveShadow,liste:[]}).liste.push(g);alt.push(m)});
   for(const k in gr){const q=gr[k];let nv=0,ni=0;q.liste.forEach(g=>{nv+=g.attributes.position.count;ni+=g.index?g.index.count:g.attributes.position.count});
-    const P=new Float32Array(nv*3),N=new Float32Array(nv*3),I=new Uint32Array(ni);let vo=0,io=0;
-    q.liste.forEach(g=>{const c=g.attributes.position.count;P.set(g.attributes.position.array,vo*3);N.set(g.attributes.normal.array,vo*3);
+    const P=new Float32Array(nv*3),N=new Float32Array(nv*3),CC=q.vc?new Float32Array(nv*3):null,I=new Uint32Array(ni);let vo=0,io=0;
+    q.liste.forEach(g=>{const c=g.attributes.position.count;P.set(g.attributes.position.array,vo*3);N.set(g.attributes.normal.array,vo*3);if(CC)CC.set(g.attributes.color.array,vo*3);
       if(g.index){const ix=g.index.array;for(let j=0;j<ix.length;j++)I[io+j]=ix[j]+vo;io+=ix.length}else{for(let j=0;j<c;j++)I[io+j]=vo+j;io+=c}vo+=c;g.dispose()});
-    const G=new THREE.BufferGeometry();G.setAttribute('position',new THREE.BufferAttribute(P,3));G.setAttribute('normal',new THREE.BufferAttribute(N,3));G.setIndex(new THREE.BufferAttribute(I,1));
+    const G=new THREE.BufferGeometry();G.setAttribute('position',new THREE.BufferAttribute(P,3));G.setAttribute('normal',new THREE.BufferAttribute(N,3));if(CC)G.setAttribute('color',new THREE.BufferAttribute(CC,3));G.setIndex(new THREE.BufferAttribute(I,1));
     const mm=new THREE.Mesh(G,q.mt);mm.castShadow=q.cast;mm.receiveShadow=q.recv;scene.add(mm)}
   alt.forEach(m=>{if(m.parent)m.parent.remove(m)})}
 
