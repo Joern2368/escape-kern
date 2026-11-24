@@ -11,7 +11,7 @@ const BEREICHE={
   teich:{name:'Pinguinteich',x:-88,z:32,plaetze:[]},
   wiese:{name:'Affen und Schafe',x:0,z:-60,plaetze:[]}
 };
-const EXTRAZONEN=[{name:'Spielplatz',x:-88,z:-100,r:15},{name:'Picknick',x:88,z:-100,r:15},{name:'Elefantenpark',x:95,z:-35,r:26},{name:'Giraffenwiese',x:-95,z:-35,r:26},{name:'Löwen',x:-45,z:70,r:19},{name:'Tiger',x:45,z:70,r:19},{name:'Nilpferde',x:-45,z:0,r:20},{name:'Eisbären',x:45,z:0,r:19},{name:'Kängurus',x:-45,z:-68,r:19},{name:'Bären',x:45,z:-68,r:19},{name:'Streichelzoo',x:-45,z:102,r:11},{name:'Seehunde',x:45,z:102,r:12},{name:'Papageien',x:-45,z:-132,r:12},{name:'Reptilien',x:45,z:-132,r:14}];
+const EXTRAZONEN=[{name:'Spielplatz',x:-88,z:-100,r:15},{name:'Picknick',x:88,z:-100,r:15},{name:'Elefantenpark',x:95,z:-35,r:26},{name:'Giraffenwiese',x:-95,z:-35,r:26},{name:'Löwen',x:-45,z:70,r:19},{name:'Tiger',x:45,z:70,r:19},{name:'Nilpferde',x:-45,z:0,r:20},{name:'Eisbären',x:45,z:0,r:19},{name:'Kängurus',x:-45,z:-68,r:19},{name:'Bären',x:45,z:-68,r:19},{name:'Streichelzoo',x:-45,z:102,r:11},{name:'Seehunde',x:45,z:102,r:12},{name:'Papageien',x:-45,z:-132,r:12},{name:'Reptilien',x:45,z:-132,r:14},{name:'Aquarium',x:45,z:28,r:9},{name:'Nachttierhaus',x:-45,z:30,r:8},{name:'Futterküche',x:45,z:-41,r:8},{name:'Tierarzt',x:-45,z:-41,r:7},{name:'Flamingoteich',x:45,z:-97,r:8},{name:'Zoo-Schule',x:-45,z:-97,r:8}];
 const SEITENWEGE=[35,-35,-100];
 const WEGBOGEN=11;
 const GRENZE={x0:-125,x1:125,z0:-215,z1:115};
@@ -299,4 +299,116 @@ ausgang=(function(){const g=grp(0,0,TORZ);g.userData.keep=1;[-1,1].forEach(s=>{b
     wasserFl(b.x-5,b.z+3,4.2,WASSER);[[-5,3],[-8,2],[-3,6]].forEach((p,i)=>{const s=tier(schildkroete,b.x+p[0]+(i==1?.5:0),b.z+p[1],b.x,b.z,.7+i*.1,.6);s.position.y=0});
     felsen(b.x+8,b.z+4,1.3);felsen(b.x+10,b.z+7,.9);wegweiser(b.x-17,b.z+3,'Reptilien',Math.PI/2)})();
 
+
+  /* ========== Dichte-Runde (24.11.2026): 6 neue Orte, Landschaft, Kleinteile, Bewegung ========== */
+  function bewegt(teil,fn){teil.userData.keep=1;lebendig.push({o:{userData:{anim:fn}},ph:0})}
+  function instanziert(geo,farbe,liste){const im=new THREE.InstancedMesh(geo,mat(farbe),liste.length);im.frustumCulled=false;scene.add(im);const M=new THREE.Matrix4(),Q=new THREE.Quaternion(),P=new THREE.Vector3(),S=new THREE.Vector3();liste.forEach((a,i)=>{P.set(a[0],a[1],a[2]);S.set(a[3],a[4],a[5]);M.compose(P,Q,S);im.setMatrixAt(i,M)});im.instanceMatrix.needsUpdate=true;return im}
+  const PW35=wellen(-76,35,92,35),PW_35=wellen(-100,-35,100,-35),PW_100=wellen(-92,-100,92,-100);
+  function pz(pts,x){for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1];if(x>=a[0]&&x<=b[0])return a[1]+(b[1]-a[1])*(x-a[0])/(b[0]-a[0])}return pts[pts.length-1][1]}
+  function eule(par){const g=grp(0,0,0,par),f=0x8a6a44;
+    sph(.5,f,0,.7,0,g,1,1.3,.9).castShadow=true;sph(.4,0xe8d8b8,0,.62,.3,g,.9,1.2,.45);
+    const kopf=grp(0,1.5,0,g);sph(.42,f,0,0,0,kopf,1.1,.95,.95);
+    [-1,1].forEach(s=>{sph(.17,0xf4ecd8,s*.17,.05,.3,kopf,1,1,.4);sph(.1,0xffd23a,s*.17,.05,.4,kopf);sph(.05,0x111111,s*.17,.05,.47,kopf);cone(.1,.28,f,s*.28,.45,0,kopf);sph(.3,0x6e5232,s*.5,.65,-.05,g,.35,1.3,.7)});
+    cone(.07,.2,0xf59e3f,0,-.08,.45,kopf).rotation.x=Math.PI/2;[-.15,.15].forEach(s=>box(.1,.08,.2,0xf59e3f,s,.05,.15,g));
+    g.userData.anim=t=>{kopf.rotation.y=Math.sin(t*.7)*.7};return g}
+  function vogelhaus(x,z){const g=grp(x,0,z);cyl(.06,2,0x6a4220,0,1,0,g,true);box(.55,.4,.45,0xc98a4b,0,2.2,0,g);const r1=box(.7,.05,.32,0xb94a3a,0,2.55,-.12,g);r1.rotation.x=-.6;const r2=box(.7,.05,.32,0xb94a3a,0,2.55,.12,g);r2.rotation.x=.6;sph(.07,0x2a1d14,0,2.2,.23,g);box(.3,.04,.2,0x6a4220,0,1.98,.28,g);kreis(x,z,.25)}
+  function trinkbrunnen(x,z){const g=grp(x,0,z);cyl(.18,1,0x9aa8b4,0,.5,0,g,true);cyl(.4,.14,0xb8c4cc,0,1.05,0,g);cyl(.3,.05,0x4aa3d8,0,1.12,0,g);sph(.09,0x7a8894,0,1.2,.1,g);kreis(x,z,.45)}
+  /* Orte der Dichte-Runde: Mitten in den Lücken zwischen den Gehegen, jeweils an einem Seitenweg */
+  /* Aquarium */
+  (function(){const b=EXTRAZONEN[14],x=b.x,z=b.z,fz=z+3.5,wz=pz(PW35,x);
+    cyl(8.5,.1,0xe6dcb4,x,.05,z+1,scene).receiveShadow=true;pfad(x,fz+2.4,x,wz-1.5,3.5);
+    haus(x,z,12,7,0x4a9ac8,0x2f6b9a);
+    box(8.4,.6,.9,0x1f4f7a,x,.3,fz+.45,scene);box(8.4,.2,.9,0x1f4f7a,x,2.2,fz+.45,scene);[-1,1].forEach(s=>box(.2,1.9,.9,0x1f4f7a,x+s*4.2,1.25,fz+.45,scene));
+    box(8,1.5,.12,0x1e6aa8,x,1.35,fz+.1,scene);box(8,.2,.6,0xe8d8a0,x,.72,fz+.45,scene);glas(8,1.5,.7,x,1.45,fz+.45);
+    [-3,-1.5,.5,2,3.4].forEach((o,i)=>{cyl(.05,.7+i%3*.3,0x2f9a5a,x+o,.9+(.7+i%3*.3)/2-.1,fz+.3,scene)});sph(.35,0x9aa0a6,x-3.4,.95,fz+.5,scene,1.3,.7,1);sph(.3,0xe0605a,x+1.2,.9,fz+.55,scene,1,.5,1);
+    box(.95,1.7,.1,0x7a5230,x+5.1,.85,fz+.05,scene);box(.12,.12,.08,0xf5d442,x+5.4,.9,fz+.12,scene);box(10.2,.1,1.3,0x2f6b9a,x,2.5,fz+.9,scene).rotation.x=.35;
+    [[0,1.0,0xf59e3f,1,0],[1.7,1.4,0xe0605a,.8,1.3],[3.1,1.2,0xffd45e,.9,2.6],[4.4,.9,0x3b8fc4,1,.7],[5.6,1.6,0xb06ae0,.7,3.3],[2.4,.85,0x4caf6a,.85,5.2]].forEach(f=>{
+      const g=grp(x,f[1],fz+.5,scene);g.userData.keep=1;const s=f[3];sph(.24*s,f[2],0,0,0,g,1.5,1,.55);cone(.15*s,.3*s,f[2],-.36*s,0,0,g).rotation.z=-Math.PI/2;sph(.04,0x111111,.26*s,.06,.1*s,g);sph(.04,0x111111,.26*s,.06,-.1*s,g);
+      bewegt(g,t=>{const a=t*.35+f[4];g.position.x=x+Math.sin(a)*3.4;g.rotation.y=Math.cos(a)>0?0:Math.PI;g.position.y=f[1]+Math.sin(t*1.1+f[0])*.12})});
+    [-3,-1,1.5,3.2].forEach((bx,i)=>{const s=sph(.06,0xffffff,x+bx,1,fz+.5,scene);bewegt(s,t=>{const u=(t*.4+i*.27)%1;s.position.y=.8+u*1.2;s.position.x=x+bx+Math.sin(t*3+i)*.05})});
+    const fg=grp(x,4.7,z,scene);fg.userData.keep=1;sph(1.3,0xf59e3f,0,0,0,fg,1.8,1,.55);cone(.8,1.3,0xe8782a,-2.75,0,0,fg).rotation.z=-Math.PI/2;cone(.55,.9,0xe8782a,0,1.2,0,fg);[-1,1].forEach(s=>{sph(.2,0xffffff,1.5,.3,s*.46,fg);sph(.1,0x111111,1.6,.3,s*.55,fg)});cyl(.1,1.6,0x6a4220,0,-1.5,0,fg);
+    bewegt(fg,t=>{fg.position.y=4.7+Math.sin(t)*.15;fg.rotation.y=Math.sin(t*.5)*.3});
+    sperrKasten(x,fz+.45,8.8,.9,0);bank(x+8.6,z+3.4,-Math.PI/2);tonne(x-8,z+4.2)})();
+  /* Nachttierhaus */
+  (function(){const b=EXTRAZONEN[15],x=b.x,z=b.z,fz=z+3.55,wz=pz(PW35,x);
+    cyl(8,.1,0xd8d0b8,x,.05,z+1,scene).receiveShadow=true;pfad(x,z+5,x,wz-1.5,3.5);
+    haus(x,z,10,7,0x3a4066,0x1f2540);fassade(x,z,10,7,0,[-3.2,3.2]);[-3.2,3.2].forEach(q=>box(.95,.75,.12,0xffe28a,x+q,1.35,fz+.04,scene));
+    const mo=grp(x,5.2,z+.3,scene);mo.userData.keep=1;sph(1.1,0xfff0a0,0,0,0,mo,1,1,.35);[[-.4,.3],[.35,-.2],[.1,.5]].forEach(p=>sph(.2,0xe8d880,p[0],p[1],.3,mo,1,1,.3));cyl(.07,2,0x6a4220,0,-1.6,0,mo);
+    [[-2,1.2],[2.3,1.6],[-1.6,-1.4],[1.9,-1.2],[0,2]].forEach((p,i)=>{const s=sph(.12,0xffe060,p[0],p[1],.2,mo);bewegt(s,t=>{s.scale.setScalar(.12*(.7+.5*Math.sin(t*2+i*1.7)))})});
+    bewegt(mo,t=>{mo.rotation.z=Math.sin(t*.4)*.06});
+    [-4.4,4.4].forEach(q=>{cyl(.12,2.9,0x6a4220,x+q,1.45,z+5.2,scene,true);sph(.18,0xffe28a,x+q,3.05,z+5.2,scene);kreis(x+q,z+5.2,.3)});box(9.2,.2,.3,0x6a4220,x,2.85,z+5.2,scene);
+    [-3.2,-1.6,.1,1.7,3.3].forEach(o=>{const g=grp(x+o,2.75,z+5.2,scene);sph(.13,0x3a2a22,0,-.25,0,g,1,1.4,1);sph(.09,0x4a3a2c,0,-.45,.03,g);[-1,1].forEach(s=>{cone(.05,.12,0x3a2a22,s*.06,-.55,.03,g);sph(.18,0x2a1f1a,s*.13,-.25,0,g,.3,1.3,.5);sph(.02,0xe0302a,s*.04,-.45,.11,g)});g.scale.setScalar(1.6)});
+    [-6,6].forEach((q,i)=>{cyl(.09,1.9,0x6a4220,x+q,.95,z+1.4,scene,true);const e=eule(scene);e.userData.keep=1;e.position.set(x+q,1.9,z+1.4);e.rotation.y=i?-.4:.4;e.scale.setScalar(.9);lebendig.push({o:e,ph:i*2});kreis(x+q,z+1.4,.3)});
+    bank(x+7,z+5.5,-Math.PI/2);tonne(x-8,z+4)})();
+  /* Futterküche */
+  (function(){const b=EXTRAZONEN[16],x=b.x,z=b.z,wz=pz(PW_35,x);
+    cyl(8.5,.1,0xe6dcb4,x,.05,z+2,scene).receiveShadow=true;pfad(x,z+3.5,x,wz-1.5,3.5);
+    haus(x,z,9,6,0xe8d8a0,0xb94a3a);fassade(x,z,9,6,-1.5,[2.4]);cyl(.4,2.2,0x9a6a50,x+3,3.2,z-1,scene,true);
+    const rg=grp(x+3,4.4,z-1,scene);const ps=[0,1,2,3].map(()=>sph(.4,0xf2f2f2,0,0,0,rg));bewegt(rg,t=>{ps.forEach((p,i)=>{const f=(t*.35+i*.25)%1;p.position.set(f*1.2,f*2.8,0);p.scale.setScalar(.18+f*.5)})});
+    [[-5.6,z+.2,0],[-5.6,z+1.5,1]].forEach(q=>{box(1.1,.7,.8,0xa8743f,x+q[0],.35,q[1],scene,true);if(q[2]===0){for(let i=0;i<6;i++)sph(.17,0xe0302a,x+q[0]-.35+(i%3)*.35,.8,q[1]-.15+(i>2?.3:0),scene)}else{for(let i=0;i<5;i++){const c=cone(.09,.55,0xf2882a,x+q[0]-.4+i*.2,.78,q[1],scene);c.rotation.z=Math.PI/2}}kreis(x+q[0],q[1],.7)});
+    box(1.1,.7,.8,0xa8743f,x-5.6,1.05,z+.8,scene);[0,1,2].forEach(i=>sph(.2,0x6cc04a,x-5.9+i*.3,1.5,z+.8,scene));
+    heu(x+6.4,z-.5,0);heu(x+6.4,z+1.6,.3);
+    [-3.4,-2.2].forEach(q=>{cyl(.45,1,0x8a5a32,x+q,.5,z+3.6,scene,true);cyl(.47,.08,0x4a3320,x+q,.55,z+3.6,scene);cyl(.47,.08,0x4a3320,x+q,.95,z+3.6,scene);kreis(x+q,z+3.6,.5)});
+    const sk=grp(x+4,0,z+4.4,scene);sk.rotation.y=.4;box(1.1,.4,.7,0x3b8fc4,0,.65,0,sk,true);cyl(.25,.1,0x222222,.65,.28,0,sk).rotation.x=Math.PI/2;sph(.4,0xe8c850,0,.95,0,sk,1.2,.5,.8);[-1,1].forEach(s=>box(.9,.05,.05,0x6a4220,-.9,.7,s*.3,sk));kreis(x+4,z+4.4,.9);
+    const kw=grp(x,0,wz,scene);kw.userData.keep=1;box(2.2,.5,1.2,0xa8743f,0,.8,0,kw,true);sph(.9,0xe8c850,0,1.2,0,kw,1.2,.55,.8);[[-.8,.5],[-.8,-.5],[.8,.5],[.8,-.5]].forEach(p=>cyl(.3,.1,0x222222,p[0],.3,p[1]*1.1,kw).rotation.x=Math.PI/2);box(1,.06,.06,0x6a4220,-1.6,1,0,kw);
+    const wa=grp(-1.9,0,0,kw);cyl(.3,.9,0x3e7a4a,0,.95,0,wa);sph(.23,0xf0c8a0,0,1.6,0,wa);box(.5,.1,.4,0x3e7a4a,.05,1.82,0,wa);cyl(.1,.8,0x2a4a8a,0,.4,0,wa);
+    bewegt(kw,t=>{const a=t*.13,xx=x+Math.sin(a)*22,sg=Math.cos(a)>0?1:-1,s=pz(PW_35,xx+1)-pz(PW_35,xx);kw.position.set(xx,0,pz(PW_35,xx));kw.rotation.y=Math.atan2(-sg*s,sg);wa.position.y=Math.abs(Math.sin(t*5))*.06});
+    bank(x-8,z+3.2,Math.PI/2)})();
+  /* Tierarztstation */
+  (function(){const b=EXTRAZONEN[17],x=b.x,z=b.z,wz=pz(PW_35,x);
+    cyl(8,.1,0xe6dcb4,x,.05,z+2,scene).receiveShadow=true;pfad(x,z+3.5,x,wz-1.5,3.5);
+    haus(x,z,8,6,0xf4f4f0,0x3b8fc4);fassade(x,z,8,6,-1.5,[1.8]);box(.9,.3,.1,0xe0302a,x+.1,1.4,z+3.1,scene);box(.3,.9,.1,0xe0302a,x+.1,1.4,z+3.1,scene);
+    const tt=grp(x-5.8,0,z+2.8,scene);box(1.8,.12,1,0xdde4ea,0,.85,0,tt,true);[[-.8,-.4],[.8,-.4],[-.8,.4],[.8,.4]].forEach(p=>cyl(.05,.85,0x8a9aa6,p[0],.42,p[1],tt));kreis(x-5.8,z+2.8,1.1);
+    const sh=tier(schaf,x-5.8,z+2.8,x-5.8,z+10,.6);sh.position.y=.9;
+    const van=grp(x+7,0,z+3.2,scene);van.userData.keep=1;box(3,1.4,1.6,0xffffff,0,1.2,0,van,true);box(1,1,1.5,0xffffff,1.9,.95,0,van);box(.05,.55,1.3,0x9fd0ea,2.42,1.15,0,van);box(3.02,.2,1.62,0xe0605a,0,.85,0,van);[1,-1].forEach(s=>{box(.7,.2,.05,0xe0302a,-.3,1.5,s*.83,van);box(.2,.7,.05,0xe0302a,-.3,1.5,s*.83,van)});
+    [[-.9,.8],[-.9,-.8],[1.8,.8],[1.8,-.8]].forEach(p=>cyl(.35,.2,0x222222,p[0],.35,p[1],van).rotation.x=Math.PI/2);const li=box(.4,.14,.4,0x3b8fc4,.9,1.98,0,van);bewegt(li,t=>{li.visible=Math.sin(t*6)>0});sperrKasten(x+7,z+3.2,3.2,1.8,0);
+    tonne(x+9.5,z+5.5);bank(x-8,z+4.6,Math.PI/2)})();
+  /* Flamingoteich */
+  (function(){const b=EXTRAZONEN[18],x=b.x,z=b.z;
+    cyl(8,.1,0xdcecc0,x,.04,z,scene).receiveShadow=true;
+    wasserFl(x,z,5.5,WASSER);wasserFl(x-.8,z+.6,3.4,0x6ec0ea,.02);const ring=new THREE.Mesh(new THREE.TorusGeometry(5.7,.3,6,36),mat(0xb8bec4));ring.rotation.x=Math.PI/2;ring.position.set(x,.25,z);scene.add(ring);sperrRing(x,z,5.9,36);
+    for(let i=0;i<14;i++){const a=i/14*6.283;felsen(x+Math.cos(a)*6.2,z+Math.sin(a)*6.2,.45+rnd()*.3)}
+    [[2.5,0,1],[1,2.8,1.1],[-1.8,2.4,.95],[-3.2,.2,1],[-1.6,-2.5,1.05],[1.3,-2.8,.95],[3.2,-1.6,1],[0,.2,1.1]].forEach((p,i)=>{const f=tier(flamingo,x+p[0],z+p[1],x,z,p[2],.5);f.position.y=.1;f.rotation.y+=i*1.1});
+    const lp=[],rd=[],bl=[];for(let i=0;i<10;i++){const a=i*2.1,r=1.5+(i%4)*.9;lp.push([x+Math.cos(a)*r,.2,z+Math.sin(a)*r,.55,.03,.55]);if(i%3===0)bl.push([x+Math.cos(a)*r,.28,z+Math.sin(a)*r,.12,.1,.12])}
+    for(let i=0;i<34;i++){const a=i/34*6.283+rnd()*.1,r=5.2+rnd()*.5;rd.push([x+Math.cos(a)*r,.8,z+Math.sin(a)*r,.05,.8+rnd()*.5,.05])}
+    instanziert(gCyl,0x4aa84e,lp);instanziert(gSph,0xf0a0c8,bl);instanziert(gCyl,0xc9b97a,rd);
+    bank(x+9,z+1,-Math.PI/2);bank(x-9,z+1,Math.PI/2)})();
+  /* Zoo-Schule (Klassenzimmer im Freien) */
+  (function(){const b=EXTRAZONEN[19],x=b.x,z=b.z;
+    cyl(8,.1,0xe6dcb4,x,.05,z,scene).receiveShadow=true;
+    [[-2.8,-1.9],[2.8,-1.9],[-2.8,1.9],[2.8,1.9]].forEach(p=>{cyl(.12,2.8,0x7a5230,x+p[0],1.4,z-2.2+p[1],scene,true);kreis(x+p[0],z-2.2+p[1],.3)});
+    const r=box(6.6,.15,4.6,0x4a9a5a,x,2.9,z-2.2,scene,true);r.rotation.x=.14;
+    const tf=grp(x,0,z-3.8,scene);box(4,2,.12,0x2f5a45,0,1.6,0,tf,true);[[-2.1,0],[2.1,0]].forEach(p=>box(.12,2.1,.14,0x8a5a32,p[0],1.6,0,tf));box(4.3,.1,.16,0x8a5a32,0,.55,0,tf);box(4.3,.1,.16,0x8a5a32,0,2.65,0,tf);[-1.4,1.4].forEach(p=>box(.12,.55,.14,0x8a5a32,p,.28,0,tf));
+    [[-1.4,1.8,.9],[-.2,1.5,1.2],[1.1,1.9,.7]].forEach(p=>box(p[2],.05,.02,0xffffff,p[0],p[1],.08,tf));sph(.35,0xe8a060,1.2,1.4,.09,tf,1,.7,.1);sph(.3,0x6aa84a,-1.2,1.1,.09,tf,1.2,.8,.1);box(.4,.06,.12,0xffffff,0,.62,.1,tf);sperrKasten(x,z-3.8,4.4,.5,0);
+    [[-2.6,z+1.2],[2.6,z+1.2],[-2.6,z+3.6],[2.6,z+3.6]].forEach(p=>bank(x+p[0],p[1],Math.PI));
+    const gl=grp(x-6.5,0,z+1.5,scene);gl.userData.keep=1;cyl(.08,1.3,0x6a4220,0,.65,0,gl,true);const ku=grp(0,1.6,0,gl);sph(.55,0x3b8fc4,0,0,0,ku);[[.3,.2,.5,.2],[-.4,.1,.4,.18],[.1,-.3,.45,.15]].forEach(p=>sph(.17,0x6aa84a,p[0],p[1],p[2],ku,1,1,.5));bewegt(ku,t=>{ku.rotation.y=t*.4});kreis(x-6.5,z+1.5,.5);
+    tonne(x+7,z+3);vogelhaus(x+7.5,z-1.5)})();
+  /* ----- Landschaft: Büsche, Blumen, Gras, Hecken ----- */
+  const KT=[[58,1,10.8],[22,-1,10.8],[-22,1,10.8],[-84,-1,10.8],[-118,1,10.8],[40,1,10.8],[58,-1,7.6],[-12,1,7.6],[-60,-1,7.6],[-112,1,7.6],[-142,-1,7.6]].map(q=>[wegX(q[0])+q[1]*q[2],q[0]]);
+  const frei2=(x,z,m)=>{for(const k of KT){if(Math.hypot(x-k[0],z-k[1])<m+1.5)return false}for(const d of [[0,0],[m,0],[-m,0],[0,m],[0,-m]]){const p=hindernisse(x+d[0],z+d[1]);if(Math.hypot(p[0]-x-d[0],p[1]-z-d[1])>.02)return false}return true};
+  (function(){const sz=[102,70,0,-68,-132],bu1=[],bu2=[],fl=[[],[],[],[]],st=[],gr=[],he=[];const fc=[0xe0605a,0xffd45e,0xf59e3f,0xb06ae0];
+    for(let zz=100;zz>TORZ+10;zz-=5.5){if(Math.abs(zz-92)<17)continue;let skip=false;SEITENWEGE.forEach(w=>{if(Math.abs(zz-w)<9)skip=true});sz.forEach(q=>{if(Math.abs(zz-q)<5)skip=true});if(skip)continue;
+      [-1,1].forEach(sd=>{const x=wegX(zz)+sd*(8.5+rnd()*2.5),s=1+rnd()*.8,zb=zz+(rnd()-.5)*2;const lst=rnd()<.5?bu1:bu2;if(!frei2(x,zb,1.4*s))return;lst.push([x,.55*s,zb,1.2*s,.85*s,1.1*s])})}
+    for(let zz=96;zz>TORZ+10;zz-=11){if(Math.abs(zz-92)<17)continue;let skip=false;SEITENWEGE.forEach(w=>{if(Math.abs(zz-w)<9)skip=true});sz.forEach(q=>{if(Math.abs(zz-q)<6)skip=true});if(skip)continue;
+      [-1,1].forEach(sd=>{const cx=wegX(zz)+sd*6.9;for(let i=0;i<6;i++){const x=cx+(rnd()-.5)*1.6,z2=zz+(rnd()-.5)*2.2;if(!frei2(x,z2,.2))continue;st.push([x,.25,z2,.03,.5,.03]);fl[(i+(sd>0?1:0))%4].push([x,.55,z2,.14,.14,.14])}})}
+    const okG=(x,z)=>{for(const k in BEREICHE){const q=BEREICHE[k];if(Math.hypot(x-q.x,z-q.z)<(k==='eingang'?17:21))return false}for(const e of EXTRAZONEN){if(Math.hypot(x-e.x,z-e.z)<(e.r||0)+2)return false}if(z>TORZ+2&&Math.abs(x-wegX(z))<3.6)return false;if(z<TORZ+14)return false;
+      if(Math.abs(z-pz(PW35,Math.max(-76,Math.min(92,x))))<3.6&&x>-78&&x<94)return false;if(Math.abs(z-pz(PW_35,x))<3.6)return false;if(Math.abs(z-pz(PW_100,Math.max(-92,Math.min(92,x))))<3.6&&Math.abs(x)<94)return false;return true};
+    for(let i=0,n=0;i<900&&n<260;i++){const x=GRENZE.x0+4+rnd()*(GRENZE.x1-GRENZE.x0-8),z=GRENZE.z0+60+rnd()*(GRENZE.z1-GRENZE.z0-70);if(!okG(x,z))continue;const s=.7+rnd()*.7;gr.push([x,.2*s,z,.16*s,.4*s,.16*s]);n++}
+    [[45,28,9.6],[-45,30,8.8],[45,-41,9.6],[-45,-41,8.2]].forEach(p=>[-1,1].forEach(sd=>{const hx=p[0]+sd*p[2];he.push([hx,.55,p[1],4,1.1,1.1]);sperrKasten(hx,p[1],4,1.1,0)}));
+    instanziert(gSph,0x3f9a46,bu1);instanziert(gSph,0x5cba5c,bu2);instanziert(gCyl,0x3f9a46,st);fl.forEach((l,i)=>instanziert(gSph,fc[i],l));instanziert(gCone,0x58b04a,gr);instanziert(gBox,0x2f8a3e,he)})();
+  /* ----- Kleinteile ----- */
+  (function(){[[58,1],[22,-1],[-22,1],[-84,-1],[-118,1],[40,1]].forEach(q=>vogelhaus(wegX(q[0])+q[1]*10.8,q[0]));
+    [[58,-1],[-12,1],[-60,-1],[-112,1],[-142,-1]].forEach(q=>trinkbrunnen(wegX(q[0])+q[1]*7.6,q[0]))})();
+  /* ----- Bewegung: Zoo-Bahn, Vögel, Schmetterlinge ----- */
+  (function(){const g=grp(0,0,70,scene);g.userData.keep=1;
+    function rad(par,x,z,r){cyl(r,.2,0x222222,x,r,z,par).rotation.z=Math.PI/2}
+    const lok=grp(0,0,0,g);box(1.5,.9,2.4,0x3b9a5a,0,.95,.4,lok,true);box(1.5,1,1.1,0xe8d8a0,0,1.85,-.7,lok);box(1.7,.12,1.3,0xe0605a,0,2.4,-.7,lok);cyl(.18,.7,0x333333,0,1.8,1.2,lok);[-.5,.5].forEach(s=>sph(.1,0xfff0a0,s,1,1.62,lok));[-.8,.8].forEach(s=>{rad(lok,s,1,.35);rad(lok,s,-.8,.35)});[-1,1].forEach(s=>box(.05,.5,.7,0x9fd0ea,s*.76,1.9,-.7,lok));
+    [-4,-8].forEach((oz,i)=>{const w=grp(0,0,oz,g);box(1.7,.3,3,i?0x3b8fc4:0xf5d442,0,.6,0,w,true);[-1,1].forEach(s=>box(1.5,.1,.5,0x9a5a30,0,1,s*.8,w));[[-.8,-1.4],[.8,-1.4],[-.8,1.4],[.8,1.4]].forEach(p=>cyl(.06,1.6,0x7a5230,p[0],1.5,p[1],w));box(1.9,.1,3.2,0xe0605a,0,2.3,0,w);[-.8,.8].forEach(s=>{rad(w,s,1,.3);rad(w,s,-1,.3)})});
+    bewegt(g,t=>{const v=4.5,L=220,P=2*(L/v+4);const u=t%P;let pos,sgn;if(u<L/v){pos=u*v;sgn=-1}else if(u<L/v+4){pos=L;sgn=-1}else if(u<2*L/v+4){pos=L-(u-L/v-4)*v;sgn=1}else{pos=0;sgn=1}const z=70-pos;g.position.set(wegX(z),0,z);g.rotation.y=Math.atan2(wegX(z+sgn)-wegX(z),sgn)})})();
+  (function(){function vogel(cx,cz,r,h,ph,c){const g=grp(cx+r,h,cz,scene);g.userData.keep=1;sph(.22,c,0,0,0,g,1.7,.8,.8);cone(.08,.3,0xf59e3f,.38,0,0,g).rotation.z=-Math.PI/2;const fl=[-1,1].map(s=>box(.12,.03,.6,c,0,.02,s*.35,g));
+      bewegt(g,t=>{const a=t*.25+ph;g.position.set(cx+Math.cos(a)*r,h+Math.sin(t*.7+ph)*1.2,cz+Math.sin(a)*r);g.rotation.y=-a-Math.PI/2;fl[0].rotation.x=Math.sin(t*9)*.5;fl[1].rotation.x=-Math.sin(t*9)*.5})}
+    vogel(-40,40,45,26,0,0x3a3f4a);vogel(40,-40,50,30,2,0x8a6a44);vogel(0,-100,35,24,4,0x3a3f4a);vogel(0,80,30,28,1,0xe8e8e8);
+    function falter(cx,cz,r,farbe,ph){const g=grp(cx+r,1.3,cz,scene);g.userData.keep=1;sph(.06,0x3a2a22,0,0,0,g,2,.6,.6);const fl=[-1,1].map(s=>sph(.22,farbe,0,0,s*.2,g,.9,.1,1.1));
+      bewegt(g,t=>{const a=t*.5+ph;g.position.set(cx+Math.cos(a)*r,1.3+Math.sin(t*1.7+ph)*.4,cz+Math.sin(a*1.3)*r);g.rotation.y=-a;const f=Math.sin(t*16+ph)*.7;fl[0].rotation.x=f;fl[1].rotation.x=-f})}
+    falter(-11,102,3.5,0xffd45e,0);falter(13,104,3.5,0xf06a9c,2);falter(45,-97,8,0xf59e3f,1);falter(-45,-97,6,0xb06ae0,3);falter(wegX(-20)+7,-20,3,0x4aa8e0,4)})();
 }
