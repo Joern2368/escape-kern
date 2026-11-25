@@ -340,7 +340,7 @@ function kartePicken(k){k.da=false;k.g.visible=false}
 /* ---------- Spielfigur ---------- */
 const spieler=grp(START.x,0,START.z);
 const teile={};
-function figurBauen(av){while(spieler.children.length)spieler.remove(spieler.children[0]);const m=kindModell(av,spieler);teile.beinL=m.bl;teile.beinR=m.br;teile.armL=m.al;teile.armR=m.ar}
+function figurBauen(av){while(spieler.children.length)spieler.remove(spieler.children[0]);const m=kindModell(av,spieler);if(typeof SPIELERMODELL==='function')SPIELERMODELL(m);teile.beinL=m.bl;teile.beinR=m.br;teile.armL=m.al;teile.armR=m.ar}
 figurBauen(AVATARE[0]);
 
 /* ---------- Eingaben ---------- */
