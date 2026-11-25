@@ -117,6 +117,9 @@ html,body{touch-action:none}
 #knob{position:absolute;left:50%;top:50%;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;background:#fffe;box-shadow:0 3px 8px #0004;pointer-events:none}
 #mini{cursor:pointer;position:fixed;right:max(12px,env(safe-area-inset-right));top:max(62px,calc(env(safe-area-inset-top) + 52px));z-index:6;border-radius:14px;box-shadow:0 2px 8px #1f3a4d44;width:170px;height:auto}
 .urkunde{background:#fffdf0;padding:10px}
+.urgrossk{width:520px;box-shadow:0 8px 30px #0003;border-radius:6px;transform-origin:center center}
+#urgross{position:fixed;inset:0;z-index:60;background:#dfe9ef;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#urgross .urhinweis{position:absolute;left:0;right:0;bottom:10px;text-align:center;font-size:18px;color:#1f3a4d;transition:opacity 1.2s}
 .ur-rahmen{border:10px double #e8b930;border-radius:10px;padding:26px 24px;text-align:center}
 .ur-stern{color:#e8b930;font-size:30px;letter-spacing:6px}
 .ur-titel{font-size:46px;font-weight:700;letter-spacing:8px;color:#b9792a;margin:6px 0}

@@ -1,7 +1,7 @@
 /* Engine für begehbare 3D-Welten. Fest, gehostet. Erwartet: CONFIG (Inhalt) und die Welt-Datei (welt-<kennwort>.js) davor. */
 document.body.insertAdjacentHTML('afterbegin',`<div id="gl"></div>
 <div id="zaehler" class="pille"><span id="titelz"><span id="titel">Rätsel-Zoo</span></span><span>📖 <b id="zk">0</b>/<span id="zn">10</span></span><span>❓ <b id="zr">0</b>/<span id="zn2">10</span></span></div>
-<div id="knoepfe"><span id="fps">FPS: --</span><button class="rund" id="mappe" title="Wissensmappe">📖</button><button class="rund" id="kartenknopf" title="Karte">🗺️</button><button class="rund" id="tonknopf" title="Ton">🔊</button></div>
+<div id="knoepfe"><span id="fps">FPS: --</span><button class="rund" id="urknopf" title="Urkunde" style="display:none">🏆</button><button class="rund" id="mappe" title="Wissensmappe">📖</button><button class="rund" id="kartenknopf" title="Karte">🗺️</button><button class="rund" id="tonknopf" title="Ton">🔊</button></div>
 <div id="spruch" class="pille"></div>
 <canvas id="mini" width="170" height="225"></canvas>
 <button class="knopf" id="aktion"></button>
@@ -564,7 +564,11 @@ function urkunde(){const k=karteOeffnen();k.className='karte';
   const d=new Date().toLocaleDateString('de-DE');
   k.innerHTML='<div class="urkunde"><div class="ur-rahmen"><div class="ur-stern">★ ★ ★</div><div class="ur-titel">URKUNDE</div><div class="ur-klein">'+CONFIG.spielname+'</div><div class="ur-name"></div><div class="ur-text"></div><div class="ur-fuss"><span>'+d+'</span><span>'+MASKOTTCHEN+'</span></div></div></div>';
   k.querySelector('.ur-name').textContent=S.name;k.querySelector('.ur-text').textContent=CONFIG.urkundeText;
-  const l=el('div','leiste noprint');l.appendChild(el('div','platz'));const z=el('button','knopf','Weiter feiern');z.onclick=karteSchliessen;l.appendChild(z);k.appendChild(l)}
+  const l=el('div','leiste noprint');l.appendChild(el('div','platz'));const gz=el('button','knopf blau','Urkunde groß zeigen');gz.onclick=urkundeGross;l.appendChild(gz);const z=el('button','knopf','Weiter feiern');z.onclick=karteSchliessen;l.appendChild(z);k.appendChild(l);$('#urknopf').style.display=''}
+/* Urkunde gross: nur die Urkunde auf ruhigem Hintergrund (fuer das Bildschirmfoto der Kinder). Tippen schliesst, die Urkunde ist dann wieder offen. */
+function urkundeGross(){const q=document.querySelector('#karte .urkunde');if(!q)return;const o=el('div');o.id='urgross';const c=q.cloneNode(true);c.className='urkunde urgrossk';o.appendChild(c);const h=el('div','urhinweis','Mache jetzt dein Bildschirmfoto. Tippe danach irgendwo, um zurückzugehen.');o.appendChild(h);document.body.appendChild(o);
+  const s=Math.min(innerWidth*.94/c.offsetWidth,innerHeight*.86/c.offsetHeight);c.style.transform='scale('+s+')';setTimeout(()=>{h.style.opacity='0'},4500);o.onclick=()=>{o.remove()}}
+$('#urknopf').onclick=()=>{if(modal)return;urkunde()};
 function finaleStart(){if(finale)return;finale={t:0,burstT:0,urk:false};sag('Überraschung! Alle feiern mit dir!',9000);paradeBauen();konfetti(120);sRichtig()}
 
 /* ---------- Hauptschleife ---------- */
@@ -593,7 +597,7 @@ function schleife(){requestAnimationFrame(schleife);const dt=Math.min(.05,clock.
 /* ---------- Start ---------- */
 function weltWiederherstellen(){karten.forEach(k=>{if(S.karten[k.i])kartePicken(k)});stationen.forEach(s=>{if(S.geloest[s.i])stationFertig(s)});if(zaehle(S.geloest)>=N){ausgang.ziel=1;ausgang.offen=1;ausgang.fl[0].rotation.y=-1.5;ausgang.fl[1].rotation.y=1.5}hud()}
 function gespeicherte(){const out=[],pre='welt3d|'+CONFIG.spielname+'|';try{for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key.indexOf(pre)===0){const s=JSON.parse(localStorage.getItem(key));if(s&&s.name&&(zaehle(s.karten||{})+zaehle(s.geloest||{}))>0)out.push(s)}}}catch(e){}return out.slice(0,8)}
-function losGehts(n,jacke,alt){S=alt||{name:n,jacke:0,karten:{},geloest:{}};S.name=n;S.jacke=jacke;try{localStorage.setItem(LETZT,JSON.stringify({name:n,jacke:jacke}))}catch(e){}figurBauen(AVATARE[jacke]);const weiter=!!alt;
+function losGehts(n,jacke,alt){$('#urknopf').style.display='none';S=alt||{name:n,jacke:0,karten:{},geloest:{}};S.name=n;S.jacke=jacke;try{localStorage.setItem(LETZT,JSON.stringify({name:n,jacke:jacke}))}catch(e){}figurBauen(AVATARE[jacke]);const weiter=!!alt;
   if(alt&&S.x!=null)spieler.position.set(S.x,0,S.z);else spieler.position.set(START.x,0,START.z);
   if(!alt){karten.forEach(k=>{k.da=true;k.g.visible=true});stationen.forEach(s=>{s.ring.material.color.set(0xf59e3f);s.spr.material.map=marke('?','#f59e3f');s.spr.material.needsUpdate=true});ausgang.ziel=0;ausgang.offen=0;ausgang.fl[0].rotation.y=0;ausgang.fl[1].rotation.y=0}
   gestartet=true;speichern();karteSchliessen();weltWiederherstellen();sKlick();
