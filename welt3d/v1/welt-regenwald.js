@@ -13,6 +13,7 @@ const BEREICHE={
 /* Der Rio: breiter Fluss von Osten (Becken des Wasserfalls) nach Westen. Er trennt Süden und Norden; Brücken: Hauptweg (x etwa 3) und Hängebrücke (x = -148). */
 const RW=12;
 const RIO=spl([[150,-84],[134,-82],[114,-84],[96,-88],[78,-87],[58,-83],[40,-81],[22,-82],[4,-85],[-14,-88],[-34,-88],[-54,-85],[-74,-82],[-94,-84],[-114,-88],[-134,-90],[-154,-88],[-184,-85]],2);
+const KARTENFLUSS={pts:RIO,w:RW};
 function rioZ(x){let b=0,bd=1e9;for(let i=0;i<RIO.length;i++){const d=Math.abs(RIO[i][0]-x);if(d<bd){bd=d;b=i}}return RIO[b][1]}
 /* 37 Orte (dazu der Eingang) und Wasserflächen (Namen 'Fluss' kommen oft vor und zählen nicht als Ort, halten nur die Rätsel aus dem Wasser) */
 const EXTRAZONEN=[
