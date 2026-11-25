@@ -264,7 +264,7 @@ function bodenfl(x,z,s,k){inst('sph',x,.02,z,(2.5+nr()*2)*s,.04,(2+nr()*2)*s,[0x
 function urw(x,z,s,t,kr){s=s||1;t=t||0;const c=tp();
   if(t===0){const h=(7+nr()*3)*s;inst('cyl',x,h/2,z,.32*s,h,.32*s,0x6a4e34);inst('sph',x,h+1.2*s,z,3.2*s,2.1*s,3.2*s,c);inst('blm',x+1.7*s,h-.1*s,z+.6*s,2.4*s,1.6*s,2.4*s,dk(c,.9));if(nr()<.6)liane(x+1.4*s,h-.8*s,z+.5*s,(4+nr()*4)*s);if(nr()<.3)brom(x,2.4*s,z+.45*s,.8,1)}
   else if(t===1){const h=(9+nr()*3)*s;inst('cyl',x,h/2,z,.38*s,h,.38*s,0x7a5a3a);inst('sph',x,h+.6*s,z,5.4*s,1.3*s,5.4*s,c);inst('blm',x+2.6*s,h,z+1.2*s,2.6*s,1*s,2.6*s,dk(c,.9));inst('blm',x-2.4*s,h+.2*s,z-1.4*s,2.6*s,1*s,2.6*s,dk(c,1.1));liane(x+2.5*s,h-.4*s,z+.6*s,(5+nr()*4)*s);liane(x-2*s,h-.4*s,z-1*s,(4+nr()*4)*s)}
-  else{const h=(20+nr()*5)*s;inst('cyl',x,h/2,z,.9*s,h,.9*s,0x8a7a6a);for(let i=0;i<4;i++){const a=i*1.57+.4;inst('box',x+Math.cos(a)*1.6*s,1.8*s,z-Math.sin(a)*1.6*s,2.4*s,3.6*s,.3*s,0x8a7a6a,a)}inst('sph',x,h+2*s,z,7.5*s,2.4*s,7.5*s,c);inst('blm',x+4.4*s,h,z+2*s,3.6*s,1.8*s,3.6*s,dk(c,.9));inst('blm',x-4*s,h+.6*s,z-2.4*s,3.6*s,1.8*s,3.6*s,dk(c,1.1));for(let i=0;i<3;i++)liane(x+Math.cos(i*2.1)*3.4*s,h-.4*s,z+Math.sin(i*2.1)*3.4*s,(8+nr()*6)*s)}
+  else{const h=(20+nr()*5)*s;inst('cyl',x,h/2,z,.9*s,h,.9*s,0x8a7a6a);for(let i=0;i<5;i++){const a=i*1.2566+.4;inst('con',x+Math.cos(a)*.8*s,2.3*s,z-Math.sin(a)*.8*s,1.8*s,4.6*s,.32*s,0x8a7a6a,a)}inst('sph',x,h+2*s,z,7.5*s,2.4*s,7.5*s,c);inst('blm',x+4.4*s,h,z+2*s,3.6*s,1.8*s,3.6*s,dk(c,.9));inst('blm',x-4*s,h+.6*s,z-2.4*s,3.6*s,1.8*s,3.6*s,dk(c,1.1));for(let i=0;i<3;i++)liane(x+Math.cos(i*2.1)*3.4*s,h-.4*s,z+Math.sin(i*2.1)*3.4*s,(8+nr()*6)*s)}
   if(kr!==false)kreis(x,z,(t===2?2.3:.65)*s)}
 /* Strauch-Dickicht: viele Pflanzen auf einmal (Fläche rx mal rz) */
 function dickicht(cx,cz,rx,rz,n,pred){let k=0,t=0;while(k<n&&t++<n*10){const x=cx+(nr()*2-1)*rx,z=cz+(nr()*2-1)*rz;if(!frei(x,z)||(pred&&!pred(x,z)))continue;const q=nr();if(q<.5)farn(x,z,.8+nr()*.7);else if(q<.7)blatt(x,z,.9+nr()*.6);else if(q<.82)helico(x,z);else if(q<.92)busch(x,z,.8+nr()*.5,tp());else orch(x,z);k++}}
@@ -776,7 +776,7 @@ function ort29(){const b=zone('Baumhausdorf'),L=lay(b),X=L.x,Z=L.z,R=L.r,bx=b.x,
 function seil2(x,z){const g=grp(x,0,z);for(let i=0;i<5;i++){cyl(.28,.12,0xc8a870,0,.06+i*.1,0,g,true).scale.set(.28+(5-i)*.1,.12,.28+(5-i)*.1)}kreis(x,z,.8)}
 function ort30(){const b=zone('Kapok-Riesenbaum'),L=lay(b),X=L.x,Z=L.z,R=L.r,bx=b.x,bz=b.z;ast(b);scheibe(bx,bz,14,0x6a7a40,.09);
   const tx=bx,tz=bz-b.dir*3;cyl(2.3,36,0x8a7a6a,tx,18,tz,scene,true);cyl(2.7,4,0x8a7a6a,tx,2,tz,scene,true);
-  for(let i=0;i<6;i++){const a=i*1.047+.3;const r=box(4.6,9,.55,0x8a7a6a,tx+Math.cos(a)*3.4,4.5,tz-Math.sin(a)*3.4,scene,true);r.rotation.y=a;const r2=box(2.4,5,.45,0x7a6a5a,tx+Math.cos(a)*5.2,2.5,tz-Math.sin(a)*5.2,scene);r2.rotation.y=a}
+  for(let i=0;i<6;i++){const a=i*1.047+.3;const r=mesh(gCone,0x8a7a6a,tx+Math.cos(a)*2.4,3.4,tz-Math.sin(a)*2.4,2.6,6.8,.5,scene,true);r.rotation.y=a}
   kreis(tx,tz,5.3);
   sph(13,tp(),tx,38,tz,scene,1,.5,1).castShadow=true;sph(8,tp(),tx+9,35,tz+4,scene,1,.55,1);sph(8,tp(),tx-8,35,tz-5,scene,1,.55,1);sph(7,tp(),tx+2,35,tz-9,scene,1,.5,1);
   for(let i=0;i<16;i++){const a=i*.9+.4,r=5+(i%4)*2.2;liane(tx+Math.cos(a)*r,34,tz+Math.sin(a)*r,30+(i%3)*2);if(i%2)liane(tx+Math.cos(a)*r+.3,34,tz+Math.sin(a)*r+.3,26)}
@@ -875,11 +875,11 @@ function etappe4(){
   WEGE.forEach(s=>s.forEach((q,i)=>{if(i%2===0)sgMark(q[0],q[1],4.8)}));EXTRAZONEN.forEach(e=>{if(e.name!=='Fluss')sgMark(e.x,e.z,e.r+2.5)});WS.forEach(w=>sgMark(w[0],w[1],w[2]+4));RIO.forEach((q,i)=>{if(i%2===0)sgMark(q[0],q[1],RW/2+3.2)});
   sgMark(0,120,22);sgMark(0,90,14);sgMark(-20,126,12);sgMark(FEST.x,FEST.z,26);for(let z=TORZ-30;z<TORZ+12;z+=2)sgMark(0,z,6);sgMark(0,-190,8);
   /* Randwald: dicht, mit Riesenbäumen */
-  for(let z=-232;z<144;z+=3.6)[[-178,-152],[152,178]].forEach(rg=>{for(let k=0;k<2;k++){const x=rg[0]+nr()*(rg[1]-rg[0]),zz=z+nr()*3.4;if(!frei(x,zz)||!thFrei(x,zz,3.6))continue;const q=nr();if(q<.14){urw(x,zz,1.2,2);thSet(x,zz)}else if(q<.35){urw(x,zz,1,1);thSet(x,zz)}else if(q<.75){urw(x,zz,.9+nr()*.4,0);thSet(x,zz)}else if(q<.88)palme(x,zz,1.1);else bambus(x,zz,1)}});
+  for(let z=-232;z<144;z+=3.6)[[-178,-152],[152,178]].forEach(rg=>{for(let k=0;k<2;k++){const x=rg[0]+nr()*(rg[1]-rg[0]),zz=z+nr()*3.4;if(!frei(x,zz)||!thFrei(x,zz,3.6))continue;const q=nr();if(q<.3){urw(x,zz,1.2,2);thSet(x,zz)}else if(q<.5){urw(x,zz,1,1);thSet(x,zz)}else if(q<.75){urw(x,zz,.9+nr()*.4,0);thSet(x,zz)}else if(q<.88)palme(x,zz,1.1);else bambus(x,zz,1)}});
   for(let z=146;z>-236;z-=18)[-1,1].forEach(s=>{const x=s*(142+nr()*10);if(frei(x,z)&&thFrei(x,z,5)){urw(x,z,1.3,2);thSet(x,z)}});
   /* Waldgürtel im Inneren (zwischen den Orten) */
   zuf((x,z)=>{if(thFrei(x,z,4.4)){urw(x,z,.9+nr()*.4,nr()<.2?1:0);thSet(x,z)}},210);
-  zuf((x,z)=>{if(thFrei(x,z,9)){urw(x,z,1.15+nr()*.2,2);thSet(x,z)}},14,(x,z)=>Math.abs(x)>16);
+  zuf((x,z)=>{if(thFrei(x,z,9)){urw(x,z,1.15+nr()*.2,2);thSet(x,z)}},38,(x,z)=>Math.abs(x)>16);
   zuf((x,z)=>{if(thFrei(x,z,2.4))palme(x,z,.9+nr()*.4)},105);
   zuf((x,z)=>{if(thFrei(x,z,3))bambus(x,z,.9+nr()*.3)},46,(x,z)=>x>-120);
   zuf((x,z)=>busch(x,z,.9+nr()*.6,tp()),170);zuf((x,z)=>hibiskus(x,z,.8+nr()*.4),34);
@@ -901,7 +901,7 @@ function etappe4(){
   /* Ruheplätze und Lagerstellen im Wald */
   [[-150,60],[150,40],[-150,-40],[150,-60],[-20,-60],[30,-60],[-100,-60],[0,92],[60,0],[-20,40]].forEach((p,i)=>{if(!frei(p[0],p[1]))return;haengematte(p[0],p[1],i*.7,[0xe8785a,0x4a8aa8,0xf2c230,0x6aa86a][i%4]);bankW(p[0]+3,p[1]+2,.4)});
   /* Lichtstrahlen und Dunst */
-  strahlen();dunst();
+  dunst();
 }
 function strahlen(){const P=[[-110,22],[-44,-30],[44,-134],[-60,-172],[40,106],[100,104],[-84,-134],[76,-172],[-34,106],[126,-30],[0,40],[-20,-60],[140,64],[-120,-140],[-130,70]];
   const g=new THREE.CylinderGeometry(.6,2.6,26,7,1,true),mt=new THREE.MeshBasicMaterial({color:0xfff4c0,transparent:true,opacity:.13,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide});const im=new THREE.InstancedMesh(g,mt,P.length);im.frustumCulled=false;scene.add(im);
