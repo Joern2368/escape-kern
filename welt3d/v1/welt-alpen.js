@@ -7,6 +7,34 @@ const MASKOTTCHEN='Murmeltier Molli';
 const START={x:0,z:128};
 const VERTEXFARBEN=true,MERGEZELLE=50,FERNBESUCHER=65,FERNLEBEN=95;
 const ZOOMMAX=45;
+/* Sammelstücke: mögliche Verstecke der 5 Edelsteine (abseits der Wege, in Ecken). Gefunden und geprüft mit werkzeuge/_verstecke.js; die Engine lost je Spiel 5 aus. */
+const SAMMELPOOL=[
+  {x:-73,z:110,ort:'Berghotel'},
+  {x:113,z:-164,ort:'Hängebrücke'},
+  {x:-143,z:-180,ort:'Gletscher'},
+  {x:119,z:30,ort:'Bergwald-Lehrpfad'},
+  {x:-52,z:-39,ort:'Murmeltierwiese'},
+  {x:32,z:115,ort:'Bergsteigerschule'},
+  {x:41,z:-86,ort:'Wasserkraftwerk'},
+  {x:14,z:-183,ort:'Gipfelkreuz'},
+  {x:135,z:-68,ort:'Zahnradbahn'},
+  {x:-123,z:10,ort:'Alpenblumenwiese'},
+  {x:-53,z:-130,ort:'Alpengarten'},
+  {x:73,z:-24,ort:'Bergbach mit Mühle'},
+  {x:-139,z:104,ort:'Dorfladen'},
+  {x:-50,z:23,ort:'Imkerei'},
+  {x:90,z:103,ort:'Bergwacht'},
+  {x:-102,z:-69,ort:'Bergsee'},
+  {x:-108,z:-135,ort:'Klettersteig-Wand'},
+  {x:93,z:-104,ort:'Staudamm'},
+  {x:-109,z:64,ort:'Almhütte'},
+  {x:19,z:66,ort:'Ziegen- und Schafweide'},
+  {x:-38,z:-85,ort:'Gletscherbach'},
+  {x:-67,z:-174,ort:'Skihütte'},
+  {x:53,z:16,ort:'Holzfällerplatz'},
+  {x:33,z:-144,ort:'Wetterstation'},
+  {x:-133,z:-30,ort:'Gämsenfelsen'}
+];
 const BEREICHE={
   eingang:{name:'Talstation',x:0,z:134,plaetze:[]}
 };

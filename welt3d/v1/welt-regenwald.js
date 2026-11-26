@@ -7,6 +7,34 @@ const MASKOTTCHEN='Faultier Fiete';
 const START={x:0,z:128};
 const VERTEXFARBEN=true,MERGEZELLE=85,FERNBESUCHER=65,FERNLEBEN=95;
 const ZOOMMAX=45;
+/* Sammelstücke: mögliche Verstecke der 5 Edelsteine (abseits der Wege, in Ecken). Gefunden und geprüft mit werkzeuge/_verstecke.js; die Engine lost je Spiel 5 aus. */
+const SAMMELPOOL=[
+  {x:-79,z:110,ort:'Wetterstation'},
+  {x:80,z:-181,ort:'Pilzlichtung'},
+  {x:-140,z:-121,ort:'Sumpf'},
+  {x:158,z:24,ort:'Kakaoplantage'},
+  {x:-36,z:-23,ort:'Faultier-Allee'},
+  {x:46,z:65,ort:'Käferwiese'},
+  {x:161,z:-96,ort:'Wasserfall mit Becken'},
+  {x:-28,z:-132,ort:'Baumkronenpfad-Turm'},
+  {x:59,z:-70,ort:'Piranha-Steg'},
+  {x:-118,z:25,ort:'Tukan-Wald'},
+  {x:-16,z:137,ort:'Eingangstor'},
+  {x:-130,z:-41,ort:'Brüllaffen-Bäume'},
+  {x:-83,z:-97,ort:'Krokodilfluss'},
+  {x:87,z:110,ort:'Schmetterlingshaus'},
+  {x:132,z:-26,ort:'Wildkamera-Station'},
+  {x:119,z:-127,ort:'Baumhausdorf'},
+  {x:-56,z:67,ort:'Blattschneiderameisen-Straße'},
+  {x:132,z:65,ort:'Dorf der Waldbewohner'},
+  {x:-50,z:-174,ort:'Regenbogenlichtung'},
+  {x:-110,z:76,ort:'Baumfrosch-Teich'},
+  {x:81,z:-38,ort:'Ameisenbär-Pfad'},
+  {x:113,z:26,ort:'Kolibri-Blüten'},
+  {x:-78,z:-32,ort:'Kapuzineräffchen'},
+  {x:31,z:104,ort:'Orchideengarten'},
+  {x:-61,z:8,ort:'Papageienfelsen'}
+];
 const BEREICHE={
   eingang:{name:'Eingangstor',x:0,z:134,plaetze:[]}
 };

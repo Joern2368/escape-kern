@@ -7,6 +7,34 @@ const MASKOTTCHEN='Burgfalke Falko';
 const START={x:0,z:128};
 const VERTEXFARBEN=true,MERGEZELLE=70,FERNBESUCHER=65,FERNLEBEN=92;
 const ZOOMMAX=45;
+/* Sammelstücke: mögliche Verstecke der 5 Edelsteine (abseits der Wege, hinter Häusern und in Ecken). Die Engine lost bei jedem neuen Spiel 5 davon aus. */
+const SAMMELPOOL=[
+  {x:-99,z:134,ort:'Schafweide'},
+  {x:-70,z:118,ort:'Bauerndorf'},
+  {x:58,z:107,ort:'Weinberg'},
+  {x:103,z:104,ort:'Windmühle'},
+  {x:-121,z:106,ort:'Fischerhafen'},
+  {x:168,z:55,ort:'Wassermühle'},
+  {x:-162,z:11,ort:'Pilger-Rastplatz'},
+  {x:164,z:0,ort:'Spielplatz'},
+  {x:-19,z:-116,ort:'Falknerei'},
+  {x:-102,z:31,ort:'Waschbrunnen'},
+  {x:24,z:27,ort:'Gaukler-Platz'},
+  {x:83,z:35,ort:'Gasthaus'},
+  {x:-36,z:1,ort:'Rathaus'},
+  {x:32,z:3,ort:'Stadtkirche'},
+  {x:-102,z:-26,ort:'Bäckerei'},
+  {x:-71,z:-32,ort:'Schmiede'},
+  {x:48,z:-21,ort:'Weberei'},
+  {x:-97,z:-47,ort:'Zimmerei'},
+  {x:101,z:-45,ort:'Kloster'},
+  {x:29,z:-105,ort:'Burgküche'},
+  {x:-45,z:-124,ort:'Stall'},
+  {x:-60,z:-158,ort:'Burggarten'},
+  {x:45,z:-135,ort:'Rittersaal'},
+  {x:113,z:-154,ort:'Turnierplatz'},
+  {x:-119,z:-125,ort:'Zeltlager'}
+];
 const BEREICHE={
   eingang:{name:'Dorfeingang',x:0,z:134,plaetze:[]}
 };
@@ -401,7 +429,10 @@ function etappe1(){
   scheibe(0,114,12,COB,.07);weg([[0,TORZ+2],[0,TORZ-24]],5,FARBEN.platz);scheibe(FEST.x,FEST.z,17,FARBEN.platz,.08);
   /* Fluss mit Brücken (Hauptweg, Ringwege), Mühlbach mit Brücke */
   (function(){const s=spl(RIO,2.5),br=[bruecke(gx(76),76,s,RW),bruecke(-138,80,s,RW),bruecke(138,80,s,RW)];bachBauen(s,RW,br);sgFluss(s,7);
-    const s2=spl(BACH,2.5),b2=[bruecke(140,66,s2,4)];bachBauen(s2,4,b2);sgFluss(s2,4)})();
+    const s2=spl(BACH,2.5),b2=[bruecke(140,66,s2,4)];bachBauen(s2,4,b2);sgFluss(s2,4);
+    /* Uferlinien bis an das Brückengeländer (sonst bleibt ein Spalt, durch den man auf dem Wasser läuft) */
+    {const q=b2[0],i0=s2.reduce((m,p,i)=>Math.hypot(p[0]-q[0],p[1]-q[1])<Math.hypot(s2[m][0]-q[0],s2[m][1]-q[1])?i:m,0),a=s2[Math.max(0,i0-1)],c=s2[Math.min(s2.length-1,i0+1)],l=Math.hypot(c[0]-a[0],c[1]-a[1]),tx=(c[0]-a[0])/l,tz=(c[1]-a[1])/l;
+      [-1,1].forEach(v=>[-1,1].forEach(u=>sperrLinie(q[0]+u*3.4*tx-v*2*tz,q[1]+u*3.4*tz+v*2*tx,q[0]+u*9.5*tx-v*2*tz,q[1]+u*9.5*tz+v*2*tx,.2)))}})();
   /* Burggraben */
   grabenFl();
   /* Stadtmauer: Rechteck x -112..112, z -72..60; Tore für Hauptweg und die Querwege 44, -8, -58 */
@@ -625,7 +656,12 @@ function ort17(){const b=zone('Waschbrunnen mit Waschfrauen'),L=lay(b),X=L.x,Z=L
   /* Wäscheleinen mit Tüchern (flatternd) */
   [[-9,-7,9,-7],[-9,7,9,7]].forEach((l,k)=>{const x1=X(l[0]),z1=Z(l[1]),x2=X(l[2]),z2=Z(l[3]);inst('cyl',x1,1.8,z1,.08,3.6,.08,0x6a4a2e);inst('cyl',x2,1.8,z2,.08,3.6,.08,0x6a4a2e);inst('box',(x1+x2)/2,3.5,(z1+z2)/2,18,.04,.04,0xc8c0a8);
     for(let i=0;i<6;i++){const tx=x1+(x2-x1)*(i+.5)/6,g=grp(tx,3.4,(z1+z2)/2);box(1.5,1.7,.08,[0xf6f2e8,0xc03a3a,0x3a5ea8,0xf2f2ea,0xe8b830,0xf6f2e8][(i+k)%6],0,-.9,0,g);vm(g);bewegt(g,t=>{g.rotation.x=Math.sin(t*1.4+i)*.12})}});
-  heuI(X(9),Z(-9),.8);inst('box',X(0),.04,Z(8),10,.06,3,0xf6f2e8);inst('box',X(-3),.045,Z(9.5),3,.06,1.4,0xf0e8d0);sack(X(11),Z(1.6),0xf2ecdc,.9);
+  heuI(X(9),Z(-9),.8);sack(X(11),Z(1.6),0xf2ecdc,.9);
+  /* Bleichwiese: große Blumenwiese links und rechts vom Weg; Tücher mit Abstand (nichts liegt gleich hoch übereinander, sonst flackert es) */
+  [-1,1].forEach(s=>{[[8.2,10.3,6,2.8,.12,0x86bd55],[12.4,9.6,3.8,2.4,.15,0x7fb64e],[5.2,10.4,2.7,2.3,.18,0x8fc65c]].forEach(w=>{const m=mesh(gDisc,w[5],X(s*w[0]),w[4]/2,Z(w[1]),w[2],w[4],w[3],scene);m.receiveShadow=true});
+    const tuch=[[4.9,10.2,.12],[8.3,9.9,-.1],[11.7,10.4,.16]];tuch.forEach((c,i)=>inst('box',X(s*c[0]),.22,Z(c[1]),2.2,.04,2,[0xf6f2e8,0xcfe0f2,0xf2e4c4][(i+(s>0?1:0))%3],R+c[2]*s));
+    for(let i=0;i<90;i++){const f=(i*.6180339)%1,g=(i*.4142135)%1,dx=3+f*12.6,dz=7.9+g*4.8;if(((dx-9)/7)**2+((dz-10.2)/2.7)**2>1||tuch.some(c=>Math.abs(dx-c[0])<1.45&&Math.abs(dz-c[1])<1.35))continue;const x=X(s*dx),z=Z(dz),h=.3+((i*.7320508)%1)*.25;
+      if(i%3){inst('cyl',x,h/2+.1,z,.03,h,.03,0x3f9a46);inst('blm',x,h+.14,z,.17,.13,.17,[0xffffff,0xffd45e,0xf47ab0,0xe0605a,0xb06ae0][i%5])}else inst('con',x,h/2+.1,z,.12,h,.12,0x4aa040)}});
   [[X(11),Z(-8)],[X(-11),Z(-8)]].forEach((p,i)=>baum(p[0],p[1],i?0:5,.9))}
 function ort16(){const b=zone('Marktstände'),L=lay(b),X=L.x,Z=L.z,R=L.r,bx=b.x,bz=b.z;ast(b,3.2,0,COB);scheibe(bx,bz,9,0xc4bdae,.09);
   const W=['obst','tuch','gewuerz','brot','fisch','kaese','topf','obst'];
@@ -757,14 +793,29 @@ function ort23(){const b=zone('Schusterei und Gerberei'),L0=lay(b),X=L0.x,Z=L0.z
   [[-7,2],[-7,5]].forEach((p,i)=>{inst('cyl',X(p[0]),1.8,Z(p[1])-1.4,.1,3.6,.1,0x6a4a2e);inst('cyl',X(p[0]),1.8,Z(p[1])+1.4,.1,3.6,.1,0x6a4a2e);inst('box',X(p[0]),3.4,Z(p[1]),.1,.1,3,0x6a4a2e,R);for(let k=0;k<3;k++)inst('box',X(p[0]),2.4,Z(p[1])-.9+k*.9,.1,2,.7,[0x8a5a32,0xa87a4a,0x6a4a2e][(i+k)%3],R);kreis(X(p[0]),Z(p[1]),1.8)});
   eimer(X(4),Z(6.4),0x6a4a2e,0x6a4a2e);figK(X(6.4),Z(5.6),R+3.6,0,1.25,{j:0x7a5a3a,schuerze:1})}
 function ort24(){const b=zone('Zimmerei und Holzfällerplatz'),L0=lay(b),X=L0.x,Z=L0.z,R=L0.r,bx=b.x,bz=b.z;ast(b,3.2,0,COB);
-  /* Rohbau eines Hauses: nur das Gerüst (Fachwerkskelett mit Sparren) */
-  {const L2=LG(X(-2),Z(-4),R);[-3.6,3.6].forEach(x=>[-2.6,2.6].forEach(z=>L2.b(x,2.2,z,.4,4.4,.4,0x9a6a3a)));[-1.2,1.2].forEach(x=>[-2.6,2.6].forEach(z=>L2.b(x,2.2,z,.3,4.4,.3,0x9a6a3a)));[2.2,5.4].forEach(y=>{L2.b(0,y,2.6,7.6,.3,.3,0x9a6a3a);L2.b(0,y,-2.6,7.6,.3,.3,0x9a6a3a);[-3.6,3.6].forEach(x=>L2.b(x,y,0,.3,.3,5.4,0x9a6a3a))});for(let i=0;i<4;i++){const x=-3.6+i*2.4;L2.b(x,5.4,1.35,.28,3.0,.28,0xb88450,.82);L2.b(x,5.4,-1.35,.28,3.0,.28,0xb88450,-.82)}L2.b(0,6.6,0,8,.3,.3,0xb88450);sperrKasten(X(-2),Z(-4),8,5.8,R)}
-  /* Tretradkran (Rad dreht sich), Balkenstapel, Sägebock mit Säger */
-  {const L2=LG(X(7),Z(1),R+1.57);L2.b(0,3,0,.4,6,.4,0x7a5230);L2.b(1.6,5.8,0,3.6,.3,.3,0x7a5230);L2.b(3.2,3.2,0,.05,5,.05,0xc8a870);L2.b(3.2,.9,0,.7,.7,.7,0x9a6a3a);const w=grp(X(7),3.2,Z(1)+0);w.rotation.y=R+1.57;const rg=new THREE.Mesh(new THREE.TorusGeometry(2.2,.2,5,16),mat(0x8a5a32));w.add(rg);for(let i=0;i<4;i++){const a=box(.15,4.4,.15,0x6a4a2e,0,0,0,w);a.rotation.z=i*.785}vm(w);bewegt(w,t=>{w.rotation.z=-t*.4});kreis(X(7),Z(1),1.2)}
+  /* Rohbau eines Hauses: Steinsockel, Fachwerk mit Streben, erste gefüllte Fächer, offener Dachstuhl und Leiter */
+  {const L2=LG(X(-2),Z(-4),R),H=0x8a5a32,S=0xb88450;L2.b(0,.2,0,7.9,.4,5.9,STEIN);
+    [-3.6,-1.2,1.2,3.6].forEach(x=>[-2.6,2.6].forEach(z=>L2.b(x,2.4,z,.32,4.1,.32,H)));[-3.6,3.6].forEach(x=>L2.b(x,2.4,0,.28,4.1,.28,H));
+    [.55,2.35,4.4].forEach(y=>{[-2.6,2.6].forEach(z=>L2.b(0,y,z,7.55,.28,.34,H));[-3.6,3.6].forEach(x=>L2.b(x,y,0,.34,.28,5.2,H))});
+    /* Streben in den äußeren Fächern vorn und hinten */
+    [-2.6,2.6].forEach(z=>[-1,1].forEach(s=>L2.b(s*2.4,3.38,z,.2,3.1,.2,S,0,s*.86)));
+    /* schon fertige Lehmfächer */
+    [-2.4,0,2.4].forEach(x=>L2.b(x,1.45,-2.6,2.1,1.55,.14,0xeadcb8));[-1.3,1.3].forEach(z=>L2.b(-3.6,1.45,z,.14,1.55,2.35,0xeadcb8));L2.b(-2.4,1.45,2.6,2.1,1.55,.14,0xeadcb8);
+    /* Dachstuhl: Sparrenpaare treffen sich oben am First */
+    [-3.6,-1.2,1.2,3.6].forEach(x=>{[-1,1].forEach(s=>L2.b(x,5.52,s*1.5,.24,3.75,.24,S,-s*.935));L2.b(x,5.4,0,.18,.18,3.3,S)});L2.b(0,6.62,0,7.9,.28,.28,H);[-3.6,3.6].forEach(x=>L2.b(x,5.5,0,.24,2.2,.24,H));
+    /* Leiter an der Vorderseite */
+    [-.35,.35].forEach(d=>L2.b(2.4+d,2.3,3.35,.1,4.75,.1,0xc9a46a,-.24));for(let i=0;i<8;i++){const y=.45+i*.55;L2.b(2.4,y,3.35-(y-2.3)*.245,.7,.08,.08,0xc9a46a)}
+    sperrKasten(X(-2),Z(-4),8,5.9,R);const lp=L2.P(2.4,3.45);sperrKasten(lp[0],lp[1],1,1.2,R)}
+  /* Tretradkran (Rad dreht sich neben dem Mast), Balkenstapel, Sägebock mit Säger */
+  {const L2=LG(X(7),Z(1),R+1.57);L2.b(0,3,0,.4,6,.4,0x7a5230);L2.b(1.6,5.8,0,3.6,.3,.3,0x7a5230);L2.b(1,5,0,.2,2.3,.2,0x7a5230,0,-.9);L2.b(3.2,3.95,0,.06,3.5,.06,0xc8a870);L2.b(3.2,1.9,0,.9,.7,.9,0x9a6a3a);
+    L2.b(0,2.25,.9,.26,.26,1.8,0x5a3a22);L2.b(0,1.15,1.8,.36,2.3,.36,0x7a5230);
+    const w=grp(L2.P(0,.95)[0],2.25,L2.P(0,.95)[1]);w.rotation.y=R+1.57;const rad=grp(0,0,0,w);[-.45,.45].forEach(z=>{const rg=new THREE.Mesh(new THREE.TorusGeometry(2,.13,5,16),mat(0x8a5a32));rg.position.z=z;rad.add(rg);for(let i=0;i<4;i++){const a=box(.13,4,.1,0x6a4a2e,0,0,z,rad);a.rotation.z=i*.785}});
+    for(let i=0;i<16;i++){const a=i/16*6.283,br=box(.12,.55,.95,0xb88450,Math.cos(a)*2,Math.sin(a)*2,0,rad);br.rotation.z=a}vm(rad);bewegt(rad,t=>{rad.rotation.z=-t*.4});
+    const m=L2.P(0,1);sperrKasten(m[0],m[1],4.4,2.2,R+1.57);const e=L2.P(3.2,0);kreis(e[0],e[1],.7)}
   for(let i=0;i<3;i++)for(let j=0;j<3-i;j++)inst('box',X(-8)+j*.6,.3+i*.6,Z(3)+j*0,.5,.5,5,[0xb88450,0xa87a42][(i+j)%2],R);kreis(X(-8),Z(3),3);
-  {const x=X(0.4),z=Z(5);inst('box',x,.9,z,3,.2,.5,0x7a5230,R);[-1.2,1.2].forEach(s=>inst('box',x+s,.45,z,.2,.9,.9,0x7a5230,R,0,s>0?.3:-.3));inst('cyl',x,1.4,z,.35,3.2,.35,0xa87a42,R,0,1.57);kreis(x,z,1.7);const sg=grp(x,1.1,z+.9);sg.rotation.y=R;box(.1,.7,.9,0xc8c8d0,0,.4,0,sg);box(.1,.2,.1,0x6a4a2e,0,.8,.4,sg);vm(sg);bewegt(sg,t=>{sg.position.x=Math.sin(t*3)*.4;});figK(x+.5,z+1.8,R+3.14,0,1.25,{j:0x7a4a2a})}
+  {const x=X(0.4),z=Z(5);inst('box',x,.9,z,3,.2,.5,0x7a5230,R);[-1.2,1.2].forEach(s=>inst('box',x+s,.45,z,.2,.9,.9,0x7a5230,R,0,s>0?.3:-.3));inst('cyl',x,1.4,z,.35,3.2,.35,0xa87a42,R,0,1.57);kreis(x,z,1.7);const sg=grp(x+.3,1.2,z);sg.rotation.y=R;box(.1,.7,.9,0xc8c8d0,0,.4,0,sg);box(.1,.2,.1,0x6a4a2e,0,.8,.4,sg);vm(sg);bewegt(sg,t=>{sg.position.z=z+Math.sin(t*3)*.35;});figK(x+.4,z+1.25,R+3.14,0,1.25,{j:0x7a4a2a})}
   [[-6,6],[-4,8]].forEach(p=>stamm(X(p[0]),Z(p[1]),5,R,.5));stumpf(X(3),Z(8),1);stumpf(X(4.4),Z(7),.9);holzstapel(X(-7.4),Z(-3),R);holzstapel(X(10),Z(-3),R+1.57);
-  figK(X(8.6),Z(4.4),R+2.8,3,1.25,{j:0x4a7a3a});figK(X(-5),Z(6),R+.6,0,1.2)}
+  figK(X(8.6),Z(4.4),R+2.8,3,1.25,{j:0x4a7a3a});figK(X(-5),Z(4.2),R+.6,0,1.2)}
 function ort25(){const b=zone('Apotheke und Kräuterhaus'),L0=lay(b),X=L0.x,Z=L0.z,R=L0.r,bx=b.x,bz=b.z;ast(b,3.2,0,COB);
   fachwerk(X(0),Z(-3.4),7,5.6,R,{dach:0x2f6a8a,og:true,wand:0xf0e4c8});
   /* Mörser mit Stößel als Bild-Schild am Ausleger (kein Text) */

@@ -1,6 +1,6 @@
 /* Engine für begehbare 3D-Welten. Fest, gehostet. Erwartet: CONFIG (Inhalt) und die Welt-Datei (welt-<kennwort>.js) davor. */
 document.body.insertAdjacentHTML('afterbegin',`<div id="gl"></div>
-<div id="zaehler" class="pille"><span id="titelz"><span id="titel">Rätsel-Zoo</span></span><span>📖 <b id="zk">0</b>/<span id="zn">10</span></span><span>❓ <b id="zr">0</b>/<span id="zn2">10</span></span></div>
+<div id="zaehler" class="pille"><span id="titelz"><span id="titel">Rätsel-Zoo</span></span><span>📖 <b id="zk">0</b>/<span id="zn">10</span></span><span>❓ <b id="zr">0</b>/<span id="zn2">10</span></span><span id="zsw" style="display:none">💎 <b id="zs">0</b>/5</span></div>
 <div id="knoepfe"><span id="fps">FPS: --</span><button class="rund" id="urknopf" title="Urkunde" style="display:none">🏆</button><button class="rund" id="mappe" title="Wissensmappe">📖</button><button class="rund" id="kartenknopf" title="Karte">🗺️</button><button class="rund" id="tonknopf" title="Ton">🔊</button></div>
 <div id="spruch" class="pille"></div>
 <canvas id="mini" width="170" height="225"></canvas>
@@ -351,7 +351,7 @@ cv3.addEventListener('pointerdown',e=>{cv3.setPointerCapture(e.pointerId);zeiger
 cv3.addEventListener('pointermove',e=>{const p=zeiger[e.pointerId];if(!p)return;const ids=Object.keys(zeiger);
   if(ids.length===2){const q=zeiger[ids.find(k=>+k!==e.pointerId)];const d0=Math.hypot(p.x-q.x,p.y-q.y);p.x=e.clientX;p.y=e.clientY;const d1=Math.hypot(p.x-q.x,p.y-q.y);dist=Math.max(5,Math.min(typeof ZOOMMAX==='number'?ZOOMMAX:55,dist*d0/Math.max(d1,1)));p.bew+=99;return}
   const dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;p.bew+=Math.abs(dx)+Math.abs(dy);if(p.bew>10){yaw-=dx*.006;pitch=Math.max(.2,Math.min(1.15,pitch+dy*.004))}});
-const zeigerAus=e=>{const p=zeiger[e.pointerId];delete zeiger[e.pointerId];if(p&&p.bew<10&&performance.now()-p.t<400&&!modal&&gestartet)tippGehen(e.clientX,e.clientY)};
+const zeigerAus=e=>{const p=zeiger[e.pointerId];delete zeiger[e.pointerId];if(p&&p.bew<10&&performance.now()-p.t<400&&!modal&&gestartet&&!steinTipp(e.clientX,e.clientY))tippGehen(e.clientX,e.clientY)};
 cv3.addEventListener('pointerup',zeigerAus);cv3.addEventListener('pointercancel',e=>{delete zeiger[e.pointerId]});
 cv3.addEventListener('wheel',e=>{dist=Math.max(5,Math.min(typeof ZOOMMAX==='number'?ZOOMMAX:55,dist+e.deltaY*.03));e.preventDefault()},{passive:false});
 const ray=new THREE.Raycaster(),ebene=new THREE.Plane(new THREE.Vector3(0,1,0),0),pt=new THREE.Vector3();
@@ -404,6 +404,51 @@ const fw=new THREE.Points(fGeo,new THREE.PointsMaterial({size:1.7,vertexColors:t
 function burst(x,y,z){const c=new THREE.Color().setHSL(rnd(),1,.6);for(let k=0;k<70;k++){const i=fi++%NF;const a=rnd()*6.283,b=Math.acos(rnd()*2-1),v=6+rnd()*5;fPos[i*3]=x;fPos[i*3+1]=y;fPos[i*3+2]=z;fVel[i*3]=Math.sin(b)*Math.cos(a)*v;fVel[i*3+1]=Math.cos(b)*v;fVel[i*3+2]=Math.sin(b)*Math.sin(a)*v;fLeb[i]=1.6+rnd()*.6;fBasis[i*3]=c.r;fBasis[i*3+1]=c.g;fBasis[i*3+2]=c.b}}
 function feuerwerkUpdate(dt){for(let i=0;i<NF;i++){if(fLeb[i]<=0)continue;fLeb[i]-=dt;fVel[i*3+1]-=5*dt;fPos[i*3]+=fVel[i*3]*dt;fPos[i*3+1]+=fVel[i*3+1]*dt;fPos[i*3+2]+=fVel[i*3+2]*dt;const f=Math.max(0,Math.min(1,fLeb[i]*1.6));fCol[i*3]=fBasis[i*3]*f;fCol[i*3+1]=fBasis[i*3+1]*f;fCol[i*3+2]=fBasis[i*3+2]*f;if(fLeb[i]<=0)fPos[i*3+1]=-200}fGeo.attributes.position.needsUpdate=true;fGeo.attributes.color.needsUpdate=true}
 
+/* ---------- Sammelstücke: 5 bunte Edelsteine (nur wenn die Welt SAMMELPOOL = [{x,z,ort,y?}, ...] nennt) ----------
+   Bei jedem neuen Spiel werden 5 Verstecke aus dem Pool ausgelost (mit Abstand voneinander) und im Spielstand gespeichert. Kein Eintrag auf der Karte. */
+const STEINE=[{name:'roten',farbe:0xe5243b},{name:'blauen',farbe:0x1f6fe0},{name:'grünen',farbe:0x0b9150},{name:'gelben',farbe:0xffe01f},{name:'lila',farbe:0xa23fe0}];
+const SAMMELN=typeof SAMMELPOOL!=='undefined'&&SAMMELPOOL.length>=STEINE.length;
+const steine=[];let steinNah=null;
+const steinZahl=s=>zaehle((s&&s.sammel&&s.sammel.funde)||{});
+if(SAMMELN){$('#zsw').style.display='';$('#zaehler').classList.add('sammel');
+  const form=new THREE.LatheGeometry([[.001,-.66],[.56,0],[.3,.48],[.001,.48]].map(p=>new THREE.Vector2(p[0],p[1])),6),kanten=new THREE.EdgesGeometry(form,10),kMat=new THREE.LineBasicMaterial({color:0xffffff,transparent:true,opacity:.75});
+  const stern=(()=>{const c=document.createElement('canvas');c.width=c.height=64;const t=c.getContext('2d');t.fillStyle='#fff';t.beginPath();[[32,0],[37,27],[64,32],[37,37],[32,64],[27,37],[0,32],[27,27]].forEach((p,i)=>i?t.lineTo(p[0],p[1]):t.moveTo(p[0],p[1]));t.closePath();t.fill();return new THREE.CanvasTexture(c)})();
+  STEINE.forEach((f,i)=>{const g=grp(0,0,0),k=new THREE.Mesh(form,new THREE.MeshPhongMaterial({color:f.farbe,emissive:new THREE.Color(f.farbe).multiplyScalar(.4),specular:0xffffff,shininess:80,flatShading:true,side:THREE.DoubleSide}));k.castShadow=true;k.add(new THREE.LineSegments(kanten,kMat));g.add(k);
+    const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(7*3),3));
+    const gl=new THREE.Points(geo,new THREE.PointsMaterial({color:0xffffff,size:.6,map:stern,transparent:true,depthWrite:false,opacity:0}));gl.frustumCulled=false;g.add(gl);g.visible=false;
+    steine.push({i,g,k,gl,x:0,z:0,y:1.15,da:false})})}
+function steineWaehlen(){
+  /* Verstecke direkt neben Rätsel-Schildern und Wissenskarten fallen weg */
+  const frei=SAMMELPOOL.filter(p=>stationen.every(s=>Math.hypot(s.x-p.x,s.z-p.z)>6.5)&&karten.every(k=>Math.hypot(k.x-p.x,k.z-p.z)>5)),basis=frei.length>=10?frei:SAMMELPOOL;
+  for(let md=90;;md-=10){const out=[];for(const p of mischen(basis)){if(out.length<STEINE.length&&out.every(q=>Math.hypot(q[0]-p.x,q[1]-p.z)>=md))out.push([p.x,p.z])}if(out.length===STEINE.length)return out}}
+function sammelStart(){if(!SAMMELN)return;const s=S.sammel,imPool=o=>SAMMELPOOL.find(p=>p.x===o[0]&&p.z===o[1]);
+  if(!(s&&s.funde&&Array.isArray(s.orte)&&s.orte.length===STEINE.length&&s.orte.every((o,i)=>s.funde[i]||imPool(o))))S.sammel={orte:steineWaehlen(),funde:(s&&s.funde)||{}};
+  steine.forEach(st=>{const o=S.sammel.orte[st.i],p=imPool(o);st.x=o[0];st.z=o[1];st.y=(p&&p.y)||1.15;st.da=!S.sammel.funde[st.i];st.g.position.set(st.x,0,st.z);st.g.visible=false})}
+function steinFinden(st){if(!st.da)return;st.da=false;st.g.visible=false;steinNah=null;S.sammel.funde[st.i]=true;speichern();hud();piep([1047,1319,1568,2093],.08);konfetti(24);fliege('<div style="font-size:44px">💎</div>',$('#zsw'),'stein');
+  const n=steinZahl(S);sag('Du hast den '+STEINE[st.i].name+' Edelstein gefunden! '+(n<STEINE.length?n+' von '+STEINE.length+'.':'Super, jetzt hast du alle '+STEINE.length+' Edelsteine!'),6000)}
+/* Kein Aufheben durch Zäune und Wände: zwischen Figur und Stein darf keine Mauer, kein Zaun und kein Gebäude liegen */
+function steinFrei(st){const px=spieler.position.x,pz=spieler.position.z,n=Math.ceil(Math.hypot(st.x-px,st.z-pz)/.2);
+  for(let i=1;i<n;i++){const x=px+(st.x-px)*i/n,z=pz+(st.z-pz)*i/n;
+    if(sperrKaesten.some(k=>{const wx=x-k.x,wz=z-k.z;return Math.abs(wx*k.c-wz*k.s)<k.hb&&Math.abs(wx*k.s+wz*k.c)<k.ht}))return false;
+    if(sperrLinien.some(q=>{const vx=q.x2-q.x1,vz=q.z2-q.z1;let t=((x-q.x1)*vx+(z-q.z1)*vz)/(vx*vx+vz*vz||1);t=t<0?0:t>1?1:t;return Math.hypot(x-q.x1-vx*t,z-q.z1-vz*t)<q.r+.05}))return false}
+  return true}
+/* Ist der Stein auf dem Bildschirm zu sehen (nichts davor)? Nur beim Antippen geprüft. */
+const _sr=new THREE.Raycaster();
+/* Trifft der Strahl eines der Teile? Instanzierte Teile haben eine Huell-Kugel fuer den ganzen Block (zum Ausblenden), zum Treffen braucht es kurz die Kugel des einzelnen Teils. */
+function strahlTreffer(m){if(!m.isInstancedMesh)return _sr.intersectObject(m,false);const g=m.geometry,welt=g.boundingSphere;if(!g.userData.lokal){g.boundingSphere=null;g.computeBoundingSphere();g.userData.lokal=g.boundingSphere}g.boundingSphere=g.userData.lokal;const r=_sr.intersectObject(m,false);g.boundingSphere=welt;return r}
+function steinSichtbar(st){const o=camera.position,d=new THREE.Vector3(st.x,st.k.position.y,st.z).sub(o),l=d.length(),teile=[];
+  scene.traverseVisible(m=>{if(!m.isMesh||m.material.transparent)return;for(let p=m;p;p=p.parent)if(p===spieler||p===himmel||p===st.g)return;teile.push(m)});
+  _sr.set(o,d.normalize());_sr.far=l-.7;return !teile.some(m=>strahlTreffer(m).length)}
+/* Antippen eines sichtbaren Steins: nah genug = aufheben, sonst bis kurz davor laufen */
+const _sp=new THREE.Vector3();
+function steinTipp(cx,cy){for(const st of steine){if(!st.da||!st.g.visible)continue;const d=Math.hypot(st.x-spieler.position.x,st.z-spieler.position.z);if(d>18)continue;_sp.set(st.x,st.y,st.z).project(camera);if(_sp.z>1||Math.hypot((_sp.x+1)/2*innerWidth-cx,(1-_sp.y)/2*innerHeight-cy)>46||!steinSichtbar(st))continue;
+    if(d<5.5&&steinFrei(st))steinFinden(st);else{const f=Math.min(1,2.3/(d||1)),zx=st.x+(spieler.position.x-st.x)*f,zz=st.z+(spieler.position.z-st.z)*f;ziel={x:zx,z:zz};zielMarke.position.set(zx,.1,zz);zielMarke.visible=true;sKlick()}return true}return false}
+/* Drehen, Schweben, Glitzern (nur in der Nähe); merkt sich den Stein in Griffweite */
+function steineUpdate(t){steinNah=null;let nah=3.5;steine.forEach(st=>{if(!st.da)return;const d=Math.hypot(st.x-spieler.position.x,st.z-spieler.position.z),sicht=d<60;st.g.visible=sicht;if(!sicht)return;
+    st.k.rotation.y=t*1.1+st.i;st.k.position.y=st.y+Math.sin(t*2.2+st.i)*.1;if(d<nah&&steinFrei(st)){nah=d;steinNah=st}
+    const o=Math.max(0,Math.min(1,(18-d)/7));st.gl.visible=o>0;if(!o)return;st.gl.material.opacity=o;const a=st.gl.geometry.attributes.position;
+    for(let j=0;j<7;j++){const ph=t*.9+j*.37+st.i,an=j*2.4+Math.floor(ph)*1.7,h=(Math.floor(ph)*7+j*3)%5/5;if(ph%1<.55)a.setXYZ(j,Math.cos(an)*(.55+h*.5),st.y-.4+((j*5)%7)/6+h*.3,Math.sin(an)*(.55+h*.5));else a.setXYZ(j,0,-50,0)}a.needsUpdate=true})}
+
 /* ---------- Tierparade ---------- */
 const parade=[];let finale=null;
 function paradeUpdate(t,dt){parade.forEach(p=>{p.o.position.x+=dt*3;if(p.o.position.x>12)p.o.position.x-=parade.length*3.8;if(p.o.userData.anim)p.o.userData.anim(t+p.i);p.o.position.y=Math.abs(Math.sin(t*6+p.i))*.3;p.o.position.z=FEST.z+2+Math.sin(p.o.position.x*.15+p.i)*2})}
@@ -414,7 +459,7 @@ const _lw=new THREE.Vector3();function lebenUpdate(t){const px=spieler.position.
 /* ---------- Oberfläche (HUD) ---------- */
 let sprechT=null;
 function sag(text,ms){const s=$('#spruch');s.textContent=text;s.style.opacity=1;clearTimeout(sprechT);sprechT=setTimeout(()=>s.style.opacity=0,ms||6000)}
-function hud(){$('#mappe').textContent='\uD83D\uDCD6 '+zaehle(S.karten);$('#zk').textContent=zaehle(S.karten);$('#zr').textContent=zaehle(S.geloest);$('#zn').textContent=N;$('#zn2').textContent=N}
+function hud(){$('#mappe').textContent='\uD83D\uDCD6 '+zaehle(S.karten);$('#zk').textContent=zaehle(S.karten);$('#zr').textContent=zaehle(S.geloest);$('#zn').textContent=N;$('#zn2').textContent=N;$('#zs').textContent=steinZahl(S)}
 /* ---------- Karte (ab 24.11.2026): kleine Karte oben rechts, grosse Karte mit nummerierten Orten, Legende und Antippen ---------- */
 const ASP=(GRENZE.z1-GRENZE.z0)/(GRENZE.x1-GRENZE.x0),VIEL=N>12,PUNKTFARBE='#3b6b8c';
 /* Orte (Bereiche und Zonen) in fester Reihenfolge: Zeilen von Sueden nach Norden, in jeder Zeile von links nach rechts. Nur suedlich vom Tor. */
@@ -501,7 +546,7 @@ function tafelAnsicht(k,i,zurueck,neu,beschr){const t=CONFIG.auftraege[i].tafel;
   const l=el('div','leiste');if(CONFIG.vorlesen)l.appendChild(lautKnopf(()=>t.titel+'. '+t.text));l.appendChild(el('div','platz'));
   const b=el('button','knopf',zurueck?(beschr||'\u2190 Zurück zur Aufgabe'):(neu?'Weiter erkunden':'Schließen'));
   b.onclick=zurueck||(()=>{karteSchliessen();if(neu)fliege('<div>\uD83C\uDCCF<br>'+t.titel+'</div>',$('#mappe'))});l.appendChild(b);k.appendChild(l)}
-function fliege(html,zielEl){const z=zielEl.getBoundingClientRect(),d=document.createElement('div');d.className='flugkarte';d.innerHTML=html;document.body.appendChild(d);const b=d.getBoundingClientRect(),vx=innerWidth/2,vy=innerHeight/2;d.style.left=(vx-b.width/2)+'px';d.style.top=(vy-b.height/2)+'px';d.getBoundingClientRect();
+function fliege(html,zielEl,art){const z=zielEl.getBoundingClientRect(),d=document.createElement('div');d.className='flugkarte'+(art?' '+art:'');d.innerHTML=html;document.body.appendChild(d);const b=d.getBoundingClientRect(),vx=innerWidth/2,vy=innerHeight/2;d.style.left=(vx-b.width/2)+'px';d.style.top=(vy-b.height/2)+'px';d.getBoundingClientRect();
   d.style.transform='translate('+(z.left+z.width/2-vx)+'px,'+(z.top+z.height/2-vy)+'px) scale(.15)';d.style.opacity='.2';
   setTimeout(()=>{d.remove();zielEl.classList.remove('bump');void zielEl.offsetWidth;zielEl.classList.add('bump')},880)}
 function kartenFund(kk){S.karten[kk.i]=true;speichern();kartePicken(kk);hud();piep([500,660,1320],.14);const k=karteOeffnen();tafelAnsicht(k,kk.i,null,true);
@@ -530,7 +575,7 @@ function mappeZeigen(){const k=karteOeffnen();k.className='karte papyrus mappe';
   const l=el('div','leiste');l.appendChild(el('div','platz'));const z=el('button','knopf','Zurück zum Spiel');z.onclick=karteSchliessen;l.appendChild(z);k.appendChild(l);k.scrollTop=mappeScroll}
 $('#mappe').onclick=()=>{if(modal)return;mappeScroll=0;mappeZeigen()};
 $('#tonknopf').onclick=()=>{tonAn=!tonAn;$('#tonknopf').textContent=tonAn?'🔊':'🔇'};
-$('#aktion').onclick=()=>{if(modal||!aktiv)return;raetselOeffnen(aktiv.i)};
+$('#aktion').onclick=()=>{if(modal)return;if(aktiv)raetselOeffnen(aktiv.i);else if(steinNah)steinFinden(steinNah)};
 let aktiv=null,warnT=0;
 
 /* ---------- Silbenschrift (blau/rot, automatisch getrennt, Mittelpunkt überschreibt) ---------- */
@@ -562,7 +607,7 @@ new MutationObserver(liste=>liste.forEach(m=>{if(m.type==='characterData')aufber
 /* ---------- Urkunde ---------- */
 function urkunde(){const k=karteOeffnen();k.className='karte';
   const d=new Date().toLocaleDateString('de-DE');
-  k.innerHTML='<div class="urkunde"><div class="ur-rahmen"><div class="ur-stern">★ ★ ★</div><div class="ur-titel">URKUNDE</div><div class="ur-klein">'+CONFIG.spielname+'</div><div class="ur-name"></div><div class="ur-text"></div><div class="ur-fuss"><span>'+d+'</span><span>'+MASKOTTCHEN+'</span></div></div></div>';
+  k.innerHTML='<div class="urkunde"><div class="ur-rahmen"><div class="ur-stern">★ ★ ★</div><div class="ur-titel">URKUNDE</div><div class="ur-klein">'+CONFIG.spielname+'</div><div class="ur-name"></div><div class="ur-text"></div>'+(SAMMELN?'<div class="ur-sammel">💎 Du hast '+steinZahl(S)+' von '+STEINE.length+' Edelsteinen gefunden.</div>':'')+'<div class="ur-fuss"><span>'+d+'</span><span>'+MASKOTTCHEN+'</span></div></div></div>';
   k.querySelector('.ur-name').textContent=S.name;k.querySelector('.ur-text').textContent=CONFIG.urkundeText;
   const l=el('div','leiste noprint');l.appendChild(el('div','platz'));const gz=el('button','knopf blau','Urkunde groß zeigen');gz.onclick=urkundeGross;l.appendChild(gz);const z=el('button','knopf','Weiter feiern');z.onclick=karteSchliessen;l.appendChild(z);k.appendChild(l);$('#urknopf').style.display=''}
 /* Urkunde gross: nur die Urkunde auf ruhigem Hintergrund (fuer das Bildschirmfoto der Kinder). Tippen schliesst, die Urkunde ist dann wieder offen. */
@@ -582,7 +627,8 @@ function schleife(){requestAnimationFrame(schleife);const dt=Math.min(.05,clock.
   /* Karten, Stationen */
   karten.forEach(k=>{if(!k.da)return;k.kar.rotation.y=tges*1.6;k.kar.position.y=1.9+Math.sin(tges*2+k.i)*.25;if(gestartet&&!modal&&Math.hypot(k.x-spieler.position.x,k.z-spieler.position.z)<2.4)kartenFund(k)});
   aktiv=null;let nah=1e9;stationen.forEach(s=>{if(S.geloest[s.i]){s.spr.position.y=3.6;return}s.spr.position.y=3.6+Math.sin(tges*3+s.i)*.2;s.ring.rotation.z=tges;const d=Math.hypot(s.x-spieler.position.x,s.z-spieler.position.z);if(d<3.6&&d<nah){nah=d;aktiv=s}});
-  const ab=$('#aktion');ab.style.display=(aktiv&&!modal&&gestartet)?'block':'none';if(aktiv){const abT='❓ Rätsel '+(aktiv.i+1)+' lösen';if(ab.textContent!==abT)ab.textContent=abT}
+  if(gestartet)steineUpdate(tges);if(steinNah&&aktiv){if(Math.hypot(steinNah.x-spieler.position.x,steinNah.z-spieler.position.z)<nah)aktiv=null;else steinNah=null}
+  const ab=$('#aktion'),abT=aktiv?'❓ Rätsel '+(aktiv.i+1)+' lösen':steinNah?'💎 Edelstein aufheben':'';ab.style.display=(abT&&!modal&&gestartet)?'block':'none';if(abT&&ab.textContent!==abT)ab.textContent=abT;
   /* Tor */
   if(ausgang.ziel!=null){ausgang.offen+=(ausgang.ziel-ausgang.offen)*Math.min(1,dt*1.5);ausgang.fl[0].rotation.y=-ausgang.offen*1.5;ausgang.fl[1].rotation.y=ausgang.offen*1.5}
   if(gestartet&&!modal&&ausgang.offen<.9&&Math.abs(spieler.position.x)<6&&Math.abs(spieler.position.z-TORZ)<4&&tges-warnT>8){warnT=tges;sag('Das Tor ist noch zu. Löse erst alle Rätsel ('+zaehle(S.geloest)+' von '+N+').',5000)}
@@ -596,26 +642,27 @@ function schleife(){requestAnimationFrame(schleife);const dt=Math.min(.05,clock.
 
 /* ---------- Start ---------- */
 function weltWiederherstellen(){karten.forEach(k=>{if(S.karten[k.i])kartePicken(k)});stationen.forEach(s=>{if(S.geloest[s.i])stationFertig(s)});if(zaehle(S.geloest)>=N){ausgang.ziel=1;ausgang.offen=1;ausgang.fl[0].rotation.y=-1.5;ausgang.fl[1].rotation.y=1.5}hud()}
-function gespeicherte(){const out=[],pre='welt3d|'+CONFIG.spielname+'|';try{for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key.indexOf(pre)===0){const s=JSON.parse(localStorage.getItem(key));if(s&&s.name&&(zaehle(s.karten||{})+zaehle(s.geloest||{}))>0)out.push(s)}}}catch(e){}return out.slice(0,8)}
+function gespeicherte(){const out=[],pre='welt3d|'+CONFIG.spielname+'|';try{for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key.indexOf(pre)===0){const s=JSON.parse(localStorage.getItem(key));if(s&&s.name&&(zaehle(s.karten||{})+zaehle(s.geloest||{})+steinZahl(s))>0)out.push(s)}}}catch(e){}return out.slice(0,8)}
 function losGehts(n,jacke,alt){$('#urknopf').style.display='none';S=alt||{name:n,jacke:0,karten:{},geloest:{}};S.name=n;S.jacke=jacke;try{localStorage.setItem(LETZT,JSON.stringify({name:n,jacke:jacke}))}catch(e){}figurBauen(AVATARE[jacke]);const weiter=!!alt;
   if(alt&&S.x!=null)spieler.position.set(S.x,0,S.z);else spieler.position.set(START.x,0,START.z);
   if(!alt){karten.forEach(k=>{k.da=true;k.g.visible=true});stationen.forEach(s=>{s.ring.material.color.set(0xf59e3f);s.spr.material.map=marke('?','#f59e3f');s.spr.material.needsUpdate=true});ausgang.ziel=0;ausgang.offen=0;ausgang.fl[0].rotation.y=0;ausgang.fl[1].rotation.y=0}
-  gestartet=true;speichern();karteSchliessen();weltWiederherstellen();sKlick();
-  sag(weiter?'Willkommen zurück, '+n+'! Du hast '+zaehle(S.karten)+' Karten und '+zaehle(S.geloest)+' Rätsel. Es geht dort weiter, wo du aufgehört hast.':'Hallo '+n+'! Tippe auf den Boden, um zu laufen. Suche die goldenen Wissenskarten und die orangen Rätsel-Schilder. Die kleine Karte oben rechts hilft dir.',9000)}
+  sammelStart();gestartet=true;speichern();karteSchliessen();weltWiederherstellen();sKlick();
+  sag(weiter?'Willkommen zurück, '+n+'! Du hast '+zaehle(S.karten)+' Karten'+(SAMMELN?', '+zaehle(S.geloest)+' Rätsel und '+steinZahl(S)+(steinZahl(S)===1?' Edelstein':' Edelsteine'):' und '+zaehle(S.geloest)+' Rätsel')+'. Es geht dort weiter, wo du aufgehört hast.':'Hallo '+n+'! Tippe auf den Boden, um zu laufen. Suche die goldenen Wissenskarten und die orangen Rätsel-Schilder.'+(SAMMELN?' Findest du auch die '+STEINE.length+' bunten Edelsteine?':'')+' Die kleine Karte oben rechts hilft dir.',SAMMELN?16000:9000)}
 function start(){document.title=CONFIG.spielname;$('#titel').textContent=CONFIG.spielname;
   const k=karteOeffnen();k.innerHTML='';k.appendChild(el('h2',null,CONFIG.spielname));k.appendChild(el('div','tafeltext',CONFIG.einleitung));
+  if(SAMMELN)k.appendChild(el('div','neukarte','💎 Hier sind auch '+STEINE.length+' bunte Edelsteine versteckt. Findest du sie? Suche auch abseits der Wege!'));
   k.appendChild(el('div','frage','So geht es: Tippe auf den Boden (oder halte den Finger gedrückt), dann läuft deine Figur dorthin. Ziehe mit dem Finger, um dich umzuschauen. Suche goldene Wissenskarten 📖 und Rätsel-Schilder ❓.'));
   const let0=letzter();let jacke=let0&&AVATARE[let0.jacke]?let0.jacke:0;const fz=el('div','figuren');AVATARE.forEach((av,i)=>{const b=el('button','fig'+(i===jacke?' gewaehlt':''),avSvg(av));b.setAttribute('aria-label','Figur '+(i+1));b.onclick=()=>{jacke=i;sKlick();[...fz.children].forEach((x,j)=>x.classList.toggle('gewaehlt',j===i));figurBauen(AVATARE[i])};fz.appendChild(b)});k.appendChild(el('div','frage','Wähle deine Figur:'));k.appendChild(fz);
   k.appendChild(el('div','keinraetsel','\uD83D\uDCBE Das Spiel speichert alles. Wenn du später weiterspielen willst, gib genau denselben Namen ein.'));const l=el('div','leiste');const inp=el('input','eing');inp.placeholder='Dein Name';if(let0&&let0.name)inp.value=let0.name;figurBauen(AVATARE[jacke]);inp.maxLength=20;inp.style.maxWidth='260px';l.appendChild(inp);l.appendChild(el('div','platz'));
   const b=el('button','knopf','Los geht’s!');b.onclick=()=>{const n=inp.value.trim()||'Gast';const alt=laden(n);
-    if(alt&&(zaehle(alt.karten||{})+zaehle(alt.geloest||{}))>0){const k2=karteOeffnen();k2.appendChild(el('h2',null,'Spielstand gefunden'));
-      k2.appendChild(el('div','tafeltext',n+', du hast schon '+zaehle(alt.karten||{})+' Wissenskarten gefunden und '+zaehle(alt.geloest||{})+' von '+N+' Rätseln gelöst. Möchtest du dort weiterspielen oder noch einmal von vorn anfangen?'));
+    if(alt&&(zaehle(alt.karten||{})+zaehle(alt.geloest||{})+steinZahl(alt))>0){const k2=karteOeffnen();k2.appendChild(el('h2',null,'Spielstand gefunden'));
+      k2.appendChild(el('div','tafeltext',n+', du hast schon '+zaehle(alt.karten||{})+' Wissenskarten gefunden'+(SAMMELN?', ':' und ')+zaehle(alt.geloest||{})+' von '+N+' Rätseln gelöst'+(SAMMELN?' und '+steinZahl(alt)+' von '+STEINE.length+' Edelsteinen entdeckt':'')+'. Möchtest du dort weiterspielen oder noch einmal von vorn anfangen?'));
       const l2=el('div','leiste');const nb=el('button','knopf grau','Neu starten');nb.onclick=()=>{sKlick();losGehts(n,jacke,null)};l2.appendChild(nb);l2.appendChild(el('div','platz'));
       const wb=el('button','knopf','▶ Weiterspielen');wb.onclick=()=>losGehts(n,jacke,alt);l2.appendChild(wb);k2.appendChild(l2);
       const zb=el('button','knopf blau','← Zurück');zb.style.marginTop='10px';zb.onclick=start;k2.appendChild(zb);return}
     losGehts(n,jacke,alt)};
   const alle=gespeicherte();if(alle.length){k.appendChild(el('div','frage','Gespeicherte Spiele:'));const ls=el('div','pool');
-    alle.forEach(s=>{const bt=el('button','chip','▶ '+s.name+' ('+zaehle(s.karten||{})+' Karten, '+zaehle(s.geloest||{})+' von '+N+' Rätseln)');bt.onclick=()=>losGehts(s.name,AVATARE[s.jacke]?s.jacke:0,s);ls.appendChild(bt)});k.appendChild(ls)}
+    alle.forEach(s=>{const bt=el('button','chip','▶ '+s.name+' ('+zaehle(s.karten||{})+' Karten, '+zaehle(s.geloest||{})+' von '+N+' Rätseln'+(SAMMELN?', '+steinZahl(s)+' von '+STEINE.length+' Edelsteinen':'')+')');bt.onclick=()=>losGehts(s.name,AVATARE[s.jacke]?s.jacke:0,s);ls.appendChild(bt)});k.appendChild(ls)}
   l.appendChild(b);k.appendChild(l);$('#maske').onclick=null}
 addEventListener('resize',()=>{gkLayout();if(gkAuf)gkPassen();renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();kgroesse()});
 kgroesse();hud();camera.position.set(START.x,9,START.z+14);start();schleife();

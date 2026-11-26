@@ -5,6 +5,34 @@ const SCHILDER=['Ausgang','Geschafft!'];
 const WEGMAX=0;
 const MASKOTTCHEN='Wilma Waschbär';
 const START={x:0,z:119};
+/* Sammelstücke: mögliche Verstecke der 5 Edelsteine (abseits der Wege, in Ecken). Gefunden und geprüft mit werkzeuge/_verstecke.js; die Engine lost je Spiel 5 aus. */
+const SAMMELPOOL=[
+  {x:58,z:111,ort:'Zoo-Café'},
+  {x:-113,z:-140,ort:'Otter und Biber'},
+  {x:-150,z:124,ort:'Wäldchen beim Aquarium-Tunnel'},
+  {x:82,z:-154,ort:'Wolfswald'},
+  {x:-64,z:-11,ort:'Nilpferde'},
+  {x:144,z:19,ort:'Nashörner'},
+  {x:40,z:-47,ort:'Futterküche'},
+  {x:-45,z:116,ort:'Streichelzoo'},
+  {x:-145,z:-56,ort:'Pandagarten'},
+  {x:146,z:99,ort:'Schmetterlinge'},
+  {x:-54,z:-97,ort:'Zoo-Schule'},
+  {x:68,z:24,ort:'Savanne'},
+  {x:-91,z:41,ort:'Pinguinteich'},
+  {x:25,z:62,ort:'Tiger'},
+  {x:57,z:-144,ort:'Reptilien'},
+  {x:-123,z:-37,ort:'Giraffenwiese'},
+  {x:113,z:-14,ort:'Elefantenpark'},
+  {x:-38,z:-145,ort:'Papageien'},
+  {x:-148,z:45,ort:'Kletterturm'},
+  {x:-99,z:-96,ort:'Spielplatz'},
+  {x:-37,z:50,ort:'Löwen'},
+  {x:-101,z:82,ort:'Greifvögel'},
+  {x:49,z:-84,ort:'Flamingoteich'},
+  {x:-49,z:-46,ort:'Tierarzt'},
+  {x:87,z:90,ort:'Delfin-Show'}
+];
 const BEREICHE={
   eingang:{name:'Eingangsplatz',x:0,z:117,plaetze:[]},
   savanne:{name:'Savanne',x:88,z:32,plaetze:[]},

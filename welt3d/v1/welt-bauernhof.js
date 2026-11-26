@@ -6,6 +6,34 @@ const WEGMAX=0;
 const MASKOTTCHEN='Hanna Huhn';
 const START={x:0,z:94};
 const VERTEXFARBEN=true,MERGEZELLE=60,FERNBESUCHER=50,FERNLEBEN=80;
+/* Sammelstücke: mögliche Verstecke der 5 Edelsteine (abseits der Wege, in Ecken). Gefunden und geprüft mit werkzeuge/_verstecke.js; die Engine lost je Spiel 5 aus. */
+const SAMMELPOOL=[
+  {x:-160,z:97,ort:'Lavendelgarten'},
+  {x:130,z:-137,ort:'Wassermühle'},
+  {x:-126,z:-128,ort:'Alpakaweide'},
+  {x:156,z:99,ort:'Backhaus'},
+  {x:29,z:-23,ort:'Schäferei'},
+  {x:139,z:-24,ort:'Wagenremise'},
+  {x:-167,z:16,ort:'Maislabyrinth'},
+  {x:28,z:-123,ort:'Traktoren'},
+  {x:-61,z:62,ort:'Hühnerhof'},
+  {x:71,z:60,ort:'Schweinestall'},
+  {x:-65,z:-76,ort:'Gemüsegarten'},
+  {x:-161,z:-84,ort:'Gänsewiese'},
+  {x:71,z:-72,ort:'Imkerei'},
+  {x:171,z:-70,ort:'Getreidefeld'},
+  {x:-53,z:-10,ort:'Entenweiher'},
+  {x:110,z:87,ort:'Kartoffelacker'},
+  {x:-151,z:42,ort:'Bauernhaus'},
+  {x:-121,z:12,ort:'Pferdekoppel'},
+  {x:-119,z:-72,ort:'Kürbisfeld'},
+  {x:134,z:67,ort:'Molkerei'},
+  {x:-58,z:-129,ort:'Scheune'},
+  {x:33,z:58,ort:'Streichelzoo'},
+  {x:-119,z:64,ort:'Kuhweide'},
+  {x:-164,z:-132,ort:'Eselgehege'},
+  {x:-33,z:-90,ort:'Weidenwäldchen'}
+];
 const BEREICHE={
   eingang:{name:'Hofeinfahrt',x:0,z:92,plaetze:[]},
   obstgarten:{name:'Obstgarten',x:45,z:-68,plaetze:[]}

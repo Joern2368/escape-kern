@@ -126,6 +126,9 @@ html,body{touch-action:none}
 .ur-klein{font-size:20px;color:#56707f}
 .ur-name{font-size:42px;font-weight:700;margin:18px 0 8px;color:#1f3a4d;border-bottom:3px dotted #e8b930;display:inline-block;padding:0 24px}
 .ur-text{font-size:22px;line-height:1.45;margin:10px auto 18px;max-width:520px}
+.ur-sammel{font-size:21px;font-weight:700;color:#7a3fb0;margin:-6px auto 12px}
+.flugkarte.stein{background:none;border:0;box-shadow:none}
+@media (max-width:1100px){#zaehler.sammel #titelz{display:none}}
 .ur-fuss{display:flex;justify-content:space-between;font-size:18px;color:#56707f;margin-top:14px}
 @media print{body>*:not(#maske){display:none!important}#maske{position:static;background:#fff;display:block}.karte{box-shadow:none;max-width:none}.noprint{display:none!important}}
 @media (max-width:700px){#stick{width:120px;height:120px}#spruch{font-size:16px;max-width:90vw}#mini{width:120px;height:auto}}

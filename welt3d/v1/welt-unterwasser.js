@@ -7,6 +7,34 @@ const MASKOTTCHEN='Schildkröte Tilda';
 const START={x:0,z:128};
 const VERTEXFARBEN=true,MERGEZELLE=85,FERNBESUCHER=65,FERNLEBEN=88;
 const ZOOMMAX=45;
+/* Sammelstücke: mögliche Verstecke der 5 Edelsteine (abseits der Wege, in Ecken). Gefunden und geprüft mit werkzeuge/_verstecke.js; die Engine lost je Spiel 5 aus. */
+const SAMMELPOOL=[
+  {x:-143,z:110,ort:'Pinguin-Tauchbecken'},
+  {x:134,z:-143,ort:'Rotes Meer'},
+  {x:146,z:102,ort:'Leuchtturm'},
+  {x:-120,z:-130,ort:'Walgesang-Höhle'},
+  {x:37,z:11,ort:'Putzerstation'},
+  {x:-93,z:-17,ort:'Rochen-Plateau'},
+  {x:25,z:-132,ort:'Leuchtfisch-Schlucht'},
+  {x:134,z:-43,ort:'Aquarium-Tunnel'},
+  {x:-46,z:110,ort:'Tauchstation'},
+  {x:31,z:104,ort:'Forschungsstation'},
+  {x:-31,z:-88,ort:'Fischschwarm-Tunnel'},
+  {x:93,z:59,ort:'Anemonen und Clownfische'},
+  {x:63,z:-188,ort:'Regenbogenriff'},
+  {x:-35,z:13,ort:'Seesterne und Seeigel'},
+  {x:-103,z:63,ort:'Seegraswiese'},
+  {x:-141,z:-78,ort:'Schiffswrack'},
+  {x:128,z:11,ort:'Unterwasser-Spielplatz'},
+  {x:89,z:112,ort:'Wetterboje'},
+  {x:-50,z:-137,ort:'Tiefsee-Plateau'},
+  {x:49,z:-37,ort:'Quallenfeld'},
+  {x:-81,z:-95,ort:'Schatzhöhle'},
+  {x:-145,z:30,ort:'Schildkröten-Strand'},
+  {x:-35,z:-39,ort:'Tintenfisch-Höhle'},
+  {x:105,z:-82,ort:'U-Boot-Dock'},
+  {x:85,z:-142,ort:'Unterwasser-Vulkan'}
+];
 const BEREICHE={
   eingang:{name:'Eingangstor',x:0,z:134,plaetze:[]}
 };
@@ -473,18 +501,18 @@ function etappe3(){ort9();ort10();ort11();ort12();ort13();ort14();ort15();ort16(
 /* ==================== Etappe 3b: Orte 17 bis 24 ==================== */
 function rauchSaeule(x,y,z,h,n,c){const im=schwarmF(gBlase,n,[c,dk(c,1.4)],(i,t)=>{const u=((t*.3+i/n)%1),s=(.4+u*1.6)*(1+(i%3)*.2);return[x+Math.sin(u*6+i)*.5*u*3,y+u*h,z+Math.cos(u*5+i*2)*.5*u*3,s,s,s,0]},x,z);im.material.transparent=true;im.material.opacity=.55;im.material.depthWrite=false;return im}
 function ort17(){P('Fischschwarm-Tunnel',(b,X,Z,R,bx,bz)=>{
-  scheibe(bx,bz,b.r-1,SAND3,.1);for(let i=0;i<6;i++){const zz=bz-12+i*4.8;[-1,1].forEach((s,k)=>{const r=2.2+(i%2)*.4;sph(r,GRAU[(i+k)%5],bx+s*6.2,r*.9,zz,scene,1,1.15,1);sph(r*.65,GRAU[(i+k+2)%5],bx+s*5.6,r*2.1,zz,scene,1,.9,1);kreis(bx+s*6.2,zz,r*.95)});sph(2.4,GRAU[(i+3)%5],bx,6.4,zz,scene,3.3,.5,1.1);sph(1.7,GRAU[(i+1)%5],bx-2.2*(i%2?1:-1),5.2,zz,scene,1.4,.8,1.2)}
+  scheibe(bx,bz,b.r-1,SAND3,.15);for(let i=0;i<6;i++){const zz=bz-12+i*4.8;[-1,1].forEach((s,k)=>{const r=2.2+(i%2)*.4;sph(r,GRAU[(i+k)%5],bx+s*6.2,r*.9,zz,scene,1,1.15,1);sph(r*.65,GRAU[(i+k+2)%5],bx+s*5.6,r*2.1,zz,scene,1,.9,1);kreis(bx+s*6.2,zz,r*.95)});sph(2.4,GRAU[(i+3)%5],bx,6.4,zz,scene,3.3,.5,1.1);sph(1.7,GRAU[(i+1)%5],bx-2.2*(i%2?1:-1),5.2,zz,scene,1.4,.8,1.2)}
   const hz=fischGeo({f:0xaebfca,b:0xeef4f8,l:.9,h:.26});fischZug(hz,40,bx,bz,3.4,13,3.4,.9,.5,1.5,null,2.0,125);fischZug(hz,30,bx,bz,3,12,2.4,.7,-.42,1.4,[0xc8d8e0,0xaebfca],1.8,125);
   fischZug(fischGeo({f:0x2a4a7a,b:0xdde8f0,l:2.2,h:.7,dh:1}),9,bx,bz,12,18,5.5,1.2,.28,1.3,null,3.4,125);const t=thunF(scene);t.scale.setScalar(2);kreisen(t,bx,bz,10,16,7,.3,2);
   taucherSteh(X(10),Z(10),R+3,2,1.3);riff(bx,bz-b.dir*14,6,5);riff(bx,bz+b.dir*14,6,5)},{dr:.5,d:false})}
 function ort18(){P('Delfinbucht',(b,X,Z,R,bx,bz)=>{
-  scheibe(bx,bz-b.dir*2,b.r-2,0xf2e6bc,.1);const ga=b.dir>0?Math.PI/2:-Math.PI/2,n=34;for(let i=0;i<n;i++){const a=i/n*6.283;if(Math.abs(Math.atan2(Math.sin(a-ga),Math.cos(a-ga)))<.65)continue;const rr=b.r+(i%3)*.8,px=bx+Math.cos(a)*rr,pz=bz-b.dir*2+Math.sin(a)*rr,s=1.6+(i%4)*.5;sph(s,GRAU[i%5],px,s*.7,pz,scene,1.2,1,1.1);kreis(px,pz,s*1.05)}
+  scheibe(bx,bz-b.dir*2,b.r-2,0xf2e6bc,.15);const ga=b.dir>0?Math.PI/2:-Math.PI/2,n=34;for(let i=0;i<n;i++){const a=i/n*6.283;if(Math.abs(Math.atan2(Math.sin(a-ga),Math.cos(a-ga)))<.65)continue;const rr=b.r+(i%3)*.8,px=bx+Math.cos(a)*rr,pz=bz-b.dir*2+Math.sin(a)*rr,s=1.6+(i%4)*.5;sph(s,GRAU[i%5],px,s*.7,pz,scene,1.2,1,1.1);kreis(px,pz,s*1.05)}
   [[0,.45,9,7,3.2],[2.4,-.4,11,8,3.8],[4.4,.5,6,6,2.6]].forEach((p,i)=>{const d=delfin(scene);d.scale.setScalar(1.7);kreisen(d,bx,bz-b.dir*2,p[2],p[3],p[4],p[1],p[0],1.5)});
   [-1,1].forEach(s=>cyl(.15,6,0xe0e8f0,bx+s*3,3,bz+6*b.dir*-1+b.dir*0,scene,true));const rg=new THREE.Mesh(new THREE.TorusGeometry(3,.22,6,18),mat(0xff7a1a));rg.position.set(bx,6,bz-6*b.dir);scene.add(rg);[-1,1].forEach(s=>kreis(bx+s*3,bz-6*b.dir,.3));
   bojenReihe(X(-12),Z(12),X(12),Z(12),7,2.2);const ball=grp(X(5),3,Z(4));sph(.8,0xffffff,0,0,0,ball);sph(.82,0xe0302a,0,0,0,ball,1,.3,1);ball.userData.keep=1;bewegt(ball,t=>{ball.position.y=3+Math.abs(Math.sin(t*1.3))*2});
   [[6,8],[-6,9]].forEach((p,i)=>{eimer(X(p[0]),Z(p[1]),0x2a8ad8,0xaebfca)});taucherSteh(X(0),Z(9),R+3.14,1,1.3);taucherSteh(X(-9),Z(7),R+3,3,1.3);seegrasBusch(X(-14),Z(2),1.4);riff(bx,bz,16,3)},{d:false})}
 function ort19(){P('Quallenfeld',(b,X,Z,R,bx,bz)=>{
-  scheibe(bx,bz,b.r-1,0xcfd4e8,.1);quallen(bx,bz,12,11,13,3,[0xff9ad8,0xffb0e8,0xf8a0c8],1.2);quallen(bx-3,bz+3,11,9,11,4.5,[0x9ad8ff,0xb0e0ff,0xa0c8f8],1.5);quallen(bx+3,bz-2,13,10,10,6,[0xb8ffd0,0xd0ffe8,0xa8f0c8],1.1);quallen(bx,bz,9,8,8,2.5,[0xffe08a,0xfff0a8],1.3);
+  scheibe(bx,bz,b.r-1,0xcfd4e8,.15);quallen(bx,bz,12,11,13,3,[0xff9ad8,0xffb0e8,0xf8a0c8],1.2);quallen(bx-3,bz+3,11,9,11,4.5,[0x9ad8ff,0xb0e0ff,0xa0c8f8],1.5);quallen(bx+3,bz-2,13,10,10,6,[0xb8ffd0,0xd0ffe8,0xa8f0c8],1.1);quallen(bx,bz,9,8,8,2.5,[0xffe08a,0xfff0a8],1.3);
   for(let i=0;i<5;i++){const q=quallenM(scene,[0xff9ad8,0x9ad8ff,0xb8ffd0,0xffe08a,0xd8a0ff][i]);q.scale.setScalar(1.8);kreisen(q,bx,bz,7+i,6+i,2.4+i*.5,.2+i*.03,i*1.2,.8)}
   for(let i=0;i<24;i++){const a=nr()*6.28,d=Math.sqrt(nr())*(b.r-1),c=[0x9af0ff,0xff9ad8,0xb8ffd0][i%3];leucht(.18,c,bx+Math.cos(a)*d,.35,bz+Math.sin(a)*d,scene,1,.7,1);inst('cyl',bx+Math.cos(a)*d,.2,bz+Math.sin(a)*d,.1,.4,.1,0xe8d8f0)}
   for(let i=0;i<5;i++)orgel(bx+(i-2)*5,bz-8*b.dir,1.1,[0xd8a0ff,0xff9ad8][i%2]);[[-9,5],[9,-4]].forEach(p=>{felsen(bx+p[0],bz+p[1],1.5)});taucherSteh(X(9),Z(7),R+3.4,5,1.3);blasen(bx,bz,16,10,1.4);blasen(bx+8,bz-6,14,8,1)},{dr:.5})}
@@ -628,7 +656,7 @@ function ort37(){P('Unterwasser-Spielplatz',(b,X,Z,R,bx,bz)=>{
   const sk=new THREE.Group();for(let i=0;i<8;i++){const a=i*.785;sph(.5,GRAU[i%5],X(11)+Math.cos(a)*2.2,.3,Z(-8)+Math.sin(a)*2.2,scene,1.2,.6,1)}scheibe(X(11),Z(-8),1.9,0xf0e4b8,.14);
   [[-5,6],[5,8],[9,-2],[-9,-8]].forEach((p,i)=>taucherSteh(X(p[0]),Z(p[1]),R+i*1.3,i+1,1.0));const k=clownF(scene);k.scale.setScalar(1.8);kreisen(k,bx,bz,6,5,3,.6,0);blasen(X(6),Z(2),10,8,.8)},{dr:.5})}
 function ort38(){P('Regenbogenriff',(b,X,Z,R,bx,bz)=>{
-  const rc=[0xe0302a,0xff7a1a,0xf2d030,0x4caf6a,0x2a9ad8,0x4a4ac8,0x9b4ab0];for(let i=0;i<7;i++){const r=14-i*1.8;cyl(r,.1,rc[i],bx,.05+i*.012,bz-b.dir*2,scene).receiveShadow=true}
+  const rc=[0xe0302a,0xff7a1a,0xf2d030,0x4caf6a,0x2a9ad8,0x4a4ac8,0x9b4ab0];for(let i=0;i<7;i++){const r=14-i*1.8;cyl(r,.1,rc[i],bx,.075+i*.012,bz-b.dir*2,scene).receiveShadow=true}
   for(let i=0;i<7;i++){const a=Math.PI+(i/6)*Math.PI,px=bx+Math.cos(a)*12.5,pz=bz-b.dir*2-b.dir*Math.abs(Math.sin(a))*9;turm(px,pz,.95,rc[i])}
   /* Aussichtsfelsen mit Treppe */
   const ax=bx,az=bz-b.dir*10;cyl(3.4,3,0xc8b890,ax,1.5,az,scene,true);cyl(3.6,.3,0xe8d8b0,ax,3.1,az,scene);kreis(ax,az,3.5);for(let i=0;i<5;i++)box(2.4,.4,.9,0xd8c8a0,ax+(i-2)*.0,.2+i*.6,az+(4.3-i*.9)*b.dir,scene,true);

@@ -5,6 +5,34 @@ const SCHILDER=['Ausgang','Geschafft!'];
 const WEGMAX=0;
 const MASKOTTCHEN='Lotta Luftballon';
 const START={x:0,z:150};
+/* Sammelstücke: mögliche Verstecke der 5 Edelsteine (abseits der Wege, in Ecken). Gefunden und geprüft mit werkzeuge/_verstecke.js; die Engine lost je Spiel 5 aus. */
+const SAMMELPOOL=[
+  {x:-143,z:144,ort:'Parkteich'},
+  {x:185,z:-103,ort:'Bergstation'},
+  {x:-90,z:-137,ort:'Ballonwiese'},
+  {x:128,z:131,ort:'Eispalast'},
+  {x:-39,z:14,ort:'Floßfahrt'},
+  {x:-197,z:2,ort:'Delfinshow'},
+  {x:50,z:-131,ort:'Spiegelhaus'},
+  {x:83,z:16,ort:'Achterbahn'},
+  {x:32,z:152,ort:'Bushaltestelle'},
+  {x:174,z:17,ort:'Dino-Park'},
+  {x:-205,z:-86,ort:'Zirkuszelt'},
+  {x:-42,z:97,ort:'Souvenirs'},
+  {x:-89,z:-47,ort:'Minigolf'},
+  {x:-154,z:73,ort:'Mini-Karussell'},
+  {x:34,z:-63,ort:'Kettenflieger'},
+  {x:52,z:78,ort:'Tassen'},
+  {x:-135,z:4,ort:'Aussichtsturm'},
+  {x:133,z:-134,ort:'Geisterbahn'},
+  {x:138,z:-74,ort:'Panoramarad'},
+  {x:-41,z:155,ort:'Parkplatz'},
+  {x:-86,z:60,ort:'Spielplatz'},
+  {x:130,z:53,ort:'Wilde Maus'},
+  {x:-155,z:-62,ort:'Happy Sailor'},
+  {x:86,z:-81,ort:'Imbiss'},
+  {x:-77,z:130,ort:'Schwebebahn West'}
+];
 const BEREICHE={
   eingang:{name:'Parkeingang',x:0,z:92,plaetze:[]}
 };

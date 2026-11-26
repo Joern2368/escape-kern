@@ -7,6 +7,34 @@ const WEGMAX=0;
 const ZOOMMAX=42,MERGEZELLE=150,FERNBESUCHER=40,FERNLEBEN=55;
 const MASKOTTCHEN='Toni Taube';
 const START={x:0,z:150};
+/* Sammelstücke: mögliche Verstecke der 5 Edelsteine (abseits der Wege, in Ecken). Gefunden und geprüft mit werkzeuge/_verstecke.js; die Engine lost je Spiel 5 aus. */
+const SAMMELPOOL=[
+  {x:32,z:155,ort:'Einkaufsgasse'},
+  {x:184,z:-133,ort:'Basketballplatz'},
+  {x:-183,z:-70,ort:'Recyclinghof'},
+  {x:-14,z:-31,ort:'Rathaus'},
+  {x:177,z:40,ort:'Wohnviertel'},
+  {x:-122,z:111,ort:'Bahnhof'},
+  {x:102,z:-55,ort:'Kino'},
+  {x:-31,z:62,ort:'Bäckerei'},
+  {x:-163,z:30,ort:'Schule'},
+  {x:-121,z:-128,ort:'Baustelle'},
+  {x:-97,z:-21,ort:'Krankenhaus'},
+  {x:94,z:61,ort:'Spielplatz'},
+  {x:167,z:110,ort:'Tankstelle'},
+  {x:43,z:26,ort:'Stadtbrunnen'},
+  {x:-15,z:-96,ort:'Flussbrücke'},
+  {x:90,z:133,ort:'Supermarkt'},
+  {x:42,z:-65,ort:'Museum'},
+  {x:-11,z:122,ort:'Stadttor'},
+  {x:-157,z:-24,ort:'Skatepark'},
+  {x:-121,z:-68,ort:'Schwimmbad'},
+  {x:40,z:103,ort:'Kaufhaus'},
+  {x:-59,z:14,ort:'Kirche'},
+  {x:-196,z:75,ort:'Hundewiese'},
+  {x:-74,z:123,ort:'Kiosk'},
+  {x:132,z:25,ort:'Postamt'}
+];
 const BEREICHE={
   eingang:{name:'Stadttor',x:0,z:128,plaetze:[]}
 };

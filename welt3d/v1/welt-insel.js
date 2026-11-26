@@ -7,6 +7,34 @@ const MASKOTTCHEN='Möwe Mila';
 const START={x:0,z:128};
 const VERTEXFARBEN=true,MERGEZELLE=50,FERNBESUCHER=65,FERNLEBEN=95;
 const ZOOMMAX=45;
+/* Sammelstücke: mögliche Verstecke der 5 Edelsteine (abseits der Wege, in Ecken). Gefunden und geprüft mit werkzeuge/_verstecke.js; die Engine lost je Spiel 5 aus. */
+const SAMMELPOOL=[
+  {x:-67,z:106,ort:'Rettungsstation'},
+  {x:129,z:-150,ort:'Windpark'},
+  {x:-142,z:-177,ort:'Wrack'},
+  {x:152,z:115,ort:'Segelschule'},
+  {x:-140,z:-24,ort:'Muschelstrand'},
+  {x:20,z:3,ort:'Picknickplatz'},
+  {x:155,z:-31,ort:'Muschelbank'},
+  {x:-40,z:-127,ort:'Höhle'},
+  {x:41,z:104,ort:'Werft'},
+  {x:-138,z:65,ort:'Strandkorbstrand'},
+  {x:-68,z:17,ort:'Kräutergarten'},
+  {x:115,z:53,ort:'Gezeiten-Station'},
+  {x:-147,z:-92,ort:'Seehundbank'},
+  {x:65,z:-129,ort:'Energiehaus'},
+  {x:-20,z:63,ort:'Dorfladen'},
+  {x:-80,z:-37,ort:'Drachenwiese'},
+  {x:102,z:5,ort:'Salzwiese'},
+  {x:-84,z:-142,ort:'Klippenpfad'},
+  {x:-63,z:-87,ort:'Piratenspielplatz'},
+  {x:34,z:60,ort:'Windmühle'},
+  {x:-141,z:-135,ort:'Vogelinsel'},
+  {x:152,z:35,ort:'Wattwanderweg'},
+  {x:59,z:30,ort:'Deich'},
+  {x:113,z:-34,ort:'Nationalpark-Haus'},
+  {x:-28,z:115,ort:'Strandpromenade'}
+];
 const BEREICHE={
   eingang:{name:'Fähranleger',x:0,z:134,plaetze:[]}
 };

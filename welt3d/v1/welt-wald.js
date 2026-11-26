@@ -6,6 +6,34 @@ const MASKOTTCHEN='Emma Eichhörnchen';
 const START={x:0,z:128};
 const VERTEXFARBEN=true,MERGEZELLE=50,FERNBESUCHER=65,FERNLEBEN=90;
 const ZOOMMAX=45;
+/* Sammelstücke: mögliche Verstecke der 5 Edelsteine (abseits der Wege, in Ecken). Gefunden und geprüft mit werkzeuge/_verstecke.js; die Engine lost je Spiel 5 aus. */
+const SAMMELPOOL=[
+  {x:16,z:138,ort:'Waldeingang'},
+  {x:-154,z:-151,ort:'Waldspielplatz'},
+  {x:134,z:-163,ort:'Felsenplatz'},
+  {x:-158,z:125,ort:'Waldkindergarten'},
+  {x:138,z:11,ort:'Pilzlichtung'},
+  {x:-46,z:-57,ort:'Ameisenhaufen'},
+  {x:-163,z:0,ort:'Wildschweinsuhle'},
+  {x:145,z:118,ort:'Waldlager'},
+  {x:48,z:-109,ort:'Baumarten-Garten'},
+  {x:-54,z:-159,ort:'Wildkamera-Station'},
+  {x:-43,z:60,ort:'Rastplatz'},
+  {x:42,z:48,ort:'Eichhörnchenwald'},
+  {x:40,z:-37,ort:'Fledermaushöhle'},
+  {x:-119,z:54,ort:'Rehwiese'},
+  {x:110,z:-47,ort:'Waldteich'},
+  {x:-88,z:115,ort:'Waldlehrpfad'},
+  {x:-109,z:-56,ort:'Moor'},
+  {x:-155,z:-92,ort:'Waldbahn'},
+  {x:103,z:-114,ort:'Köhlerhütte'},
+  {x:50,z:-164,ort:'Wildbienen-Hotel'},
+  {x:66,z:119,ort:'Försterhaus'},
+  {x:162,z:-45,ort:'Bach mit Furt'},
+  {x:-91,z:-98,ort:'Biberburg'},
+  {x:145,z:56,ort:'Vogelkundestation'},
+  {x:-109,z:14,ort:'Fuchsbau'}
+];
 const BEREICHE={
   eingang:{name:'Waldeingang',x:0,z:136,plaetze:[]}
 };
