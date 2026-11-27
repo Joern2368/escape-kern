@@ -255,3 +255,23 @@ body.voll .toast { top:114px;z-index:4;width:max-content }
   body.voll .namechip { display:none }
   body.voll .toast { top:222px }
 }
+
+/* Urkunde am Ende (wie in den 3D-Welten) */
+.btn.urknopf { margin:0 5px 10px }
+.modal.urfenster { max-width:620px;padding:12px }
+.urkunde { background:#fffdf0;color:#1f3a4d;padding:10px;border-radius:6px;line-height:1.35;text-align:center;overflow-wrap:anywhere }
+.ur-rahmen { border:10px double #e8b930;border-radius:10px;padding:16px 22px }
+.ur-stern { color:#e8b930;font-size:28px;letter-spacing:6px;line-height:1.1 }
+.ur-titel { font-size:min(42px,8.5vw);font-weight:700;letter-spacing:min(8px,1.4vw);color:#b9792a;margin:2px 0 }
+.ur-klein { font-size:19px;color:#56707f }
+.ur-name { font-size:36px;font-weight:700;margin:10px 0 6px;color:#1f3a4d;border-bottom:3px dotted #e8b930;display:inline-block;padding:0 24px;max-width:100%;overflow-wrap:anywhere }
+.ur-text { font-size:20px;line-height:1.4;margin:6px auto 10px;max-width:500px }
+.ur-steine { display:flex;justify-content:center;gap:12px }
+.ur-steine svg { width:26px;height:36px }
+.ur-sammel { font-size:19px;font-weight:700;color:#7a3fb0;margin:6px auto 0 }
+.ur-fuss { display:flex;justify-content:space-between;gap:12px;font-size:16px;color:#56707f;margin-top:12px }
+#urgross { position:fixed;inset:0;z-index:60;background:#dfe9ef;display:flex;align-items:center;justify-content:center;overflow:hidden }
+.urfenster > .vor { display:block;margin:0 0 6px auto }
+.urgrossk .ur-titel { font-size:42px;letter-spacing:8px }
+.urgrossk { width:560px;flex:none;box-shadow:0 8px 30px #0003;transform-origin:center center }
+#urgross .urhinweis { position:absolute;left:0;right:0;bottom:10px;padding:0 12px;text-align:center;font-size:18px;color:#1f3a4d;transition:opacity 1.2s }

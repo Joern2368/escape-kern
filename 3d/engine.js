@@ -821,33 +821,73 @@ function baueRaum(n){
   baueSteine(def,n);
 }
 
-/* ---------- Edelsteine: 5 je Raum, freiwillig, zählen nicht für den Code ---------- */
-const STEINFARBEN=[0xe5243b,0x2f7fe8,0x14b860,0xffc21a,0xb24ae0], STEINZAHL=5;
+/* ---------- Edelsteine: 1 je Raum (jeder Raum eine Farbe), freiwillig, zählt nicht für den Code ---------- */
+const STEINFARBEN=[0xe5243b,0x2f7fe8,0x14b860,0xffc21a,0xb24ae0], STEINZAHL=1;
 function baueSteine(def,n){
   D3.steine=[]; D3.steinNah=null; st.sammel=st.sammel||{};
   let s=st.sammel[n];
-  if(!s || s.orte.some(i=>!def.verstecke[i])) s=st.sammel[n]={ orte:mischen(def.verstecke.map((_,i)=>i)).slice(0,STEINZAHL), funde:[] };
+  if(!s || s.orte.length!==STEINZAHL || s.orte.some(i=>!def.verstecke[i])) s=st.sammel[n]={ orte:mischen(def.verstecke.map((_,i)=>i)).slice(0,STEINZAHL), funde:[] };
   s.orte.forEach((ort,i)=>{
-    const [x,z]=def.verstecke[ort], f=STEINFARBEN[i], g=gruppe(D3.scene,x,0,z);
+    const [x,z]=def.verstecke[ort], f=STEINFARBEN[(n+i)%STEINFARBEN.length], g=gruppe(D3.scene,x,0,z);
     const k=new THREE.Mesh(new THREE.OctahedronGeometry(.27),new THREE.MeshPhongMaterial({color:f,emissive:f,emissiveIntensity:.35,shininess:90,flatShading:true})); k.position.y=.5; k.scale.y=1.3; k.castShadow=true; g.add(k);
     const sc=schein(g,'rgba(255,255,255,.4)',0,.5,0,.9);
     const treffer=new THREE.Mesh(GEO.box,basis(0,{visible:false})); treffer.scale.set(.9,1,.9); treffer.position.y=.5; g.add(treffer);
     const st1={n:i,x,z,g,k,sc,treffer,da:s.funde.indexOf(i)<0}; treffer.userData.stein=st1; g.visible=st1.da; D3.steine.push(st1);
   });
 }
-const steineGefunden=()=>Object.values(st.sammel||{}).reduce((a,s)=>a+s.funde.length,0);
+const steineGefunden=()=>Object.values(st.sammel||{}).reduce((a,s)=>a+Math.min(STEINZAHL,s.funde.length),0);
 const steinText=()=>{ const s=(st.sammel||{})[st.raum]; return '💎 '+(s?s.funde.length:0)+'/'+STEINZAHL; };
 const sammelChip=()=>`<span class="chip">💎 Edelsteine gefunden: ${steineGefunden()} von ${C.raeume.length*STEINZAHL}</span>`;
 function steinNehmen(s){
   if(!s.da) return; s.da=false; s.g.visible=false; D3.steinNah=null; st.sammel[st.raum].funde.push(s.n); TON.spiele('karte'); speichere();
   const el=app.querySelector('.steinzahl'); if(el) el.textContent=steinText();
-  meldeKurz(st.sammel[st.raum].funde.length===STEINZAHL ? 'Alle 5 Edelsteine in diesem Raum gefunden!' : 'Ein Edelstein! '+steinText());
+  meldeKurz(du?'Du hast den Edelstein in diesem Raum gefunden!':'Ihr habt den Edelstein in diesem Raum gefunden!');
 }
 function steineBewegen(){
   const f=D3.figur.position; let nah=null, best=1.8;
   D3.steine.forEach(s=>{ if(!s.da) return; s.k.rotation.y=D3.t*1.6+s.n; s.k.position.y=.5+Math.sin(D3.t*2.4+s.n)*.07; const g=.8+Math.sin(D3.t*3+s.n*2)*.18; s.sc.scale.set(g,g,1);
     const d=Math.hypot(f.x-s.x,f.z-s.z); if(d<best && sichtlinie([f.x,f.z],[s.x,s.z])){ best=d; nah=s; } });
   D3.steinNah=nah; const b=app.querySelector('.steinknopf'); if(b) b.hidden=!nah;
+}
+
+/* ---------- Urkunde am Ende (wie in den 3D-Welten) ---------- */
+function urkundeHtml(){
+  const wer=st.name?esc(st.name):(du?'Rätsel-Profi':'Rätsel-Team');
+  /* ohne Zeitwort nach dem Namen: passt für ein Kind, für &bdquo;ihr&ldquo; und für jeden Teamnamen */
+  const text=C.urkundeText || ('für alle gemeisterten Räume im Escape Game zum Thema &bdquo;'+C.titel+'&ldquo; und den Weg nach draußen. '+(du?'Das hast du ganz toll gemacht!':'Das habt ihr ganz toll gemacht!'));
+  const bilder=C.raeume.map((_,n)=>{ const s=(st.sammel||{})[n], da=s&&s.funde.length>0, f='#'+('000000'+STEINFARBEN[n%STEINFARBEN.length].toString(16)).slice(-6);
+    return '<svg viewBox="0 0 20 28" aria-hidden="true"><path d="M10 1L19 14L10 27L1 14Z" fill="'+(da?f:'none')+'" stroke="'+(da?f:'#b8ad98')+'" stroke-width="1.5"'+(da?'':' stroke-dasharray="3 2"')+'/>'+(da?'<path d="M10 1L10 27L1 14Z" fill="#fff" opacity=".25"/>':'')+'</svg>'; }).join('');
+  const da=steineGefunden(), alle=C.raeume.length*STEINZAHL, wir=du?'Du hast ':'Ihr habt ';
+  const satz=!da ? '' : wir+(alle===1 ? 'den Edelstein' : da+' von '+alle+' Edelsteinen')+' gefunden.';
+  return '<div class="urkunde"><div class="ur-rahmen"><div class="ur-stern">★ ★ ★</div><div class="ur-titel">URKUNDE</div><div class="ur-klein">'+(C.spielname||C.titel)+'</div><div class="ur-name">'+wer+'</div><div class="ur-text">'+text+'</div>'+(satz?'<div class="ur-steine">'+bilder+'</div><div class="ur-sammel">'+satz+'</div>':'')+'<div class="ur-fuss"><span>'+new Date().toLocaleDateString('de-DE')+'</span><span>'+SZNAME+'</span></div></div></div>';
+}
+function urkunde(){
+  D3.urkundeGezeigt=true;
+  const m=modal(vorKnopf()+urkundeHtml()+'<div class="aktionen mitte"><button class="btn urgrossknopf">Urkunde groß zeigen</button><button class="btn zweit urzu">Weiter feiern</button></div>',
+    { vorlesen:()=>{ const q=document.querySelector('.urfenster .urkunde'); return Array.from(q.querySelectorAll('.ur-titel,.ur-klein,.ur-name,.ur-text,.ur-sammel')).map(e=>e.textContent).join('. '); } });
+  m.classList.add('urfenster'); m.querySelector('.urzu').onclick=schliesse; m.querySelector('.urgrossknopf').onclick=urkundeGross;
+}
+/* nur die Urkunde auf ruhigem Hintergrund (für das Bildschirmfoto der Kinder); Tippen führt zurück */
+function urkundeGross(){
+  const q=document.querySelector('.urfenster .urkunde'); if(!q) return;
+  const o=document.createElement('div'); o.id='urgross';
+  const c=q.cloneNode(true); c.classList.add('urgrossk'); o.appendChild(c);
+  const h=document.createElement('div'); h.className='urhinweis'; h.textContent=du?'Mache jetzt dein Bildschirmfoto. Tippe danach irgendwo, um zurückzugehen.':'Macht jetzt euer Bildschirmfoto. Tippt danach irgendwo, um zurückzugehen.'; o.appendChild(h);
+  document.body.appendChild(o);
+  const passe=()=>{ c.style.transform='scale('+Math.min(innerWidth*.94/c.offsetWidth, innerHeight*.84/c.offsetHeight)+')'; };
+  passe(); window.addEventListener('resize',passe);
+  setTimeout(()=>{ h.style.opacity='0'; },4500); o.onclick=()=>{ window.removeEventListener('resize',passe); o.remove(); };
+}
+/* auf der Endseite: Knopf zur Urkunde. Nach dem Schlussbild öffnet sie sich von selbst, aber erst, wenn kein Fenster offen ist und nicht mehr vorgelesen wird */
+function urkundeAnbieten(){
+  const start=app.querySelector('.start'); if(!start) return;
+  const b=document.createElement('button'); b.className='btn urknopf'; b.textContent='🏆 Urkunde'; b.onclick=urkunde;
+  start.insertBefore(b,start.lastElementChild);
+  D3.urkundeGezeigt=false;
+  const oeffne=()=>{ if(D3.urkundeGezeigt || !b.isConnected) return;
+    if(document.querySelector('.modal-bg') || ('speechSynthesis' in window && speechSynthesis.speaking)){ setTimeout(oeffne,1000); return; }
+    urkunde(); };
+  setTimeout(oeffne,9000);
 }
 
 /* ---------- Wege (um Gegenstände herum) ---------- */
@@ -1012,6 +1052,7 @@ function bildschleife(){
 
 /* ---------- Schlussbild in 3D (ersetzt das flache Bild der Endseite) ---------- */
 function finale3d(){
+  urkundeAnbieten();
   const sz=app.querySelector('.szene'), def=FINALE3D[C.szenario]; if(!sz || !def || !D3.renderer) return;
   raeumeAuf(); D3.waende=[]; D3.scene=new THREE.Scene(); D3.t=0;
   const k={ scene:D3.scene, anim:[] };
@@ -1064,7 +1105,7 @@ function tuerAuf(){
   setTimeout(()=>blende(()=>{ st.laeuft=false; st.raum++; st.geloest=new Set(); D3.raum=-1; if(st.raum>=C.raeume.length){ ende(); finale3d(); } else zeigeRaum(true); }, von), ruhig?100:2400);
 }
 /* Prüfhilfe: ?pruefung an die Adresse hängen */
-if(location.search.indexOf('pruefung')>=0) window.__d3={ D3, st, zeigeRaum, sprung:n=>{ schliesse(); st.raum=n; st.geloest=new Set(); D3.raum=-1; zeigeRaum(false); }, tuerAuf, schliesse, kameraSetzen, steinNehmen, tippObjekt, zurTuer, frei, suchePfad, liste, belegung };
+if(location.search.indexOf('pruefung')>=0) window.__d3={ D3, st, urkunde, ende, finale3d, zeigeRaum, sprung:n=>{ schliesse(); st.raum=n; st.geloest=new Set(); D3.raum=-1; zeigeRaum(false); }, tuerAuf, schliesse, kameraSetzen, steinNehmen, tippObjekt, zurTuer, frei, suchePfad, liste, belegung };
 
 start();
 })();
