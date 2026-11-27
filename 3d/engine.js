@@ -987,7 +987,11 @@ function kameraSetzen(dt){
   const grenz=(v,m)=>Math.max(-m,Math.min(m,v));
   const zx=grenz(f.position.x,M.b/2-(hoch?4.5:7.5))*(1-mitte), zz=grenz(f.position.z-1,M.t/2-(hoch?8.8:6.5))*(1-mitte);
   if(!D3.blickZ) D3.blickZ=V(zx,1.1,zz);
+  /* Ausgang mit eigenem Blick (blick: pitch, zoom, hoehe): beim Öffnen stellt sich die Kamera weich darauf ein */
+  const B=D3.tuer && D3.tuer.offen && D3.tuer.blick;
+  if(B){ const m=Math.min(1,dt*5); D3.yaw+=(0-D3.yaw)*m; D3.pitch+=((B.pitch||.55)-D3.pitch)*m; D3.zoom+=((B.zoom||1)-D3.zoom)*m; }
   D3.blickZ.lerp(V(zx,1.1,zz),1-Math.pow(.02,dt));
+  if(B && B.hoehe) D3.blickZ.y=1.1+Math.max(0,f.position.y)*B.hoehe;
   /* die Figur bleibt immer im Bild: Abstand zum Blickpunkt begrenzen (quer zur Kamera und in der Tiefe) */
   { const s=Math.sin(D3.yaw), co=Math.cos(D3.yaw), dx=D3.blickZ.x-f.position.x, dz=D3.blickZ.z-f.position.z;
     const quer=.62*dist*Math.tan(D3.camera.fov*Math.PI/360)*D3.camera.aspect;
@@ -1114,8 +1118,8 @@ function zeigeRaum(neu){
 function tuerAuf(){
   const von=st.raum, p=D3.tuer.durch;
   D3.tuer.offen=true; D3.tuer.bereit=false; TON.spiele('tuer'); st.laeuft=true;
-  setTimeout(()=>{ D3.pfad=[[D3.tuer.steh[0],D3.tuer.steh[1]],p]; D3.danach=null; }, ruhig?0:1100);
-  setTimeout(()=>blende(()=>{ st.laeuft=false; st.raum++; st.geloest=new Set(); D3.raum=-1; if(st.raum>=C.raeume.length){ ende(); finale3d(); } else zeigeRaum(true); }, von), ruhig?100:2400+(D3.tuer.rutsch?D3.tuer.rutschDauer*1000:0));
+  setTimeout(()=>{ D3.pfad=[[D3.tuer.steh[0],D3.tuer.steh[1]],p]; D3.danach=null; }, ruhig?0:(D3.tuer.losNach||1.1)*1000); /* manche Räume bauen D3.tuer selbst: dann gelten die Standardzeiten */
+  setTimeout(()=>blende(()=>{ st.laeuft=false; st.raum++; st.geloest=new Set(); D3.raum=-1; if(st.raum>=C.raeume.length){ ende(); finale3d(); } else zeigeRaum(true); }, von), ruhig?100:Math.round(((D3.tuer.losNach||1.1)+1.3+(D3.tuer.warte||0))*1000)+(D3.tuer.rutsch?D3.tuer.rutschDauer*1000:0));
 }
 /* Prüfhilfe: ?pruefung an die Adresse hängen */
 if(location.search.indexOf('pruefung')>=0) window.__d3={ D3, st, urkunde, ende, finale3d, zeigeRaum, sprung:n=>{ schliesse(); st.raum=n; st.geloest=new Set(); D3.raum=-1; zeigeRaum(false); }, tuerAuf, schliesse, kameraSetzen, steinNehmen, tippObjekt, zurTuer, frei, suchePfad, liste, belegung };
