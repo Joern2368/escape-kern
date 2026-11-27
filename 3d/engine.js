@@ -797,7 +797,7 @@ function groesse(){
 function baueRaum(n){
   const def=R3[n % R3.length]||R3[0];
   raeumeAuf();
-  D3.scene=new THREE.Scene(); D3.raum=n; D3.anim=[]; D3.waende=[]; D3.verdeckt=[]; D3.gitter=null; D3.hindernisse=[]; D3.objekte=[]; D3.pfad=[]; D3.danach=null; saat=7+n;
+  D3.scene=new THREE.Scene(); D3.raum=n; D3.anim=[]; D3.waende=[]; D3.verdeckt=[]; D3.gitter=null; D3.hindernisse=[]; D3.objekte=[]; D3.pfad=[]; D3.danach=null; D3.rutsch=null; saat=7+n;
   D3.yaw=0; D3.pitch=.55; D3.zoom=1;
   D3.masse={ b:def.breite, t:def.tiefe };
   const k={ scene:D3.scene, anim:D3.anim, figur:()=>D3.figur,
@@ -998,6 +998,18 @@ function kameraSetzen(dt){
   D3.camera.lookAt(D3.blickZ);
 }
 
+/* ---------- Ausgang mit Rutsche: ist die Figur am Einstieg (durch), rutscht sie sitzend und immer schneller an den Punkten entlang ---------- */
+function rutschen(dt){
+  const f=D3.figur, T=D3.tuer, u=f.userData;
+  if(!D3.rutsch){ if(D3.pfad.length || Math.hypot(f.position.x-T.durch[0], f.position.z-T.durch[1])>=.1) return; D3.yaw=0; D3.pitch=.55; D3.zoom=1; /* Standardblick, damit die Figur beim Rutschen sichtbar bleibt */ D3.rutsch={ u:0, weg:[V(T.durch[0],0,T.durch[1])].concat(T.rutsch.map(p=>V(p[0],p[1],p[2]))) }; }
+  const R=D3.rutsch, P=R.weg; R.u=Math.min(1,R.u+dt/T.rutschDauer);
+  const L=P.slice(1).map((p,i)=>p.distanceTo(P[i])); let s=Math.pow(R.u,1.6)*L.reduce((a,b)=>a+b,0), i=0;
+  while(i<L.length-1 && s>L[i]){ s-=L[i]; i++; }
+  f.position.lerpVectors(P[i],P[i+1],L[i]?Math.min(1,s/L[i]):1);
+  const dx=P[i+1].x-P[i].x, dz=P[i+1].z-P[i].z; if(Math.hypot(dx,dz)>.01) f.rotation.y=Math.atan2(dx,dz);
+  u.beinL.rotation.x=u.beinR.rotation.x=-1.45; u.armL.rotation.x=u.armR.rotation.x=-2.6; u.koerper.position.y=-.45;
+}
+
 /* ---------- Bildschleife ---------- */
 function bildschleife(){
   requestAnimationFrame(bildschleife);
@@ -1026,6 +1038,7 @@ function bildschleife(){
   const s=Math.sin(D3.gelaufen);
   u.beinL.rotation.x=geht?s*.7:0; u.beinR.rotation.x=geht?-s*.7:0; u.armL.rotation.x=geht?-s*.6:0; u.armR.rotation.x=geht?s*.6:0;
   u.koerper.position.y=geht?Math.abs(Math.cos(D3.gelaufen))*.07:Math.sin(D3.t*2)*.012;
+  if(D3.tuer && D3.tuer.offen && D3.tuer.rutsch) rutschen(dt);
   st.pos.x=f.position.x; st.pos.y=f.position.z;
 
   /* Nähe: Namensschild zeigen */
@@ -1102,7 +1115,7 @@ function tuerAuf(){
   const von=st.raum, p=D3.tuer.durch;
   D3.tuer.offen=true; D3.tuer.bereit=false; TON.spiele('tuer'); st.laeuft=true;
   setTimeout(()=>{ D3.pfad=[[D3.tuer.steh[0],D3.tuer.steh[1]],p]; D3.danach=null; }, ruhig?0:1100);
-  setTimeout(()=>blende(()=>{ st.laeuft=false; st.raum++; st.geloest=new Set(); D3.raum=-1; if(st.raum>=C.raeume.length){ ende(); finale3d(); } else zeigeRaum(true); }, von), ruhig?100:2400);
+  setTimeout(()=>blende(()=>{ st.laeuft=false; st.raum++; st.geloest=new Set(); D3.raum=-1; if(st.raum>=C.raeume.length){ ende(); finale3d(); } else zeigeRaum(true); }, von), ruhig?100:2400+(D3.tuer.rutsch?D3.tuer.rutschDauer*1000:0));
 }
 /* Prüfhilfe: ?pruefung an die Adresse hängen */
 if(location.search.indexOf('pruefung')>=0) window.__d3={ D3, st, urkunde, ende, finale3d, zeigeRaum, sprung:n=>{ schliesse(); st.raum=n; st.geloest=new Set(); D3.raum=-1; zeigeRaum(false); }, tuerAuf, schliesse, kameraSetzen, steinNehmen, tippObjekt, zurTuer, frei, suchePfad, liste, belegung };
