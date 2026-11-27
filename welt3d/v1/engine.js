@@ -192,7 +192,9 @@ const dir=new THREE.DirectionalLight(0xfff2d6,.8);dir.castShadow=true;dir.shadow
 const sc=dir.shadow.camera;sc.left=-24;sc.right=24;sc.top=24;sc.bottom=-24;sc.near=1;sc.far=90;dir.shadow.bias=-.0008;scene.add(dir);scene.add(dir.target);
 let abend=0; /* 0 = Tag, 1 = Abend (Feuerwerk) */
 const TOP_TAG=new THREE.Color(0x5fa8e8),TOP_ABEND=new THREE.Color(0x0e1633),BOT_TAG=new THREE.Color(0xdcecf7),BOT_ABEND=new THREE.Color(0x3a4a86);
-function setzeAbend(a){abend=a;skyMat.uniforms.top.value.copy(TOP_TAG).lerp(TOP_ABEND,a);skyMat.uniforms.bottom.value.copy(BOT_TAG).lerp(BOT_ABEND,a);scene.fog.color.copy(NEBEL_TAG).lerp(NEBEL_ABEND,a);hemi.intensity=.55-.3*a;dir.intensity=.8-.5*a;sternMat.opacity=a;sonne.visible=a<.5}
+/* Optionale Welt-Konstanten (z. B. Welt Weltraum): ABENDWERTE={sterne:Helligkeit der Sterne am Tag, sonne:Sonne immer sichtbar, hemi:[Tag,Finale], dir:[Tag,Finale]} */
+const ABW=typeof ABENDWERTE!=='undefined'?ABENDWERTE:null;
+function setzeAbend(a){abend=a;skyMat.uniforms.top.value.copy(TOP_TAG).lerp(TOP_ABEND,a);skyMat.uniforms.bottom.value.copy(BOT_TAG).lerp(BOT_ABEND,a);scene.fog.color.copy(NEBEL_TAG).lerp(NEBEL_ABEND,a);hemi.intensity=.55-.3*a;dir.intensity=.8-.5*a;sternMat.opacity=a;sonne.visible=a<.5;if(ABW){if(ABW.hemi)hemi.intensity=ABW.hemi[0]+(ABW.hemi[1]-ABW.hemi[0])*a;if(ABW.dir)dir.intensity=ABW.dir[0]+(ABW.dir[1]-ABW.dir[0])*a;if(ABW.sterne!=null)sternMat.opacity=Math.max(a,ABW.sterne);if(ABW.sonne!=null)sonne.visible=ABW.sonne}}
 
 /* ---------- Tiere (aus einfachen Formen, schauen nach +x) ---------- */
 const lebendig=[];
@@ -344,7 +346,7 @@ function figurBauen(av){while(spieler.children.length)spieler.remove(spieler.chi
 figurBauen(AVATARE[0]);
 
 /* ---------- Eingaben ---------- */
-let yaw=0,pitch=.52,dist=11,joy={x:0,y:0},tasten={},ziel=null,blickWinkel=Math.PI;
+let yaw=0,pitch=typeof PITCHSTART==='number'?PITCHSTART:.52,dist=11,joy={x:0,y:0},tasten={},ziel=null,blickWinkel=Math.PI;
 addEventListener('keydown',e=>{tasten[e.key.toLowerCase()]=true});addEventListener('keyup',e=>{tasten[e.key.toLowerCase()]=false});
 const zeiger={};let halteT=0;
 cv3.addEventListener('pointerdown',e=>{cv3.setPointerCapture(e.pointerId);zeiger[e.pointerId]={x:e.clientX,y:e.clientY,t:performance.now(),bew:0}});
@@ -570,7 +572,7 @@ let mappeScroll=0;
 function mappeZeigen(){const k=karteOeffnen();k.className='karte papyrus mappe';
   const kp=el('div','mkopf');kp.appendChild(el('h2',null,'\uD83C\uDCCF Deine Wissensmappe'));const x=el('button','x','\u00D7');x.onclick=karteSchliessen;kp.appendChild(x);k.appendChild(kp);
   const f=CONFIG.auftraege.map((a,i)=>i).filter(i=>S.karten[i]);
-  k.appendChild(el('div',f.length?'keinraetsel':'tafeltext',f.length?'\uD83D\uDC49 Tippe eine Karte an, dann wird sie groß.':'Du hast noch keine Karten. Suche die goldenen Wissenskarten im Zoo. Die Zahl auf der Karte zeigt, zu welchem Rätsel sie gehört.'));
+  k.appendChild(el('div',f.length?'keinraetsel':'tafeltext',f.length?'\uD83D\uDC49 Tippe eine Karte an, dann wird sie groß.':'Du hast noch keine Karten. Suche die goldenen Wissenskarten '+(typeof WELTORT==='string'?WELTORT:'im Zoo')+'. Die Zahl auf der Karte zeigt, zu welchem Rätsel sie gehört.'));
   const viel=N>8,raster=el('div','mappe-raster'+(viel?' kompakt':''));f.forEach(i=>{const t=CONFIG.auftraege[i].tafel;const sk=el('div','sk'+(viel?' klein':''));sk.style.cursor='pointer';sk.appendChild(el('h3',null,(i+1)+'. '+t.titel));if(!viel)sk.appendChild(el('p',null,t.text));sk.onclick=()=>{sKlick();mappeScroll=k.scrollTop;tafelAnsicht(k,i,mappeZeigen,false,'\u2190 Zurück zur Mappe')};raster.appendChild(sk)});k.appendChild(raster);
   const l=el('div','leiste');l.appendChild(el('div','platz'));const z=el('button','knopf','Zurück zum Spiel');z.onclick=karteSchliessen;l.appendChild(z);k.appendChild(l);k.scrollTop=mappeScroll}
 $('#mappe').onclick=()=>{if(modal)return;mappeScroll=0;mappeZeigen()};
@@ -634,7 +636,7 @@ function schleife(){requestAnimationFrame(schleife);const dt=Math.min(.05,clock.
   if(gestartet&&!modal&&ausgang.offen<.9&&Math.abs(spieler.position.x)<6&&Math.abs(spieler.position.z-TORZ)<4&&tges-warnT>8){warnT=tges;sag('Das Tor ist noch zu. Löse erst alle Rätsel ('+zaehle(S.geloest)+' von '+N+').',5000)}
   /* Finale */
   if(!finale&&gestartet&&Math.hypot(spieler.position.x-FEST.x,spieler.position.z-(FEST.z+4))<9&&zaehle(S.geloest)>=N)finaleStart();
-  if(finale){finale.t+=dt;abend=Math.min(1,finale.t/4);setzeAbend(abend);finale.burstT-=dt;if(finale.burstT<=0){finale.burstT=.55+rnd()*.5;burst(FEST.x+(rnd()-.5)*40,22+rnd()*12,FEST.z-12-rnd()*14)}
+  if(finale){finale.t+=dt;abend=Math.min(1,finale.t/4);setzeAbend(abend);finale.burstT-=dt;if(typeof FINALESCHAU==='function')FINALESCHAU(finale.t,dt);if(finale.burstT<=0&&!(typeof FEUERWERK!=='undefined'&&FEUERWERK===false)){finale.burstT=.55+rnd()*.5;burst(FEST.x+(rnd()-.5)*40,22+rnd()*12,FEST.z-12-rnd()*14)}
     paradeUpdate(tges,dt);if(!finale.urk&&finale.t>9){finale.urk=true;urkunde()}}
   if(gestartet&&tges-saveT>5){saveT=tges;speichern()}lebenUpdate(tges);besucherUpdate(dt);if(WINTER)schneeUpdate(dt);feuerwerkUpdate(dt);konfettiUpdate();miniZeichnen();
   fpsN++;fpsT+=dt;if(fpsT>=1){$('#fps').textContent='FPS: '+Math.round(fpsN/fpsT);fpsN=0;fpsT=0}
