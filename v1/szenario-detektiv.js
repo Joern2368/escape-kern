@@ -243,8 +243,8 @@ objekte:[
 ],
 infoObjekte:[{name:"Wegweiser",x:220,y:250,wand:true,by:-100,zeichne:wegweiser,fund:"Hinter dem Wegweiser steckt:"},{name:"Paketstapel",x:1520,boden:720,fuss:4,by:-90,zeichne:pakete,fund:"Auf dem obersten Paket steht:"},{name:"Regentonne",x:130,boden:690,fuss:4,by:-115,zeichne:regentonne,fund:"An der Regentonne klebt:"}]},
 {titel:"Der Dachboden",
-intro:"Du bist über die Feuerleiter auf den Dachboden geklettert. Durch das Dachfenster fällt Mondlicht auf alte Koffer und Kisten. Hier wartet Friedas letzter Fall – öffnet das Schloss an der Dachluke, dann habt ihr die Prüfung bestanden!",
-introDu:"Ihr seid über die Feuerleiter auf den Dachboden geklettert. Durch das Dachfenster fällt Mondlicht auf alte Koffer und Kisten. Hier wartet Friedas letzter Fall – öffne das Schloss an der Dachluke, dann hast du die Prüfung bestanden!",
+intro:"Ihr seid über die Feuerleiter auf den Dachboden geklettert. Durch das Dachfenster fällt Mondlicht auf alte Koffer und Kisten. Hier wartet Friedas letzter Fall – öffnet das Schloss an der Dachluke, dann habt ihr die Prüfung bestanden!",
+introDu:"Du bist über die Feuerleiter auf den Dachboden geklettert. Durch das Dachfenster fällt Mondlicht auf alte Koffer und Kisten. Hier wartet Friedas letzter Fall – öffne das Schloss an der Dachluke, dann hast du die Prüfung bestanden!",
 tuerX:600,tuerArt:"klapp",
 hintergrund:()=>`${defs('#5a4030','#241810','#c8d8ff')}${dach()}${boden(160)}<path d="M1008 200H1192L1420 780H880Z" fill="#c8d8ff" opacity=".13"/>`,
 objekte:[
